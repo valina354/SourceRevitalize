@@ -169,27 +169,6 @@ public:
 		m_bBUMPALPHASMOOTHNESS = true;
 #endif
 	}
-private:
-	int m_nPARALLAX_MAPPING;
-#ifdef _DEBUG
-	bool m_bPARALLAX_MAPPING;
-#endif
-public:
-	void SetPARALLAX_MAPPING( int i )
-	{
-		Assert( i >= 0 && i <= 1 );
-		m_nPARALLAX_MAPPING = i;
-#ifdef _DEBUG
-		m_bPARALLAX_MAPPING = true;
-#endif
-	}
-	void SetPARALLAX_MAPPING( bool i )
-	{
-		m_nPARALLAX_MAPPING = i ? 1 : 0;
-#ifdef _DEBUG
-		m_bPARALLAX_MAPPING = true;
-#endif
-	}
 public:
 	lightmappedpbr_ps30_Static_Index( )
 	{
@@ -225,23 +204,19 @@ public:
 		m_bBUMPALPHASMOOTHNESS = false;
 #endif // _DEBUG
 		m_nBUMPALPHASMOOTHNESS = 0;
-#ifdef _DEBUG
-		m_bPARALLAX_MAPPING = false;
-#endif // _DEBUG
-		m_nPARALLAX_MAPPING = 0;
 	}
 	int GetIndex()
 	{
 		// Asserts to make sure that we aren't using any skipped combinations.
 		// Asserts to make sure that we are setting all of the combination vars.
 #ifdef _DEBUG
-		bool bAllStaticVarsDefined = m_bCONVERT_TO_SRGB && m_bFLASHLIGHT && m_bCUBEMAP && m_bCUBEMAP_SPHERE_LEGACY && m_bSMOOTHNESS && m_bSEAMLESS && m_bBUMPMAP && m_bBUMPALPHASMOOTHNESS && m_bPARALLAX_MAPPING;
+		bool bAllStaticVarsDefined = m_bCONVERT_TO_SRGB && m_bFLASHLIGHT && m_bCUBEMAP && m_bCUBEMAP_SPHERE_LEGACY && m_bSMOOTHNESS && m_bSEAMLESS && m_bBUMPMAP && m_bBUMPALPHASMOOTHNESS;
 		Assert( bAllStaticVarsDefined );
 #endif // _DEBUG
-		return ( 576 * m_nCONVERT_TO_SRGB ) + ( 576 * m_nFLASHLIGHT ) + ( 1152 * m_nCUBEMAP ) + ( 2304 * m_nCUBEMAP_SPHERE_LEGACY ) + ( 4608 * m_nSMOOTHNESS ) + ( 9216 * m_nSEAMLESS ) + ( 18432 * m_nBUMPMAP ) + ( 36864 * m_nBUMPALPHASMOOTHNESS ) + ( 73728 * m_nPARALLAX_MAPPING ) + 0;
+		return ( 576 * m_nCONVERT_TO_SRGB ) + ( 576 * m_nFLASHLIGHT ) + ( 1152 * m_nCUBEMAP ) + ( 2304 * m_nCUBEMAP_SPHERE_LEGACY ) + ( 4608 * m_nSMOOTHNESS ) + ( 9216 * m_nSEAMLESS ) + ( 18432 * m_nBUMPMAP ) + ( 36864 * m_nBUMPALPHASMOOTHNESS ) + 0;
 	}
 };
-#define shaderStaticTest_lightmappedpbr_ps30 psh_forgot_to_set_static_CONVERT_TO_SRGB + psh_forgot_to_set_static_FLASHLIGHT + psh_forgot_to_set_static_CUBEMAP + psh_forgot_to_set_static_CUBEMAP_SPHERE_LEGACY + psh_forgot_to_set_static_SMOOTHNESS + psh_forgot_to_set_static_SEAMLESS + psh_forgot_to_set_static_BUMPMAP + psh_forgot_to_set_static_BUMPALPHASMOOTHNESS + psh_forgot_to_set_static_PARALLAX_MAPPING + 0
+#define shaderStaticTest_lightmappedpbr_ps30 psh_forgot_to_set_static_CONVERT_TO_SRGB + psh_forgot_to_set_static_FLASHLIGHT + psh_forgot_to_set_static_CUBEMAP + psh_forgot_to_set_static_CUBEMAP_SPHERE_LEGACY + psh_forgot_to_set_static_SMOOTHNESS + psh_forgot_to_set_static_SEAMLESS + psh_forgot_to_set_static_BUMPMAP + psh_forgot_to_set_static_BUMPALPHASMOOTHNESS + 0
 class lightmappedpbr_ps30_Dynamic_Index
 {
 private:

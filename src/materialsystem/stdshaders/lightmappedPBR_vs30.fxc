@@ -1,3 +1,9 @@
+//===================== Copyright (c) AdV Software And Source Revitalize For Improving It. All Rights Reserved. ======================
+//
+// The Vertex Shader for the brush PBR shader
+//
+//==================================================================================================
+
 //  STATIC: "BUMPMAP"					"0..1"
 //  STATIC: "DIFFUSEBUMPMAP"			"0..1"
 //  STATIC: "VERTEXCOLOR"				"0..1"

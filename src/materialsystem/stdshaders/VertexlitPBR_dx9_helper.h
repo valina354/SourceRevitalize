@@ -1,6 +1,6 @@
-//===================== Copyright (c) Valve Corporation. All Rights Reserved. ======================
+//===================== Copyright (c) AdV Software And Source Revitalize For Improving It. All Rights Reserved. ======================
 //
-// Example shader that can be applied to models
+// The .h Helper File for the model PBR shader
 //
 //==================================================================================================
 

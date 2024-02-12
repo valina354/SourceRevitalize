@@ -1,6 +1,6 @@
-//===================== Copyright (c) Valve Corporation. All Rights Reserved. ======================
+//===================== Copyright (c) AdV Software And Source Revitalize For Improving It. All Rights Reserved. ======================
 //
-// Example shader that can be applied to models
+// The .cpp File for the brush PBR shader
 //
 //==================================================================================================
 
@@ -32,8 +32,6 @@ SHADER_PARAM(EMISSIVE, SHADER_PARAM_TYPE_TEXTURE, "", "")
 SHADER_PARAM(USESMOOTHNESS, SHADER_PARAM_TYPE_BOOL, "0", "Invert roughness")
 SHADER_PARAM( NORMALMAPALPHASMOOTHNESS, SHADER_PARAM_TYPE_BOOL, "0", "Use the alpha channel of bumpmap as inverted roughness" )
 
-SHADER_PARAM( PARALLAXMAP, SHADER_PARAM_TYPE_INTEGER, "0", "1=treat alpha of bumpmap as height" )
-SHADER_PARAM( HEIGHT_SCALE, SHADER_PARAM_TYPE_FLOAT, "0.1", "height map scale for parallax mapping" )
 
 SHADER_PARAM(ENVMAPORIGIN, SHADER_PARAM_TYPE_VEC3, "[0 0 0]", "Origin of the env_cubemap (for sphere projected cubemap)")
 SHADER_PARAM(ENVMAPRADIUS, SHADER_PARAM_TYPE_INTEGER, "0", "Radius of the env_cubemap (for sphere projected cubemap)")
@@ -57,8 +55,6 @@ void SetupVars(LightmappedPBR_DX9_Vars_t& info)
 	info.m_nUseSmoothness = USESMOOTHNESS;
 	info.m_nBumpAlphaSmoothness = NORMALMAPALPHASMOOTHNESS;
 	info.m_nSeamlessMappingScale = SEAMLESS_SCALE;
-	info.m_nParallaxMap = PARALLAXMAP;
-	info.m_nHeightScale = HEIGHT_SCALE;
 	info.m_nEnvmapOrigin = ENVMAPORIGIN;
 	info.m_nEnvmapRadius = ENVMAPRADIUS;
 }

@@ -1,6 +1,6 @@
-//========= Copyright Valve Corporation, All rights reserved. ============//
+//===================== Copyright (c) AdV Software And Source Revitalize For Improving It. All Rights Reserved. ======================
 //
-// Purpose: 
+// Purpose: The .cpp Helper File for the model PBR shader
 //
 // $NoKeywords: $
 //

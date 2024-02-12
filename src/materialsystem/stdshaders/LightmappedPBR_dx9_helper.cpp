@@ -1,6 +1,6 @@
-//========= Copyright Valve Corporation, All rights reserved. ============//
+//===================== Copyright (c) AdV Software And Source Revitalize For Improving It. All Rights Reserved. ======================
 //
-// Purpose: 
+// Purpose: The .cpp Helpher File for the brush PBR shader
 //
 // $NoKeywords: $
 //
@@ -21,9 +21,7 @@
 
 static ConVar mat_fullbright( "mat_fullbright", "0", FCVAR_CHEAT );
 
-ConVar mat_allow_parallax_textures( "mat_allow_parallax_textures", "1" );
-extern ConVar mat_parallaxmapsamplesmin;
-extern ConVar mat_parallaxmapsamplesmax;
+
 extern ConVar r_csm_bias;
 extern ConVar r_csm_slopescalebias;
 extern ConVar r_csm_performance;
@@ -62,8 +60,7 @@ void InitParamsLightmappedPBR_DX9( CBaseVSShader *pShader, IMaterialVar** params
 		SET_FLAGS2(MATERIAL_VAR2_LIGHTING_BUMPED_LIGHTMAP);
 	}
 
-	// parallax mapping
-	InitFloatParam( info.m_nHeightScale, params, 0.1 );
+
 
 	if (info.m_nEnvmapRadius != -1 && !params[info.m_nEnvmapRadius]->IsDefined())
 		params[info.m_nEnvmapRadius]->SetIntValue(-1);
@@ -167,9 +164,6 @@ static void DrawLightmappedPBR_DX9_Internal( CBaseVSShader *pShader, IMaterialVa
 	bool bUseSmoothness =
 		!bBumpAlphaSmoothness && info.m_nUseSmoothness != -1 && params[info.m_nUseSmoothness]->GetIntValue() == 1;
 	bool bSeamlessMapping = ((info.m_nSeamlessMappingScale != -1) && (params[info.m_nSeamlessMappingScale]->GetFloatValue() != 0.0));
-	bool bParallaxMapping = false;
-	if (mat_allow_parallax_textures.GetBool() )
-		bParallaxMapping = ( info.m_nParallaxMap != -1 ) && ( params[info.m_nParallaxMap]->GetIntValue() != 0 );
 
 	bool bHasVertexColor = IS_FLAG_SET(MATERIAL_VAR_VERTEXCOLOR);
 	bool bHasVertexAlpha = IS_FLAG_SET(MATERIAL_VAR_VERTEXALPHA);
@@ -283,7 +277,6 @@ static void DrawLightmappedPBR_DX9_Internal( CBaseVSShader *pShader, IMaterialVa
 		SET_STATIC_VERTEX_SHADER_COMBO(BUMPMAP, bHasBump);
 		SET_STATIC_VERTEX_SHADER_COMBO(DIFFUSEBUMPMAP, bHasBump);
 		SET_STATIC_VERTEX_SHADER_COMBO(VERTEXALPHATEXBLENDFACTOR, false);
-		SET_STATIC_VERTEX_SHADER_COMBO( PARALLAX_MAPPING, bParallaxMapping );
 		SET_STATIC_VERTEX_SHADER(lightmappedpbr_vs30);
 
 		// Assume we're only going to get in here if we support 2b
@@ -296,7 +289,6 @@ static void DrawLightmappedPBR_DX9_Internal( CBaseVSShader *pShader, IMaterialVa
 		SET_STATIC_PIXEL_SHADER_COMBO(SEAMLESS, false);
 		SET_STATIC_PIXEL_SHADER_COMBO(BUMPMAP, bHasBump);
 		SET_STATIC_PIXEL_SHADER_COMBO( BUMPALPHASMOOTHNESS, bBumpAlphaSmoothness );
-		SET_STATIC_VERTEX_SHADER_COMBO( PARALLAX_MAPPING, bParallaxMapping );
 		SET_STATIC_PIXEL_SHADER(lightmappedpbr_ps30);
 
 		if( bHasFlashlight )
@@ -343,14 +335,6 @@ static void DrawLightmappedPBR_DX9_Internal( CBaseVSShader *pShader, IMaterialVa
 				pShader->BindTexture( SHADER_SAMPLER1, info.m_nRoughness );
 			else
 				pShaderAPI->BindStandardTexture( SHADER_SAMPLER1, TEXTURE_WHITE );
-		}
-
-		// parallax and cubemap light scale mapping parms (c20)
-		if ( bParallaxMapping)
-		{
-			pContextData->m_SemiStaticCmdsOut.SetPixelShaderConstant4( 20, GetFloatParam( info.m_nHeightScale, params ), GetFloatParam( info.m_nEnvmap, params ),
-																	   mat_parallaxmapsamplesmin.GetFloat(),
-																	   mat_parallaxmapsamplesmax.GetFloat() );
 		}
 
 		if (bHasMetallic)
