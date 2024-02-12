@@ -22,8 +22,8 @@
 #define SUPPORT_DX8 0
 #define SUPPORT_DX7 0
 #else
-#define SUPPORT_DX8 1
-#define SUPPORT_DX7 1
+#define SUPPORT_DX8 0
+#define SUPPORT_DX7 0
 #endif
 //-----------------------------------------------------------------------------
 // Helper macro for vertex shaders
@@ -147,6 +147,7 @@ public:
 	// Helper for dealing with modulation
 	void SetModulationVertexShaderDynamicState();
 	void SetModulationPixelShaderDynamicState( int modulationVar );
+	void SetModulationPixelShaderDynamicState_LinearScale( int modulationVar, float flScale );
 	void SetModulationPixelShaderDynamicState_LinearColorSpace( int modulationVar );
 	void SetModulationPixelShaderDynamicState_LinearColorSpace_LinearScale( int modulationVar, float flScale );
 

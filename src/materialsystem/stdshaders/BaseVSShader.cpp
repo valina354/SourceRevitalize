@@ -622,6 +622,17 @@ void CBaseVSShader::SetModulationPixelShaderDynamicState( int modulationVar )
 	s_pShaderAPI->SetPixelShaderConstant( modulationVar, color );
 }
 
+void CBaseVSShader::SetModulationPixelShaderDynamicState_LinearScale( int modulationVar, float flScale )
+{
+	float color[4] = { 1.0, 1.0, 1.0, 1.0 };
+	ComputeModulationColor( color );
+	color[0] *= flScale;
+	color[1] *= flScale;
+	color[2] *= flScale;
+
+	s_pShaderAPI->SetPixelShaderConstant( modulationVar, color );
+}
+
 void CBaseVSShader::SetModulationPixelShaderDynamicState_LinearColorSpace( int modulationVar )
 {
 	float color[4] = { 1.0, 1.0, 1.0, 1.0 };

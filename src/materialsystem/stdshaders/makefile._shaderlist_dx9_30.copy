@@ -32,6 +32,8 @@ flowmapped_water_vs20.fxc-----flowmapped_water_vs30
 flowmapped_water_ps20b.fxc-----flowmapped_water_ps30
 solidenergy_ps20b.fxc-----solidenergy_ps30
 solidenergy_vs20.fxc-----solidenergy_vs30
+object_motion_blur_ps2x.fxc-----object_motion_blur_ps30
+object_motion_blur_vs20.fxc-----object_motion_blur_vs30
 lightpass_ps30.fxc-----lightpass_ps30
 lightpass_vs30.fxc-----lightpass_vs30
 normalmapreconstruct_ps30.fxc-----normalmapreconstruct_ps30
