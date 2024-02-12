@@ -61,8 +61,20 @@ ssr_ps30.fxc
 //VertexlitPBR_ps30.fxc
 //vertexlitPBR_vs30.fxc
 
-lightmappedPBR_ps30.fxc
-lightmappedPBR_vs30.fxc
+//lightmappedPBR_ps30.fxc
+//lightmappedPBR_vs30.fxc
+
+//water
+SDK_water_ps2x.fxc
+SDK_Water_vs20.fxc
+SDK_WaterCheap_ps2x.fxc
+SDK_WaterCheap_vs20.fxc
+flowmapped_water_vs20.fxc
+flowmapped_water_ps20b.fxc
+
+//solidenergy
+solidenergy_ps20b.fxc
+solidenergy_vs20.fxc
 
 //example_model_ps20b.fxc
 //example_model_vs20.fxc

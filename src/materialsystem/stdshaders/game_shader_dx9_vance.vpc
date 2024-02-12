@@ -70,6 +70,12 @@ $Project "Shaders (VANCE)"
 		
 		$File	"parallaxtest.cpp"
 		
+		$File	"water.cpp"
+		
+		$File	"solidenergy_dx9.cpp"
+		$File	"solidenergy_dx9_helper.cpp"
+		$File	"solidenergy_dx9_helper.h"
+		
 		-$File	"example_model_dx9.cpp"
 		-$File	"example_model_dx9_helper.cpp"
 

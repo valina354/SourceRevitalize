@@ -1213,3 +1213,29 @@ void CBaseVSShader::DrawEqualDepthToDestAlpha( void )
 	Assert( 0 ); //probably just needs a shader update to the latest
 #endif
 }
+
+#ifdef VANCE
+void CBaseVSShader::GetCurrentRenderTargetDimensions( int &nWidth, int &nHeight ) const
+{
+	ITexture *pRT = s_pShaderAPI->GetRenderTargetEx( 0 );
+	if ( IsErrorTexture( pRT ) )
+	{
+		s_pShaderAPI->GetBackBufferDimensions( nWidth, nHeight );
+		return;
+	}
+
+	nWidth = pRT->GetActualWidth();
+	nHeight = pRT->GetActualHeight();
+}
+
+void CBaseVSShader::GetCurrentViewport( int &nX, int &nY, int &nWidth, int &nHeight ) const
+{
+	ShaderViewport_t viewport;
+	s_pShaderAPI->GetViewports( &viewport, 1 );
+
+	nX = viewport.m_nTopLeftX;
+	nY = viewport.m_nTopLeftY;
+	nWidth = viewport.m_nWidth;
+	nHeight = viewport.m_nHeight;
+}
+#endif // MAPBASE

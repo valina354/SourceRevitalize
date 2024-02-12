@@ -213,6 +213,14 @@ public:
 	//by writing only equal depth pixels and only if we should be writing depth to dest alpha
 	void DrawEqualDepthToDestAlpha( void );
 	
+	#ifdef VANCE
+	// Get the dimensions of the current render target
+	void GetCurrentRenderTargetDimensions(int& nWidth, int& nHeight) const;
+
+	// Get the current viewport
+	void GetCurrentViewport(int& nX, int& nY, int& nWidth, int& nHeight) const;
+#endif // MAPBASE
+	
 private:
 	// Helper methods for VertexLitGenericPass
 //	void UnlitGenericShadowState( int baseTextureVar, int detailVar, int envmapVar, int envmapMaskVar, bool doSkin );
