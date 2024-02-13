@@ -98,7 +98,6 @@ $Project "Client (Vance)"
 			$File	"hl2\c_func_tankmortar.cpp"
 			$File	"hl2\c_hl2_playerlocaldata.cpp"
 			$File	"hl2\c_hl2_playerlocaldata.h"
-			$File	"object_motion_blur_effect.cpp"
 
 			$File	"hl2\c_info_teleporter_countdown.cpp"
 			$File	"hl2\c_npc_antlionguard.cpp"

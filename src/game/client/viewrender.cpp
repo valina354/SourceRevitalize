@@ -1692,11 +1692,6 @@ void CViewRender::ViewDrawScene( bool bDrew3dSkybox, SkyboxVisibility_t nSkyboxV
 	// UNDONE: Don't do this with masked brush models, they should probably be in a separate list
 	// render->DrawMaskEntities()
 
-	#ifdef VANCE
-	if ( IsMainView( CurrentViewID() ) )
-		DoObjectMotionBlur( &view );
-#endif // MAPBASE
-
 	// Here are the overlays...
 
 	CGlowOverlay::DrawOverlays( view.m_bCacheFullSceneState );
@@ -2236,18 +2231,17 @@ void CViewRender::RenderView( const CViewSetup &view, int nClearFlags, int whatT
 	tmZone( TELEMETRY_LEVEL0, TMZF_NONE, "%s", __FUNCTION__ );
 
 	// Don't want TF2 running less than DX 8
-	if ( g_pMaterialSystemHardwareConfig->GetDXSupportLevel() < 90 )
+	if ( g_pMaterialSystemHardwareConfig->GetDXSupportLevel() < 80 )
 	{
 		// We know they were running at least 8.0 when the game started...we check the 
 		// value in ClientDLL_Init()...so they must be messing with their DirectX settings.
-		if ( ( Q_stricmp( COM_GetModDirectory(), "sr" ) == 0 ) || ( Q_stricmp( COM_GetModDirectory(), "sr" ) == 0 ) )
+		if ( ( Q_stricmp( COM_GetModDirectory(), "tf" ) == 0 ) || ( Q_stricmp( COM_GetModDirectory(), "tf_beta" ) == 0 ) )
 		{
 			static bool bFirstTime = true;
 			if ( bFirstTime )
 			{
 				bFirstTime = false;
-				Msg( "This game has a minimum requirement of DirectX 9.0 to run properly.\n" );
-				IE_Quit;
+				Msg( "This game has a minimum requirement of DirectX 8.0 to run properly.\n" );
 			}
 			return;
 		}

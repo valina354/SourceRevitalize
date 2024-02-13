@@ -25,11 +25,6 @@ public:
 
 	virtual bool OnInternalDrawModel( ClientModelRenderInfo_t *pInfo );
 
-	virtual CStudioHdr *OnNewModel( void );
-
-protected:
-	bool m_bPBR;
-
 protected:
 	// Networked vars.
 	bool m_bAwake;

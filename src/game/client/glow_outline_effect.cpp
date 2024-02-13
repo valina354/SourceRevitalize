@@ -22,7 +22,6 @@ ConVar glow_outline_effect_width( "glow_outline_width", "10.0f", FCVAR_CHEAT, "W
 
 extern bool g_bDumpRenderTargets; // in viewpostprocess.cpp
 
-#ifndef VANCE
 CGlowObjectManager g_GlowObjectManager;
 
 struct ShaderStencilState_t
@@ -57,7 +56,6 @@ struct ShaderStencilState_t
 		pRenderContext->SetStencilWriteMask( m_nWriteMask );
 	}
 };
-#endif // !MAPBASE
 
 void CGlowObjectManager::RenderGlowEffects( const CViewSetup *pSetup, int nSplitScreenSlot )
 {

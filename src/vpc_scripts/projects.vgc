@@ -139,5 +139,7 @@ $Project "vvis_launcher"
 
 $Project "gamepadui"
 {
-	"game\gamepadui\gamepadui_episodic.vpc"	[($WIN32||$X360||$POSIX) && $VANCE]
+    "game\gamepadui\gamepadui_hl2.vpc" [$HL2]
+    "game\gamepadui\gamepadui_episodic.vpc" [$EPISODIC]
+    "game\gamepadui\gamepadui_vance.vpc" [$VANCE]
 }

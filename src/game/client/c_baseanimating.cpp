@@ -3167,7 +3167,6 @@ int C_BaseAnimating::DrawModel( int flags )
 			extraFlags |= STUDIO_WIREFRAME;
 		}
 
-		#ifndef VANCE
 		if ( flags & STUDIO_SHADOWDEPTHTEXTURE )
 		{
 			extraFlags |= STUDIO_SHADOWDEPTHTEXTURE;
@@ -3177,7 +3176,6 @@ int C_BaseAnimating::DrawModel( int flags )
 		{
 			extraFlags |= STUDIO_SSAODEPTHTEXTURE;
 		}
-#endif // !MAPBASE
 
 		if ( ( flags & ( STUDIO_SSAODEPTHTEXTURE | STUDIO_SHADOWDEPTHTEXTURE ) ) == 0 &&
 			g_pStudioStatsEntity != NULL && g_pStudioStatsEntity == GetClientRenderable() )
@@ -3206,11 +3204,7 @@ int C_BaseAnimating::DrawModel( int flags )
 				// BUGBUG: Fixup bbox and do a separate cull for follow object
 				if ( baseDrawn )
 				{
-#ifndef VANCE
-					drawn = InternalDrawModel( STUDIO_RENDER | extraFlags );
-#else
-					drawn = InternalDrawModel( flags | extraFlags );
-#endif // !MAPBASE
+					drawn = InternalDrawModel( STUDIO_RENDER|extraFlags );
 				}
 			}
 		}
@@ -3363,14 +3357,6 @@ int C_BaseAnimating::InternalDrawModel( int flags )
 		return 0;
 	}
 
-	#ifdef VANCE
-	// Don't give the engine something it won't understand.
-	{
-		flags = pInfo->flags;
-		pInfo->flags &= STUDIO_ENGINE_FLAGS;
-	}
-#endif // MAPBASE
-
 	Assert( !pInfo->pModelToWorld);
 	if ( !pInfo->pModelToWorld )
 	{
@@ -3398,21 +3384,6 @@ int C_BaseAnimating::InternalDrawModel( int flags )
 		}
 	}
 
-	#ifdef VANCE
-	if ( bMarkAsDrawn )
-	{
-		if ( flags & STUDIO_SKIP_DECALS )
-		{
-			state.m_decals = STUDIORENDER_DECAL_INVALID;
-		}
-
-		if ( flags & STUDIO_SKIP_FLEXES )
-		{
-			state.m_drawFlags |= STUDIORENDER_DRAW_NO_FLEXES;
-		}
-	}
-#endif // MAPBASE
-
 	DoInternalDrawModel( pInfo, ( bMarkAsDrawn && ( pInfo->flags & STUDIO_RENDER ) ) ? &state : NULL, pBoneToWorld );
 
 	OnPostInternalDrawModel( pInfo );
@@ -3430,31 +3401,20 @@ void C_BaseAnimating::ProcessMuzzleFlashEvent()
 		//FIXME: We should really use a named attachment for this
 		if ( m_Attachments.Count() > 0 )
 		{
-			Vector vAttachment, vAng;
-			QAngle angles;
-			GetAttachment( 1, vAttachment, angles ); // set 1 instead of "attachment"
-			AngleVectors( angles, &vAng );
-			vAttachment += vAng * 2;
+			Vector vAttachment;
+			QAngle dummyAngles;
+			GetAttachment( 1, vAttachment, dummyAngles );
 
-			dlight_t *dl = effects->CL_AllocDlight( index );
-			dl->origin = vAttachment;
-
-			// Original color values
-			int originalR = 231;
-			int originalG = 219;
-			int originalB = 14;
-
-			// Randomize color components within the range of +/- 20
-			dl->color.r = originalR + random->RandomInt( -20, 20 );
-			dl->color.g = originalG + random->RandomInt( -20, 20 );
-			dl->color.b = originalB + random->RandomInt( 0, 0 );
-
-			// Randomize the die value by +/- 0.01
-			dl->die = gpGlobals->curtime + 0.05f + random->RandomFloat( -0.01f, 0.01f );
-			dl->radius = random->RandomFloat( 245.0f, 256.0f );
-
-			// Randomize the decay value
-			dl->decay = random->RandomFloat( 400.0f, 600.0f );
+			// Make an elight
+			dlight_t *el = effects->CL_AllocElight( LIGHT_INDEX_MUZZLEFLASH + index );
+			el->origin = vAttachment;
+			el->radius = random->RandomInt( 32, 64 ); 
+			el->decay = el->radius / 0.05f;
+			el->die = gpGlobals->curtime + 0.05f;
+			el->color.r = 255;
+			el->color.g = 192;
+			el->color.b = 64;
+			el->color.exponent = 5;
 		}
 	}
 }

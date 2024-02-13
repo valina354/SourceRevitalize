@@ -94,7 +94,7 @@ static ConVar r_flashlight_version2("r_flashlight_version2", "0", FCVAR_CHEAT | 
 
 ConVar r_flashlightdepthtexture("r_flashlightdepthtexture", "1");
 
-ConVar r_flashlightdepthres("r_flashlightdepthres", "2048");
+ConVar r_flashlightdepthres("r_flashlightdepthres", "512");
 
 ConVar r_threaded_client_shadow_manager("r_threaded_client_shadow_manager", "0");
 
@@ -1323,7 +1323,7 @@ bool CClientShadowMgr::Init()
 
 	SetShadowBlobbyCutoffArea(0.005);
 
-	m_nMaxDepthTextureShadows = 128;	// Maximum of 128 Projected Textures in one frame, a bit overkill
+	m_nMaxDepthTextureShadows = 6;	// Maximum of 6 Projected Textures in one frame, a bit overkill
 
 	bool bLowEnd = (g_pMaterialSystemHardwareConfig->GetDXSupportLevel() < 80);
 
