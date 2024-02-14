@@ -368,6 +368,8 @@ extern	bool		g_NodrawTriggers;
 extern	bool		g_DisableWaterLighting;
 extern	bool		g_bAllowDetailCracks;
 extern	bool		g_bNoVirtualMesh;
+extern bool g_bPropperInsertAllAsStatic;
+extern bool g_bPropperStripEntities;
 extern	char		outbase[32];
 
 extern	char	source[1024];
@@ -416,7 +418,7 @@ void	CreateBrush (int brushnum);
 //=============================================================================
 // detail objects
 //=============================================================================
-
+void AddDetailBlocker( entity_t *pFuncDetailBlocker );
 void LoadEmitDetailObjectDictionary( char const* pGameDir );
 void EmitDetailObjects();
 
