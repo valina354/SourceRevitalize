@@ -12,6 +12,7 @@
 // STATIC: "SEAMLESS"                   "0..1"
 // STATIC: "BUMPMAP"                    "0..1"
 // STATIC: "BUMPALPHASMOOTHNESS"		"0..1"
+// STATIC: "PARALLAXOCCLUSION"          "0..1"
 
 // DYNAMIC: "WRITEWATERFOGTODESTALPHA"  "0..1"
 // DYNAMIC: "PIXELFOGTYPE"				"0..1"
@@ -84,6 +85,13 @@ const float4 g_EnvmapOrigin_and_Radius		: register( c21 );
 #define g_EnvmapRadius (g_EnvmapOrigin_and_Radius.w)
 
 #define g_FlashlightPos					g_FlashlightPos_RimBoost.xyz
+
+#if PARALLAXOCCLUSION
+const float4 g_ParallaxParms                    : register( c34 );
+
+#define PARALLAX_DEPTH                          g_ParallaxParms.r
+#define PARALLAX_CENTER                         g_ParallaxParms.g
+#endif
 
 sampler BaseTextureSampler		: register( s0 );	// Base map, selfillum in alpha
 sampler RoughnessSampler		: register( s1 );	// Roughness
@@ -383,6 +391,14 @@ PS_OUTPUT main(PS_INPUT i) : COLOR
 	float3 tangentSpaceNormal = normalTexel.rgb * 2.0f - 1.0f;
 
 	float3 vWorldNormal = mul( tangentSpaceNormal, i.TBN );
+	
+	#if PARALLAXOCCLUSION
+    float3 outgoingLightRay = g_EyePos.xyz - i.worldPos_projPosZ.xyz;
+    //float3 outgoingLightDirectionTS = worldToRelative( outgoingLightRay, surfTangent, surfBase, surfNormal);
+    //float2 correctedTexCoord = parallaxCorrect(i.baseTexCoord, outgoingLightDirectionTS, NormalTextureSampler, PARALLAX_DEPTH, PARALLAX_CENTER);
+#else
+    float2 correctedTexCoord = i.baseTexCoord;
+#endif
 	
     PS_OUTPUT output = (PS_OUTPUT)0;
     

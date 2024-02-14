@@ -20,7 +20,7 @@
 #include "tier0/memdbgon.h"
 
 static ConVar mat_fullbright( "mat_fullbright", "0", FCVAR_CHEAT );
-
+static ConVar mat_pbr_parallaxmap( "mat_pbr_parallaxmap", "1" );
 
 extern ConVar r_csm_bias;
 extern ConVar r_csm_slopescalebias;
@@ -164,6 +164,7 @@ static void DrawLightmappedPBR_DX9_Internal( CBaseVSShader *pShader, IMaterialVa
 	bool bUseSmoothness =
 		!bBumpAlphaSmoothness && info.m_nUseSmoothness != -1 && params[info.m_nUseSmoothness]->GetIntValue() == 1;
 	bool bSeamlessMapping = ((info.m_nSeamlessMappingScale != -1) && (params[info.m_nSeamlessMappingScale]->GetFloatValue() != 0.0));
+	bool bHasParallax = params[info.UseParallax]->GetIntValue() != 0;
 
 	bool bHasVertexColor = IS_FLAG_SET(MATERIAL_VAR_VERTEXCOLOR);
 	bool bHasVertexAlpha = IS_FLAG_SET(MATERIAL_VAR_VERTEXALPHA);
@@ -272,6 +273,11 @@ static void DrawLightmappedPBR_DX9_Internal( CBaseVSShader *pShader, IMaterialVa
 
 		pShaderShadow->VertexShaderVertexFormat( flags, numTexCoords, 0, 0 );
 
+		 if ( !mat_pbr_parallaxmap.GetBool() )
+		{
+			bHasParallax = false;
+		}
+
 		DECLARE_STATIC_VERTEX_SHADER( lightmappedpbr_vs30 );
 		SET_STATIC_VERTEX_SHADER_COMBO(VERTEXCOLOR, bHasVertexColor || bHasVertexAlpha);
 		SET_STATIC_VERTEX_SHADER_COMBO(BUMPMAP, bHasBump);
@@ -289,6 +295,7 @@ static void DrawLightmappedPBR_DX9_Internal( CBaseVSShader *pShader, IMaterialVa
 		SET_STATIC_PIXEL_SHADER_COMBO(SEAMLESS, false);
 		SET_STATIC_PIXEL_SHADER_COMBO(BUMPMAP, bHasBump);
 		SET_STATIC_PIXEL_SHADER_COMBO( BUMPALPHASMOOTHNESS, bBumpAlphaSmoothness );
+		SET_STATIC_PIXEL_SHADER_COMBO( PARALLAXOCCLUSION, bHasParallax );
 		SET_STATIC_PIXEL_SHADER(lightmappedpbr_ps30);
 
 		if( bHasFlashlight )
@@ -516,6 +523,18 @@ static void DrawLightmappedPBR_DX9_Internal( CBaseVSShader *pShader, IMaterialVa
 				pShaderAPI->SetPixelShaderConstant( 33, GetDeferredExt()->GetLightData_Global().sizes.Base() );
 			}
 		}
+	}
+	// WRD : This used to be outside of an if-statement, leading to a bunch of crashes on my end...
+	//		 I changed useParallax to a bool and check that here now.
+	if ( bHasParallax )
+	{
+		float flParams[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
+		// Parallax Depth (the strength of the effect)
+		flParams[0] = GetFloatParam( info.ParallaxDepth, params, 3.0f );
+		// Parallax Center (the height at which it's not moved)
+		flParams[1] = GetFloatParam( info.ParallaxCenter, params, 3.0f );
+
+		pShaderAPI->SetPixelShaderConstant( 34, flParams, 1 );
 	}
 	pShader->Draw();
 }
