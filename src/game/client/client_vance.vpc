@@ -27,6 +27,8 @@ $Project "Client (Vance)"
 		$File	"c_team_objectiveresource.h"
 		$File	"$SRCDIR\game\shared\Multiplayer\multiplayer_animstate.h"
 		-$File	"$SRCDIR\game\shared\weapon_parse_default.cpp"
+		$File	"worldlight.h"
+		$File	"worldlight.cpp"
 		
 		$Folder	"VANCE"
 		{

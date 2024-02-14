@@ -54,6 +54,7 @@
 #include "filters.h"
 #include "saverestore_utlvector.h"
 #include "eventqueue.h"
+#include "npc_basescanner.h"
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
@@ -2426,7 +2427,8 @@ bool CNPC_Strider::IsValidEnemy( CBaseEntity *pTarget )
 //---------------------------------------------------------
 bool CNPC_Strider::UpdateEnemyMemory( CBaseEntity *pEnemy, const Vector &position, CBaseEntity *pInformer )
 {
-	if( pInformer && FClassnameIs( pInformer, "npc_cscanner" ) )
+	CNPC_BaseScanner *pScanner = dynamic_cast<CNPC_BaseScanner *>( pInformer );
+	if ( pScanner )
 	{
 		EmitSound( "NPC_Strider.Alert" );
 		// Move Strider's focus to this location and make strider mad at it

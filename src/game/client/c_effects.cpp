@@ -33,7 +33,7 @@ Vector g_vSplashColor( 0.5, 0.5, 0.5 );
 float g_flSplashScale = 0.15;
 float g_flSplashLifetime = 0.5f;
 float g_flSplashAlpha = 0.3f;
-ConVar r_RainSplashPercentage( "r_RainSplashPercentage", "20", FCVAR_CHEAT ); // N% chance of a rain particle making a splash.
+ConVar r_RainSplashPercentage( "r_RainSplashPercentage", "99", FCVAR_CHEAT ); // N% chance of a rain particle making a splash.
 
 
 float GUST_INTERVAL_MIN = 1;
@@ -292,30 +292,29 @@ void CClient_Precipitation::ClientThink()
 // Utility methods for the various simulation functions
 //
 //-----------------------------------------------------------------------------
-inline bool CClient_Precipitation::SimulateRain( CPrecipitationParticle* pParticle, float dt )
+inline bool CClient_Precipitation::SimulateRain( CPrecipitationParticle *pParticle, float dt )
 {
-	if (GetRemainingLifetime( pParticle ) < 0.0f)
+	if ( GetRemainingLifetime( pParticle ) < 0.0f )
 		return false;
 
 	Vector vOldPos = pParticle->m_Pos;
 
 	// Update position
-	VectorMA( pParticle->m_Pos, dt, pParticle->m_Velocity, 
-				pParticle->m_Pos );
+	VectorMA( pParticle->m_Pos, dt, pParticle->m_Velocity, pParticle->m_Pos );
 
-		// wind blows rain around
-	for ( int i = 0 ; i < 2 ; i++ )
-		{
+	// wind blows rain around
+	for ( int i = 0; i < 2; i++ )
+	{
 		if ( pParticle->m_Velocity[i] < s_WindVector[i] )
-			{
+		{
 			pParticle->m_Velocity[i] += ( 5 / pParticle->m_Mass );
 
 			// clamp
 			if ( pParticle->m_Velocity[i] > s_WindVector[i] )
 				pParticle->m_Velocity[i] = s_WindVector[i];
-			}
-		else if (pParticle->m_Velocity[i] > s_WindVector[i] )
-			{
+		}
+		else if ( pParticle->m_Velocity[i] > s_WindVector[i] )
+		{
 			pParticle->m_Velocity[i] -= ( 5 / pParticle->m_Mass );
 
 			// clamp.
@@ -324,26 +323,45 @@ inline bool CClient_Precipitation::SimulateRain( CPrecipitationParticle* pPartic
 		}
 	}
 
-		// No longer in the air? punt.
-		if ( !IsInAir( pParticle->m_Pos ) )
+	/*
+	// No longer in the air? punt.
+	if ( !IsInAir( pParticle->m_Pos ) )
+	{
+		// Possibly make a splash if we hit a water surface and it's in front of the view.
+		if ( m_Splashes.Count() < 20 )
 		{
-			// Possibly make a splash if we hit a water surface and it's in front of the view.
-			if ( m_Splashes.Count() < 20 )
+			if ( RandomInt( 0, 100 ) < r_RainSplashPercentage.GetInt() )
 			{
-				if ( RandomInt( 0, 100 ) < r_RainSplashPercentage.GetInt() )
+				trace_t trace;
+				UTIL_TraceLine(vOldPos, pParticle->m_Pos, MASK_WATER, NULL, C COLLISION_GROUP_NONE, &trace);
+				if( trace.fraction < 1 )
 				{
-					trace_t trace;
-					UTIL_TraceLine(vOldPos, pParticle->m_Pos, MASK_WATER, NULL, COLLISION_GROUP_NONE, &trace);
-					if( trace.fraction < 1 )
-					{
-						m_Splashes.AddToTail( trace.endpos );
-					}
+					m_Splashes.AddToTail( trace.endpos );
 				}
 			}
-
-			// Tell the framework it's time to remove the particle from the list
-			return false;
 		}
+
+		// Tell the framework it's time to remove the particle from the list
+		return false;
+	}*/
+	/*Tony; the traceline replaces the IsInAir check.
+   you also don't want the random's to be around the traceline either, or it will only check SOMETIMES. it  needs to check _all_ the time.
+    you also probably want to do some radius checking of the particles position (ignoring z) for if it's in range of the local player to run this code or not
+    otherwise you will have traces for every particle all over the place even if there's no way that the player can see it
+   so when the player is out of that radius, you would only use if ( !IsInAir( pParticle->m_Pos ) { return  false; }
+    probably also need to check to make sure that it doesn't splash on sky, too.
+  */
+	trace_t trace;
+	UTIL_TraceLine( vOldPos, pParticle->m_Pos, MASK_SOLID_BRUSHONLY, this, COLLISION_GROUP_NONE, &trace );
+
+	if ( trace.fraction < 1 || trace.DidHit() )
+	{
+		if ( RandomInt( 0, 100 ) <= r_RainSplashPercentage.GetInt() )
+			DispatchParticleEffect( "Rain", trace.endpos, trace.m_pEnt->GetAbsAngles(), NULL );
+
+		// Tell the framework it's time to remove the particle from the list
+		return false;
+	}
 
 	// We still want this particle
 	return true;

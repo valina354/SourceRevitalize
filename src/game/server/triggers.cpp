@@ -3155,9 +3155,13 @@ void CTriggerCamera::Enable( void )
 		if ( m_pPath->m_flSpeed != 0 )
 			m_targetSpeed = m_pPath->m_flSpeed;
 		
-		m_flStopTime += m_pPath->GetDelay();
+		// Compute the distance to the next path already:
+		m_vecMoveDir = m_pPath->GetLocalOrigin() - GetLocalOrigin();
+		m_moveDistance = VectorNormalize( m_vecMoveDir );
+		m_flStopTime = gpGlobals->curtime + m_pPath->GetDelay();
 	}
-
+	else
+		m_moveDistance = 0.0f;
 
 	// copy over player information. If we're interpolating from
 	// the player position, do something more elaborate.
@@ -3196,15 +3200,14 @@ void CTriggerCamera::Enable( void )
 	}
 
 	// Only track if we have a target
-	if ( m_hTarget )
+	if ( m_hTarget || ( m_moveDistance > 0 && m_pPath ) || HasSpawnFlags( SF_CAMERA_PLAYER_INTERRUPT ) )
 	{
 		// follow the player down
 		SetThink( &CTriggerCamera::FollowTarget );
 		SetNextThink( gpGlobals->curtime );
 	}
 
-	m_moveDistance = 0;
-	Move();
+
 
 	DispatchUpdateTransmitState();
 }
@@ -3271,13 +3274,9 @@ void CTriggerCamera::FollowTarget( )
 	if (m_hPlayer == NULL)
 		return;
 
-	if ( m_hTarget == NULL )
-	{
-		Disable();
-		return;
-	}
 
-	if ( !HasSpawnFlags(SF_CAMERA_PLAYER_INFINITE_WAIT) && (!m_hTarget || m_flReturnTime < gpGlobals->curtime) )
+
+	if ( ( !HasSpawnFlags( SF_CAMERA_PLAYER_INFINITE_WAIT ) && ( m_flReturnTime < gpGlobals->curtime ) ) || ( !m_hTarget && !m_pPath ) )
 	{
 		Disable();
 		return;
@@ -3349,9 +3348,11 @@ void CTriggerCamera::FollowTarget( )
 		}
 	}
 
-	SetNextThink( gpGlobals->curtime );
+
 
 	Move();
+
+	SetNextThink( gpGlobals->curtime );
 }
 
 void CTriggerCamera::Move()

@@ -201,3 +201,4 @@ void CDynamicLight::DynamicLightThink( void )
 	
 	SetNextThink( gpGlobals->curtime + 0.1 );
 }
+
