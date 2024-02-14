@@ -1,0 +1,15 @@
+//-----------------------------------------------------------------------------
+//	GAMEPADUI_PROJECTS.VGC
+//
+//	Project configurations for Gamepad UI
+//-----------------------------------------------------------------------------
+
+/////////////////////////
+// Project definitions //
+/////////////////////////
+
+$Project "gamepadui"
+{
+	"game\gamepadui\gamepadui_hl2.vpc"		[($WIN32||$LINUX) && $HL2]
+	"game\gamepadui\gamepadui_episodic.vpc"	[($WIN32||$LINUX) && $EPISODIC]
+}

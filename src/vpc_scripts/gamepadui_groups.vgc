@@ -1,0 +1,21 @@
+//-----------------------------------------------------------------------------
+//	GAMEPADUI_GROUPS.VGC
+//
+//	Group configurations for Gamepad UI
+//-----------------------------------------------------------------------------
+
+///////////////////////
+// Group definitions //
+///////////////////////
+$Group "game"
+{
+	"gamepadui"
+}
+
+$Group "gamepadui"
+{
+	"mathlib"
+	"tier1"
+	"vgui_controls"
+	"gamepadui"
+}

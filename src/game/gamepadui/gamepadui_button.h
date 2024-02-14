@@ -42,12 +42,11 @@ namespace FooterButtons
         Commentary  = ( 1 << 6 ),
         BonusMaps  = ( 1 << 7 ),
         Challenge  = ( 1 << 8 ),
-        UseDefaults  = ( 1 << 9 ),
 
         // Buttons that are 'confirmatory'
         ConfirmMask = ( LeftSelect | Select | Okay ),
     };
-    static const int MaxFooterButtons = 10;
+    static const int MaxFooterButtons = 9;
 
     inline const char* GetButtonName( FooterButton button )
     {
@@ -62,7 +61,6 @@ namespace FooterButtons
             case Commentary: return "#GameUI_Commentary";
             case BonusMaps: return "#Deck_BonusMaps";
             case Challenge: return "#Deck_Challenges";
-            case UseDefaults: return "#GameUI_UseDefaults";
         }
         return "Unknown";
     }
@@ -80,7 +78,6 @@ namespace FooterButtons
             case Commentary: return "action_commentary";
             case BonusMaps: return "action_bonus_maps";
             case Challenge: return "action_challenges";
-            case UseDefaults: return "action_usedefaults";
         }
         return "";
     }
@@ -98,7 +95,6 @@ namespace FooterButtons
             case Commentary: return "menu_y";
             case BonusMaps: return "menu_x";
             case Challenge: return "menu_y";
-            case UseDefaults: return "menu_x";
         }
         return "";
     }
