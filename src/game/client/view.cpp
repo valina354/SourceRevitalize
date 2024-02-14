@@ -397,6 +397,7 @@ void CViewRender::Init( void )
 	g_pScreenSpaceEffects->EnableScreenSpaceEffect("vance_ssao");
 	g_pScreenSpaceEffects->EnableScreenSpaceEffect("vance_ssr");
 	g_pScreenSpaceEffects->EnableScreenSpaceEffect("vance_volumetrics");
+	g_pScreenSpaceEffects->EnableScreenSpaceEffect( "c17_vignetting" );
 
 	materials->EndRenderTargetAllocation();
 }
@@ -444,6 +445,7 @@ void CViewRender::Shutdown( void )
 	g_pScreenSpaceEffects->DisableScreenSpaceEffect("vance_ssao");
 	g_pScreenSpaceEffects->DisableScreenSpaceEffect("vance_ssr");
 	g_pScreenSpaceEffects->DisableScreenSpaceEffect("vance_volumetrics");
+	g_pScreenSpaceEffects->DisableScreenSpaceEffect( "c17_vignetting" );
 
 	m_TranslucentSingleColor.Shutdown( );
 	m_ModulateSingleColor.Shutdown( );

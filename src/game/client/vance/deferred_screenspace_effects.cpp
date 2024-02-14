@@ -567,3 +567,88 @@ void CSSR::Render(int x, int y, int w, int h)
 
 	pRenderContext.SafeRelease();
 }
+
+//------------------------------------------------------------------------------
+// Vignetting post-processing effect
+//------------------------------------------------------------------------------
+class CVignettingEffect : public IScreenSpaceEffect
+{
+public:
+	CVignettingEffect(){};
+	~CVignettingEffect(){};
+
+	void Init();
+	void Shutdown();
+
+	void SetParameters( KeyValues *params ){};
+
+	void Render( int x, int y, int w, int h );
+
+	void Enable( bool bEnable )
+	{
+		m_bEnable = bEnable;
+	}
+	bool IsEnabled()
+	{
+		return m_bEnable;
+	}
+
+private:
+	bool m_bEnable;
+
+	float fVignettingAmount;
+	float fVignettingLerpTo;
+
+	CMaterialReference m_VignetMat;
+};
+
+ADD_SCREENSPACE_EFFECT( CVignettingEffect, c17_vignetting );
+
+ConVar r_post_vignetting_darkness( "r_post_vignetting_darkness", "1.25", FCVAR_CHEAT, "Controls the vignetting shader's power. 0 for off." );
+ConVar r_post_vignettingeffect_debug( "r_post_vignettingeffect_debug", "0", FCVAR_CHEAT );
+
+ConVar r_post_vignettingeffect( "r_post_vignettingeffect", "1", FCVAR_ARCHIVE );
+
+//------------------------------------------------------------------------------
+// CVignettingEffect init
+//------------------------------------------------------------------------------
+void CVignettingEffect::Init()
+{
+	m_VignetMat.Init( materials->FindMaterial( "effects/shaders/vignetting", TEXTURE_GROUP_PIXEL_SHADERS, true ) );
+
+	fVignettingAmount = r_post_vignetting_darkness.GetFloat();
+	fVignettingLerpTo = r_post_vignetting_darkness.GetFloat();
+}
+
+//------------------------------------------------------------------------------
+// CVignettingEffect shutdown
+//------------------------------------------------------------------------------
+void CVignettingEffect::Shutdown()
+{
+	m_VignetMat.Shutdown();
+}
+
+//------------------------------------------------------------------------------
+// CVignettingEffect render
+//------------------------------------------------------------------------------
+void CVignettingEffect::Render( int x, int y, int w, int h )
+{
+	if ( !r_post_vignettingeffect.GetBool() || ( IsEnabled() == false ) )
+		return;
+
+	fVignettingLerpTo = r_post_vignetting_darkness.GetFloat();
+
+	if ( fVignettingAmount != fVignettingLerpTo )
+		fVignettingAmount = FLerp( fVignettingAmount, fVignettingLerpTo, 0.03f );
+
+	IMaterialVar *var;
+
+	if ( fVignettingAmount >= 0.01f )
+	{
+		var = m_VignetMat->FindVar( "$VIGNETDARKNESS", NULL );
+		var->SetFloatValue( fVignettingAmount );
+		DrawScreenEffectMaterial( m_VignetMat, x, y, w, h );
+		if ( r_post_vignettingeffect_debug.GetBool() )
+			DevMsg( "Vignetting Amount: %.2f\n", fVignettingAmount );
+	}
+}
