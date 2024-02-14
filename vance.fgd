@@ -1,0 +1,348 @@
+//=============================================================================
+//
+// Purpose: Half-Life 2 mod game definition file (.fgd) 
+//			Defines new entities for the flaregun weapon
+//
+//=============================================================================
+
+@include "halflife2.fgd"
+
+@PointClass base(Item) studio("models/items/boxflares.mdl")= item_box_flare_rounds : "Box of Flare Rounds" []
+@PointClass base(Weapon) studio("models/weapons/w_pistol.mdl") = weapon_flaregun : "Flaregun" []
+@PointClass base(Weapon) studio("models/weapons/w_alyx_gun.mdl") = weapon_resistancegun : "Alyx's Gun" []
+
+@BaseClass = Studiomodel
+[
+	model(studio) : "World Model"
+	skin(integer) : "Skin" : 0 : "Some models have multiple versions of their textures, called skins. Set this to a number other than 0 to use that skin instead of the default."
+	modelscale(float) : "Model Scale" : "1.0" : "A multiplier for the size of the model."
+	
+	Hackable(integer) : "Hackable" : 0 : "Can the player hack this object?"
+	
+	disableshadows(choices) : "Disable Shadows" : 0 : "Used to disable dynamic shadows on this entity." =
+	[
+		0 : "No"
+		1 : "Yes"
+	]
+	
+	// Inputs
+	input Skin(integer) : "Changes the model skin to the specified number."
+	input DisableShadow(void) : "Turn shadow off."
+	input EnableShadow(void) : "Turn shadow on."
+	input AlternativeSorting(bool) : "Used to attempt to fix sorting problems when rendering. True activates, false deactivates"
+	input SetModelScale(string) : "Takes two values separated by a space. The first is the target model scale. The second value is the number of seconds the change in scale will be spread over."
+
+	// Outputs
+	output OnIgnite(void) : "Fired when this object catches fire."
+	output OnHacked(void) : "Fired when this object is hacked."
+]
+
+//-------------------------------------------------------------------------
+// Global Light
+//-------------------------------------------------------------------------
+@PointClass base(Targetname, EnableDisable) iconsprite("editor/shadow_control.vmt") = env_global_light : 
+	"An entity to control the sunlight that casts shadows in the map."
+[
+	angles(string) : "Pitch Yaw Roll (Y Z X)" : "50 40 0" : "This is the light cast direction. Pitch is rotation around the Y axis, yaw is the rotation around the Z axis, and roll is the rotation around the X axis."
+
+	color(color255) : "Light Color" : "255 255 255 1" : "This is the color of the sunlight."
+	ambient(color255) : "Ambient Color" : "255 255 255 1" : "This is the color of the sunlight."
+
+
+	// Inputs
+	input SetLightColor(color255) : "Set the light color."
+	input SetAmbientColor(color255) : "Set the ambient color."
+	input SetAngles(string) : "Set the sun direction."
+]
+
+//-------------------------------------------------------------------------
+// Environment (Global Light copy, also handles dynamic sky)
+//-------------------------------------------------------------------------
+@PointClass base(Targetname, EnableDisable) iconsprite("editor/shadow_control.vmt") = env_environment : 
+	"An entity to control the sunlight that casts shadows in the map and dynamic sky."
+[
+	angles(string) : "Pitch Yaw Roll (Y Z X)" : "50 40 0" : "This is the light cast direction. Pitch is rotation around the Y axis, yaw is the rotation around the Z axis, and roll is the rotation around the X axis."
+
+	color(color255) : "Light Color" : "255 255 255 1" : "This is the color of the sunlight."
+	ambient(color255) : "Ambient Color" : "255 255 255 1" : "This is the color of the sunlight."
+
+	enabledynamicsky(integer) : "Enable Dynamic sky" : 0 : "Enable dynamic sky."
+	usetimeforangles(integer) : "Use time of day for angles" : 0 : "Enable this to use 'Time of day' value to automatically compute sun angles"
+	timescale(float) : "Day/Night Time Scale" : "1" : "Speed of the day/night cycle. By default 1 seconds = 1 hour (0.016 will make so 1 real minute = 1 in-game hour)"
+	time(float) : "Time of day" : "0" : "Set time of day (0-24). -1 will enable day/night cycle and use Time Scale for speed."
+
+
+	// Inputs
+	input SetLightColor(color255) : "Set the light color."
+	input SetAmbientColor(color255) : "Set the ambient color."
+	input SetAngles(string) : "Set the sun direction."
+
+	input EnableDynamicSky(bool) : "Enable dynamic sky."
+	input EnableSetTimescale(float) : "Set Day/Night time scale."
+	input SetTime(float) : "Set time (0-24). -1 will enable day/night cycle and use Time Scale for speed"
+]
+
+
+@PointClass base(Targetname, Parentname, Angles) studio("models/editor/cone_helper.mdl") frustum(lightfov,nearz,farz,lightcolor,-1) = env_projectedtexture : 
+	"Projected texture entity."
+[
+	spawnflags(flags) =
+	[
+		1  : "Enabled"							: 1
+		2  : "Always Update (moving light)"		: 0
+	]
+	
+	target(target_destination)	: "target" : : "target"	
+	
+	lightcolor(color255)		: "Light Color" : "255 255 255 2000" : "Light Color RGB-Intensity"
+	constant(integer)			: "Constant" : 0
+	linear(integer)				: "Linear" : 0
+	quadratic(integer)			: "Quadratic" : 2500 // raise to 10000 or something when you get proper light color working
+
+	lightfov(float)				: "FOV" : "90.0" : "FOV"
+	nearz(float)				: "NearZ" : "4.0" : "Near Z for projected texture"
+	farz(float)					: "FarZ" : "750.0" : "Far Z for projected texture"
+	
+	enableshadows(Choices) : "Enable Shadows" : 1 : "Enables/disables shadows from this projected texture." =
+	[
+		0 : "No"
+		1 : "Yes"
+	]
+
+	static(Choices) : "Is Static" : 0 : "Enables/disables Baked Radiosity from this projected texture" =
+	[
+		0 : "No"
+		1 : "Yes"
+	]
+	
+	shadowquality(Choices) : "Shadow Quality" : 1 : "Quality of shadows." =
+	[
+		0 : "Low"
+		1 : "High"
+	]
+	
+	lightonlytarget(Choices) : "Light Only Target" : 0 : "Limit flashlight effect to only effect target entity." =
+	[
+		0 : "No"
+		1 : "Yes"
+	]
+	
+	lightworld(Choices) : "Light World" : 1 : "Control whether flashlight effects static world geometry." =
+	[
+		0 : "No"
+		1 : "Yes"
+	]
+
+	enablevolumetrics(Choices) : "Enable Volumetrics" : 0 : "Control whether flashlight has volumetric light shafts." =
+	[
+		0 : "No"
+		1 : "Yes"
+	]
+
+	volumetricsmultiplier(float): "Volumetrics Intensity" : "1.0" : "Volumetric light intensity multiplier"	
+	
+	//brightnessscale(float)		: "Brightness Scale" : "1.0" : "Scale the light color by this brightness"	
+	
+	//colortransitiontime(float)	: "Color Transition Time" : "0.5" : "Amount of time it takes for a color change to occur."
+	cameraspace(integer)		: "Camera Space" : 0 : "Angles are interpreted as being relative to camera."
+	
+	texturename(material) : "Texture Name" : "effects/flashlight001"
+	
+	// Inputs
+	input TurnOn(void)		: "Turn on the texture"
+	input TurnOff(void)		: "Turn off the texture"
+	input AlwaysUpdateOn(void)	: "Turn on per frame updating (for moving lights)"
+	input AlwaysUpdateOff(void)	: "Turn off per frame updating (for moving lights)"
+	input SetFOV(float)		: "Set FOV"
+	input SpotlightTexture(string)		: "Set the spotlight texture"
+	input EnableShadows(bool)		: "Set the if shadows are enabled"
+	//input LightColor(color255)		: "Change the light color/brightness"
+	//input BrightnessScale(float)	: "Set BrightnessScale"
+	
+	//input EnableVolumetrics(void)	: "Enable Volumetrics"
+	//input DisableVolumetrics(void)	: "Disable Volumetrics"
+]
+
+//-------------------------------------------------------------------------
+// Deferred Light
+//-------------------------------------------------------------------------
+@PointClass base(Targetname, Angles, EnableDisable) iconsprite("editor/light.vmt") = light_deferred : 
+	"An entity to control the sunlight that casts shadows in the map."
+[
+	_light(color255) : "Light Color" : "255 255 255 1200" : "This is the color and brightness of light source."
+	_inner_cone(integer) : "Inner (bright) angle" : 30
+	_cone(integer) : "Outer (fading) angle" : 45
+
+	_constant_attn(string)	: "Constant" : "0"
+	_linear_attn(string)	: "Linear" : "0"
+	_quadratic_attn(string)	: "Quadratic" : "1"
+
+	_exponent(integer) : "Focus" : 1
+
+	lighttype(Choices) : "Light Type" : 0 : "Type of the Light. if chosen Point then Inner and Outer angles will be ignored" =
+	[
+		0 : "Point"
+		1 : "Spot"
+	]
+]
+
+
+@PointClass base(Targetname, Parentname, Angles, Global, Studiomodel) studioprop() = prop_door_rotating : 
+	"An entity used to place a door in the world."
+[
+	slavename(target_destination) : "Slave Name" : : "The name of any doors that should be slaved to this door (i.e. should open when this one opens, and close when this one closes)."
+	hardware(choices) : "Hardware Type" : 1 =
+	[
+		0 : "<None>"
+		1 : "Lever"
+		2 : "Push bar"
+		3 : "Keypad"
+	]
+	
+	ajarangles(angle) : "Ajar Angles (Pitch Yaw Roll)" : "0 0 0" : "If the door 'Spawn Position' is set to Ajar, these are the angles to spawn at, instead of being open or closed."
+	spawnpos(choices) : "Spawn Position" : 0 =
+	[
+		0 : "Closed"
+		1 : "Open forward"
+		2 : "Open back"
+		3 : "Ajar (use Ajar Angles)"
+	]
+	
+	axis(axis) : "Hinge Axis"
+	distance(float) : "Rotation Distance (deg)" : 90 : "The amount, in degrees, that the door should rotate when opened."
+	speed(integer) : "Speed" : 100 : "The speed at which the door moves."
+	soundopenoverride(sound) : "Fully Open Sound" : : "Sound played when the door has finished opening."
+	soundcloseoverride(sound) : "Fully Closed Sound" : : "Sound played when the door has finished closing."
+	soundmoveoverride(sound) : "Moving Sound" : : "Sound played when the door starts to move."
+	returndelay(integer) : "Delay Before close (-1 stay open)" : -1 : "Amount of time, in seconds, after the door has opened before it closes. If the value is set to -1, the door never closes itself."
+	dmg(integer) : "Damage Inflicted When Blocked" : 0 : "Amount of damage done to entities that block the movement of this door, per frame."
+	health(integer) : "Health (0 = Unbreakable)" : 0			// NEEDHELP: Doesn't look like this is hooked up anymore?
+	soundlockedoverride(sound) : "Locked Sound" : : "Sound played when the player tries to open the door, and fails because it's locked."
+	soundunlockedoverride(sound) : "Unlocked Sound" : : "Sound played when the door is unlocked."
+	canbekickedopen(integer) : "Kickable" : 1 : "Can the player kick down the door?" 
+	
+	forceclosed(choices) : "Force Closed" : 0 : "If set, this door will close no matter what. Useful for doors that have to close even if the player tries to block them with objects." =
+	[
+		0 : "No"
+		1 : "Yes"
+	]
+
+	spawnflags(flags) =
+	[
+		1 : "Starts Open" : 0
+		//512: "NPCs Can't" : 0
+		2048: "Starts locked" : 0
+		4096: "Door silent (No sound, and does not alert NPCs)" : 0
+		8192: "Use closes" : 1
+		16384 : "Door silent to NPCS (Does not alert NPCs)" : 0
+		32768 : "Ignore player +USE" : 0
+	]
+
+	opendir(choices) : "Open Direction" : 0 : "Force the door to open only forwards or only backwards. Both directions is the standard door behavior." =
+	[
+		0 : "Open Both Directions"
+		1 : "Open Forward Only"
+		2 : "Open Backward Only"
+	]
+
+	// Outputs
+	output OnClose(void) : "Fired when the door is told to close."
+	output OnOpen(void) : "Fired when the door is told to open."
+	output OnFullyOpen(void) : "Fired when the door reaches the fully open position."
+	output OnFullyClosed(void) : "Fired when the door reaches the fully closed position."
+	output OnBlockedClosing(void) : "Fired when the door is blocked while closing."
+	output OnBlockedOpening(void) : "Fired when the door is blocked while opening."
+	output OnUnblockedClosing(void) : "Fired when the door is unblocked while closing."
+	output OnUnblockedOpening(void) : "Fired when the door is unblocked while opening."
+	output OnLockedUse(void) : "Fired when the player uses the door, but it is locked."
+
+	// Inputs
+	input Open(void) : "Open the door, if it is not fully open."
+	input OpenAwayFrom(string) : "Open the door away from the specified entity."
+	input Close(void) : "Close the door, if it is not fully closed."
+	input Toggle(void) : "Toggle the door between open and closed."
+	input Lock(void) : "Lock the door."
+	input Unlock(void) : "Unlock the door."
+	input SetRotationDistance(float) : "Set the distance (in degrees) between Open and Closed."
+	input SetSpeed(float) : "Set the speed at which the door rotates. 100 is default."
+]
+
+//-------------------------------------------------------------------------
+//
+// Cube map sample
+//
+//-------------------------------------------------------------------------
+
+@PointClass color(0 0 255) sidelist(sides) sphere(radius) iconsprite("editor/env_cubemap.vmt") = env_cubemap : 
+	"An entity that creates a sample point for the Cubic Environment Map."
+[
+	radius(integer) : "Sphere Mapping radius" : 0 : "Radius of the parallax corrected cubemap. Set to 0 if you dont want parallax correction for this cubemap"
+	cubemapsize(choices) : "Cubemap Size" : 0 =
+	[
+		0 : "Default"
+		1 : "1x1"
+		2 : "2x2"
+		3 : "4x4"
+		4 : "8x8"
+		5 : "16x16"
+		6 : "32x32"
+		7 : "64x64"
+		8 : "128x128"
+		9 : "256x256"
+	]
+	sides(sidelist) : "Brush faces": : "(Optional) Brushes faces to directly attach to the env_cubemap. Press Pick then click on faces in the 3D View to select them. Use CTRL while clicking to add or remove from the selection."
+]
+
+
+@NPCClass base(BaseCombine) studio("models/Elite_Cop_s.mdl") = npc_metropolice_e : "Elite Metropolice"
+[
+	input Assault(string) : "Start an assault. Parameter passed in should be the name of the rally point."
+
+	tacticalvariant(choices) : "Tactical Variant" : "0" =
+	[
+		"0" : "Normal Tactics"
+		"1" : "Pressure the enemy (Keep advancing)"
+		"2" : "Pressure until within 30ft, then normal"
+	]	
+
+]
+
+@NPCClass base(BaseNPC) studio("models/bullsquid.mdl") = npc_bullsquid : "Bullsquid"
+[
+]
+
+@NPCClass base(BaseCombine) studio("models/fassassin/fassassin.mdl") = npc_assassin : "Combine Female Assassin"
+[
+	input Assault(string) : "Start an assault. Parameter passed in should be the name of the rally point."
+
+	model(choices) : "Model" : "models/combine_soldier.mdl" : "Regular Soldier" = 
+	[
+		"models/combine_soldier.mdl" : "Regular Soldier"
+		"models/combine_soldier_prisonguard.mdl" : "Nova Prospekt Soldier"
+		"models/combine_super_soldier.mdl" : "Elite Soldier"
+	]
+
+	tacticalvariant(choices) : "Tactical Variant" : "0" =
+	[
+		"0" : "Normal Tactics"
+		"1" : "Pressure the enemy (Keep advancing)"
+		"2" : "Pressure until within 30ft, then normal"
+	]
+	
+	usemarch(choices) : "Walk Easy" : "0" : "When true, will use a variety of more casual walking animations instead of the standard walk. For use in crowds. WARNING: this animation only has a north component. For use under very special circumstances only." =
+	[
+		"0" : "No"
+		"2" : "Yes"
+	]
+]
+
+@SolidClass base(Trigger) = func_friction
+[
+	modifier(float) : "Friction Percent" : 100 : "Set the friction to this percent of the regular friction"
+]
+
+@PointClass base(Item) studio("models/healthvial.mdl") = item_stim : "Stimulant" []
+@PointClass base(Item) studio("models/healthvial.mdl") = item_tourniquet : "Tourniquet" []
+@PointClass base(Weapon) studio("models/weapons/w_shotgun.mdl") = weapon_anastasia : "10 Gauge" []
+@PointClass base(Weapon) studio("models/props_junk/garbage_glassbottle003a.mdl") = weapon_bottle : "Vodka Bottle" []
+@PointClass base(Weapon) studio("models/weapons/w_warpcore.mdl") = weapon_hopwire : "Flechette Grenades" []
