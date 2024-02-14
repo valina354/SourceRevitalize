@@ -9,6 +9,7 @@
 // STATIC: "CUBEMAP"					"0..1"
 // STATIC: "CUBEMAP_SPHERE_LEGACY"		"0..1"
 // STATIC: "SMOOTHNESS"					"0..1"
+// STATIC: "BUMPALPHASMOOTHNESS"		"0..1"
 
 // DYNAMIC: "WRITEWATERFOGTODESTALPHA"  "0..1"
 // DYNAMIC: "PIXELFOGTYPE"				"0..1"
@@ -31,7 +32,8 @@
 // SKIP: ( $CUBEMAP == 1 ) && ( $FLASHLIGHT == 1 )
 
 // both cant exist at the same time
-// SKIP: ( $FLASHLIGHT == 1) && ( $CSM == 1)
+// SKIP: ( $FLASHLIGHT == 1) && ( $CSM == 1
+// SKIP: ($BUMPALPHASMOOTHNESS == 1) && ($SMOOTHNESS == 1)
 
 // SKIP: $CUBEMAP_SPHERE_LEGACY && ($CUBEMAP == 0)
 
@@ -404,18 +406,20 @@ PS_OUTPUT main(PS_INPUT i) : COLOR
 	float2 UV = i.baseTexCoord;
 	float2 screenUV = i.projPos.xy / i.projPos.w;
 	screenUV = screenUV * 0.5f + 0.5f;
-	float4 baseColor = tex2D( BaseTextureSampler, UV );
+	float4 baseColor = tex2D(BaseTextureSampler, UV);
+    float4 normalTexel = tex2D(BumpmapSampler, UV);
 
-#if SMOOTHNESS == 0
-	float  roughnessMap = tex2D( RoughnessSampler, UV );
+#if BUMPALPHASMOOTHNESS
+	float roughnessMap = 1.0f - normalTexel.a;
+#elif SMOOTHNESS
+	float roughnessMap = 1.0f - tex2D( RoughnessSampler, UV.xy );
 #else
-	float  roughnessMap = 1.0f - tex2D( RoughnessSampler, UV );
+    float roughnessMap = tex2D(RoughnessSampler, UV.xy);
 #endif
 
 	float  metallicMap = tex2D( MetallicSampler, UV );
 	float  AOSample = tex2D( AOSampler, UV );
 	float3  EmissiveSample = tex2D( EmissiveSampler, UV );
-	float4 normalTexel = tex2D( BumpmapSampler, UV);
 	float3 lightmapTexel = GammaToLinear( 2.0f * tex2D( LightmapSampler, UV ).rgb );
 
 	float3 worldPos = i.worldPos;
@@ -424,7 +428,7 @@ PS_OUTPUT main(PS_INPUT i) : COLOR
 	float3 albedo = g_DiffuseModulation.rgb * baseColor.rgb;
 	bool bCubemap = (CUBEMAP) ? true : false;
 	
-	float3 tangentSpaceNormal = normalTexel * 2.0f - 1.0f;
+	float3 tangentSpaceNormal = normalTexel.rgb * 2.0f - 1.0f;
 	float3 vWorldBinormal = i.vWorldBinormal;
 
 	float3 vWorldNormal = Vec3TangentToWorld( tangentSpaceNormal, worldNormal, i.vWorldTangent, vWorldBinormal );

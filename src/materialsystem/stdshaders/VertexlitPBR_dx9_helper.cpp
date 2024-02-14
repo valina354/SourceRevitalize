@@ -18,6 +18,8 @@
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
 
+
+
 static ConVar mat_fullbright( "mat_fullbright", "0", FCVAR_CHEAT );
 static ConVar r_rimlight( "r_rimlight", "1", FCVAR_CHEAT );
 
@@ -155,7 +157,10 @@ static void DrawVertexLitPBR_DX9_Internal( CBaseVSShader *pShader, IMaterialVar*
 	bool bHasEnvmap =(info.m_nEnvmap != -1) && params[info.m_nEnvmap]->IsTexture();
 	bool bHasLegacyEnvSphereMap = bHasEnvmap && IS_FLAG_SET(MATERIAL_VAR_ENVMAPSPHERE);
 	bool bHasBump = IsTextureSet(info.m_nBumpmap, params);
-	bool bUseSmoothness = info.m_nUseSmoothness != -1 && params[info.m_nUseSmoothness]->GetIntValue() == 1;
+	bool bBumpAlphaSmoothness =
+		bHasBump && info.m_nBumpAlphaSmoothness != -1 && params[info.m_nBumpAlphaSmoothness]->GetIntValue() == 1;
+	bool bUseSmoothness =
+		!bBumpAlphaSmoothness && info.m_nUseSmoothness != -1 && params[info.m_nUseSmoothness]->GetIntValue() == 1;
 	bool bHasLightmap = (info.m_nLightmap != -1) && params[info.m_nLightmap]->IsTexture();
 
 	bool bHasVertexColor = IS_FLAG_SET(MATERIAL_VAR_VERTEXCOLOR);
@@ -218,7 +223,8 @@ static void DrawVertexLitPBR_DX9_Internal( CBaseVSShader *pShader, IMaterialVar*
 		pShaderShadow->EnableTexture( SHADER_SAMPLER0, true );		// Base (albedo) map
 		pShaderShadow->EnableSRGBRead( SHADER_SAMPLER0, true );
 
-		pShaderShadow->EnableTexture(SHADER_SAMPLER1, true);		// Roughness map
+		if ( !bBumpAlphaSmoothness )
+			pShaderShadow->EnableTexture( SHADER_SAMPLER1, true ); // Roughness map
 		pShaderShadow->EnableTexture(SHADER_SAMPLER2, true);		// Metallic map
 
 		if (bHasEnvmap)
@@ -281,6 +287,7 @@ static void DrawVertexLitPBR_DX9_Internal( CBaseVSShader *pShader, IMaterialVar*
 		SET_STATIC_PIXEL_SHADER_COMBO( FLASHLIGHT, bHasFlashlight );
 		SET_STATIC_PIXEL_SHADER_COMBO( CONVERT_TO_SRGB, 0 );
 		SET_STATIC_PIXEL_SHADER_COMBO(SMOOTHNESS, bUseSmoothness);
+		SET_STATIC_PIXEL_SHADER_COMBO( BUMPALPHASMOOTHNESS, bBumpAlphaSmoothness );
 		SET_STATIC_PIXEL_SHADER(vertexlitpbr_ps30);
 
 		if( bHasFlashlight )
@@ -304,10 +311,13 @@ static void DrawVertexLitPBR_DX9_Internal( CBaseVSShader *pShader, IMaterialVar*
 		else
 			pShaderAPI->BindStandardTexture( SHADER_SAMPLER0, TEXTURE_WHITE );
 
-		if (bHasRoughness)
-			pShader->BindTexture(SHADER_SAMPLER1, info.m_nRoughness);
-		else
-			pShaderAPI->BindStandardTexture(SHADER_SAMPLER1, TEXTURE_WHITE);
+		if ( !bBumpAlphaSmoothness )
+		{
+			if ( bHasRoughness )
+				pShader->BindTexture( SHADER_SAMPLER1, info.m_nRoughness );
+			else
+				pShaderAPI->BindStandardTexture( SHADER_SAMPLER1, TEXTURE_WHITE );
+		}
 
 		if (bHasMetallic)
 			pShader->BindTexture(SHADER_SAMPLER2, info.m_nMetallic);

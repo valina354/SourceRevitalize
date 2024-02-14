@@ -106,6 +106,27 @@ public:
 		m_bSMOOTHNESS = true;
 #endif
 	}
+private:
+	int m_nBUMPALPHASMOOTHNESS;
+#ifdef _DEBUG
+	bool m_bBUMPALPHASMOOTHNESS;
+#endif
+public:
+	void SetBUMPALPHASMOOTHNESS( int i )
+	{
+		Assert( i >= 0 && i <= 1 );
+		m_nBUMPALPHASMOOTHNESS = i;
+#ifdef _DEBUG
+		m_bBUMPALPHASMOOTHNESS = true;
+#endif
+	}
+	void SetBUMPALPHASMOOTHNESS( bool i )
+	{
+		m_nBUMPALPHASMOOTHNESS = i ? 1 : 0;
+#ifdef _DEBUG
+		m_bBUMPALPHASMOOTHNESS = true;
+#endif
+	}
 public:
 	vertexlitpbr_ps30_Static_Index( )
 	{
@@ -129,19 +150,23 @@ public:
 		m_bSMOOTHNESS = false;
 #endif // _DEBUG
 		m_nSMOOTHNESS = 0;
+#ifdef _DEBUG
+		m_bBUMPALPHASMOOTHNESS = false;
+#endif // _DEBUG
+		m_nBUMPALPHASMOOTHNESS = 0;
 	}
 	int GetIndex()
 	{
 		// Asserts to make sure that we aren't using any skipped combinations.
 		// Asserts to make sure that we are setting all of the combination vars.
 #ifdef _DEBUG
-		bool bAllStaticVarsDefined = m_bCONVERT_TO_SRGB && m_bFLASHLIGHT && m_bCUBEMAP && m_bCUBEMAP_SPHERE_LEGACY && m_bSMOOTHNESS;
+		bool bAllStaticVarsDefined = m_bCONVERT_TO_SRGB && m_bFLASHLIGHT && m_bCUBEMAP && m_bCUBEMAP_SPHERE_LEGACY && m_bSMOOTHNESS && m_bBUMPALPHASMOOTHNESS;
 		Assert( bAllStaticVarsDefined );
 #endif // _DEBUG
-		return ( 2880 * m_nCONVERT_TO_SRGB ) + ( 2880 * m_nFLASHLIGHT ) + ( 5760 * m_nCUBEMAP ) + ( 11520 * m_nCUBEMAP_SPHERE_LEGACY ) + ( 23040 * m_nSMOOTHNESS ) + 0;
+		return ( 2880 * m_nCONVERT_TO_SRGB ) + ( 2880 * m_nFLASHLIGHT ) + ( 5760 * m_nCUBEMAP ) + ( 11520 * m_nCUBEMAP_SPHERE_LEGACY ) + ( 23040 * m_nSMOOTHNESS ) + ( 46080 * m_nBUMPALPHASMOOTHNESS ) + 0;
 	}
 };
-#define shaderStaticTest_vertexlitpbr_ps30 psh_forgot_to_set_static_CONVERT_TO_SRGB + psh_forgot_to_set_static_FLASHLIGHT + psh_forgot_to_set_static_CUBEMAP + psh_forgot_to_set_static_CUBEMAP_SPHERE_LEGACY + psh_forgot_to_set_static_SMOOTHNESS + 0
+#define shaderStaticTest_vertexlitpbr_ps30 psh_forgot_to_set_static_CONVERT_TO_SRGB + psh_forgot_to_set_static_FLASHLIGHT + psh_forgot_to_set_static_CUBEMAP + psh_forgot_to_set_static_CUBEMAP_SPHERE_LEGACY + psh_forgot_to_set_static_SMOOTHNESS + psh_forgot_to_set_static_BUMPALPHASMOOTHNESS + 0
 class vertexlitpbr_ps30_Dynamic_Index
 {
 private:
