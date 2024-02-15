@@ -1,8 +1,8 @@
 #include "shaderlib/cshader.h"
-class vignetting_vs20_Static_Index
+class bilinearsample_ps30_Static_Index
 {
 public:
-	vignetting_vs20_Static_Index( )
+	bilinearsample_ps30_Static_Index( )
 	{
 	}
 	int GetIndex()
@@ -14,11 +14,11 @@ public:
 		return 0;
 	}
 };
-#define shaderStaticTest_vignetting_vs20 0
-class vignetting_vs20_Dynamic_Index
+#define shaderStaticTest_bilinearsample_ps30 0
+class bilinearsample_ps30_Dynamic_Index
 {
 public:
-	vignetting_vs20_Dynamic_Index()
+	bilinearsample_ps30_Dynamic_Index()
 	{
 	}
 	int GetIndex()
@@ -30,4 +30,4 @@ public:
 		return 0;
 	}
 };
-#define shaderDynamicTest_vignetting_vs20 0
+#define shaderDynamicTest_bilinearsample_ps30 0

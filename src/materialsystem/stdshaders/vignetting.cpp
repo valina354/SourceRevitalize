@@ -8,8 +8,7 @@
 #include "BaseVSShader.h"
 
 #include "SDK_screenspaceeffect_vs20.inc"
-#include "vignetting_ps20.inc"
-#include "vignetting_ps20b.inc"
+#include "vignetting_ps30.inc"
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
@@ -64,13 +63,13 @@ BEGIN_VS_SHADER( Vignetting, "Help for Vignetting" )
 
 			if( g_pHardwareConfig->SupportsPixelShaders_2_b() )
 			{
-				DECLARE_STATIC_PIXEL_SHADER( vignetting_ps20b );
-				SET_STATIC_PIXEL_SHADER( vignetting_ps20b );
+				DECLARE_STATIC_PIXEL_SHADER( vignetting_ps30 );
+				SET_STATIC_PIXEL_SHADER( vignetting_ps30 );
 			}
 			else
 			{
-				DECLARE_STATIC_PIXEL_SHADER( vignetting_ps20 );
-				SET_STATIC_PIXEL_SHADER( vignetting_ps20 );
+				DECLARE_STATIC_PIXEL_SHADER( vignetting_ps30 );
+				SET_STATIC_PIXEL_SHADER( vignetting_ps30 );
 			}
 		}
 
@@ -87,13 +86,13 @@ BEGIN_VS_SHADER( Vignetting, "Help for Vignetting" )
 
 			if( g_pHardwareConfig->SupportsPixelShaders_2_b() )
 			{
-				DECLARE_DYNAMIC_PIXEL_SHADER( vignetting_ps20b );
-				SET_DYNAMIC_PIXEL_SHADER( vignetting_ps20b );
+				DECLARE_DYNAMIC_PIXEL_SHADER( vignetting_ps30 );
+				SET_DYNAMIC_PIXEL_SHADER( vignetting_ps30 );
 			}
 			else
 			{
-				DECLARE_DYNAMIC_PIXEL_SHADER( vignetting_ps20 );
-				SET_DYNAMIC_PIXEL_SHADER( vignetting_ps20 );
+				DECLARE_DYNAMIC_PIXEL_SHADER( vignetting_ps30 );
+				SET_DYNAMIC_PIXEL_SHADER( vignetting_ps30 );
 			}
 		}
 		Draw();

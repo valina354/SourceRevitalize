@@ -25,6 +25,3 @@ SDK_screenspaceeffect_vs20.fxc
 depthwrite_ps2x.fxc
 depthwrite_vs20.fxc
 
-//vignetting
-vignetting_vs20.fxc
-vignetting_ps2x.fxc

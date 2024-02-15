@@ -1,8 +1,8 @@
 #include "shaderlib/cshader.h"
-class vignetting_ps20b_Static_Index
+class deferred_spotlight_shadow_ps30_Static_Index
 {
 public:
-	vignetting_ps20b_Static_Index( )
+	deferred_spotlight_shadow_ps30_Static_Index( )
 	{
 	}
 	int GetIndex()
@@ -14,11 +14,11 @@ public:
 		return 0;
 	}
 };
-#define shaderStaticTest_vignetting_ps20b 0
-class vignetting_ps20b_Dynamic_Index
+#define shaderStaticTest_deferred_spotlight_shadow_ps30 0
+class deferred_spotlight_shadow_ps30_Dynamic_Index
 {
 public:
-	vignetting_ps20b_Dynamic_Index()
+	deferred_spotlight_shadow_ps30_Dynamic_Index()
 	{
 	}
 	int GetIndex()
@@ -30,4 +30,4 @@ public:
 		return 0;
 	}
 };
-#define shaderDynamicTest_vignetting_ps20b 0
+#define shaderDynamicTest_deferred_spotlight_shadow_ps30 0
