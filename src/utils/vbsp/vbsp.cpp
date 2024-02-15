@@ -43,6 +43,7 @@ qboolean	noshare;
 qboolean	nosubdiv;
 qboolean	notjunc;
 qboolean	noopt;
+qboolean nodefaultcubemap;
 qboolean	leaktest;
 qboolean	verboseentities;
 qboolean	dumpcollide = false;
@@ -864,7 +865,8 @@ void ProcessModels (void)
 	}
 
 	// Turn the skybox into a cubemap in case we don't build env_cubemap textures.
-	Cubemap_CreateDefaultCubemaps();
+	if ( !nodefaultcubemap )
+		Cubemap_CreateDefaultCubemaps();
 	EndBSPFile ();
 }
 
@@ -911,7 +913,7 @@ int RunVBSP( int argc, char **argv )
 
 	LoadCmdLineFromFile( argc, argv, mapbase, "vbsp" );
 
-	Msg( "Valve Software - vbsp.exe (%s)\n", __DATE__ );
+	Msg("Source Revitalize And Valve Software - vbsp.exe (%s)\n", __DATE__ );
 
 	for (i=1 ; i<argc ; i++)
 	{
@@ -989,6 +991,11 @@ int RunVBSP( int argc, char **argv )
 			Msg ("fulldetail = true\n");
 			fulldetail = true;
 		}
+		else if ( !Q_stricmp( argv[i], "-nodefaultcubemap" ) )
+		{
+			Msg( "nodefaultcubemap = true\n" );
+			nodefaultcubemap = true;
+		}
 		else if (!Q_stricmp(argv[i], "-onlyents"))
 		{
 			Msg ("onlyents = true\n");
@@ -1020,7 +1027,7 @@ int RunVBSP( int argc, char **argv )
 			Msg ("snap axial = true\n");
 			g_snapAxialPlanes = true;
 		}
-#if 0
+#if 1
 		else if (!Q_stricmp(argv[i], "-maxlightmapdim"))
 		{
 			g_maxLightmapDimension = atof(argv[i+1]);
@@ -1064,7 +1071,7 @@ int RunVBSP( int argc, char **argv )
 		{
 			strcpy (outbase, "/tmp");
 		}
-#if 0
+#if 1
 		else if( !Q_stricmp( argv[i], "-defaultluxelsize" ) )
 		{
 			g_defaultLuxelSize = atof( argv[i+1] );
@@ -1236,6 +1243,7 @@ int RunVBSP( int argc, char **argv )
 				"  -nomerge     : Don't merge together chopped faces on nodes.\n"
 				"  -nomergewater: Don't merge together chopped faces on water.\n"
 				"  -nosubdiv    : Don't subdivide faces for lightmapping.\n"
+				 "  -nodefaultcubemap: Don't generate a default cubemap.\n"
 				"  -micro <#>   : vbsp will warn when brushes are output with a volume less\n"
 				"                 than this number (default: 1.0).\n"
 				"  -fulldetail  : Mark all detail geometry as normal geometry (so all detail\n"

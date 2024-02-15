@@ -81,6 +81,11 @@ struct directlight_t
 	float	soffset;
 	float	toffset;
 
+	// Flag indicating that even though light.type is emit_skylight, treat this light as a
+	// directional light source in vrad
+	bool m_bSkyLightIsDirectionalLight;
+	float m_flSkyLightSunAngularExtent;
+
 	int		dorecalc; // position, vector, spot angle, etc.
 	IncrementalLightID	m_IncrementalID;
 
@@ -94,6 +99,8 @@ struct directlight_t
 
 	directlight_t(void)
 	{
+		m_bSkyLightIsDirectionalLight = false;
+		m_flSkyLightSunAngularExtent = 0.0f;
 		m_flEndFadeDistance = -1.0;							// end<start indicates not set
 		m_flStartFadeDistance= 0.0;
 		m_flCapDist = 1.0e22;
@@ -285,6 +292,9 @@ extern bool			do_soften;
 extern int			fastsamples;
 extern bool			g_bInterrupt;		// Was used with background lighting in WC. Tells VRAD to stop lighting.
 extern IIncremental *g_pIncremental;	// null if not doing incremental lighting
+extern bool g_bIgnoreModelVersions;
+extern bool g_bAllowDynamicPropsAsStatic;
+extern bool g_bAllowDX90VTX;
 extern bool			g_bDumpPropLightmaps;
 
 extern float g_flSkySampleScale;								// extra sampling factor for indirect light
@@ -390,6 +400,8 @@ inline byte PVSCheck( const byte *pvs, int iCluster )
 
 // outputs 1 in fractionVisible if no occlusion, 0 if full occlusion, and in-between values
 void TestLine( FourVectors const& start, FourVectors const& stop, fltx4 *pFractionVisible, int static_prop_index_to_ignore=-1);
+void TestLine_IgnoreSky( FourVectors const &start, FourVectors const &stop, fltx4 *pFractionVisible, int static_prop_index_to_ignore = -1 );
+
 
 // returns 1 if the ray sees the sky, 0 if it doesn't, and in-between values for partial coverage
 void TestLine_DoesHitSky( FourVectors const& start, FourVectors const& stop,

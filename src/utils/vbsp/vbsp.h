@@ -96,6 +96,8 @@ struct mapbrush_t
 };
 
 #define	PLANENUM_LEAF			-1
+#define MAX_MAP_DETAILPROPS 524279
+
 
 #define	MAXEDGES		32
 
