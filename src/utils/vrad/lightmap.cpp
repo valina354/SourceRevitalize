@@ -1805,7 +1805,7 @@ void CreateDirectLights (void)
 		}
 		else if (!strcmp(name, "light_environment")) 
 		{
-			ParseLightSpot( e );
+			ParseLightEnvironment( e );
 		}
 		else if ( !strcmp( name, "light_directional" ) )
 		{
