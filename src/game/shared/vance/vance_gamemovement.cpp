@@ -5,13 +5,13 @@
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
 
-ConVar vance_slide_time( "vance_slide_time", "2.0", FCVAR_CHEAT );
+ ConVar vance_slide_time( "vance_slide_time", "2.0", FCVAR_CHEAT );
 ConVar vance_slide_movescale( "vance_slide_movescale", "0.05", FCVAR_CHEAT );
 ConVar vance_crouch_speed_scale("vance_duck_move_speed_scale", "0.5", FCVAR_CHEAT);
 ConVar vance_duck_down_speed("vance_duck_down_speed", "0.35", FCVAR_CHEAT);
 ConVar vance_duck_down_slide_speed("vance_duck_down_slide_speed", "0.2", FCVAR_CHEAT);
 ConVar vance_duck_up_speed("vance_duck_up_speed", "0.2", FCVAR_CHEAT);
-
+/*
 CVanceGameMovement::CVanceGameMovement()
 {
 	m_flFrictionScale = 1.0f;
@@ -129,3 +129,4 @@ static CVanceGameMovement g_GameMovement;
 IGameMovement *g_pGameMovement = (IGameMovement *)&g_GameMovement;
 
 EXPOSE_SINGLE_INTERFACE_GLOBALVAR( CGameMovement, IGameMovement, INTERFACENAME_GAMEMOVEMENT, g_GameMovement );
+*/
