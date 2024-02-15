@@ -29,6 +29,7 @@ $Project "Client (Vance)"
 		-$File	"$SRCDIR\game\shared\weapon_parse_default.cpp"
 		$File	"worldlight.h"
 		$File	"worldlight.cpp"
+		$File	"shaderapihack.h"
 		
 		$Folder	"VANCE"
 		{

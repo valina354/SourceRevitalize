@@ -123,6 +123,7 @@
 #include "mouthinfo.h"
 #include "sourcevr/isourcevirtualreality.h"
 #include "client_virtualreality.h"
+#include "shaderapihack.h"
 #include "mumble.h"
 #include <cstdlib> // for exit
 #include <cstdio>  // for printf
@@ -374,6 +375,18 @@ bool g_bTextMode = false;
 class IClientPurchaseInterfaceV2 *g_pClientPurchaseInterface = (class IClientPurchaseInterfaceV2 *)(&g_bTextMode + 156);
 
 static ConVar *g_pcv_ThreadMode = NULL;
+
+
+void ApplyShaderConstantHack()
+{
+	CMaterialConfigWrapper Wrapper;
+
+	Wrapper.PrintPixelConstants();
+	Wrapper.SetNumPixelConstants( 225 );
+	Wrapper.SetNumBooleanPixelConstants( 225 );
+	Wrapper.SetNumIntegerPixelConstants( 225 );
+	Wrapper.PrintPixelConstants();
+}
 
 // GAMEPADUI TODO - put this somewhere better. (Madi)
 #if defined( GAMEPADUI )
@@ -1130,6 +1143,9 @@ int CHLClient::Init( CreateInterfaceFn appSystemFactory, CreateInterfaceFn physi
 	IGameSystem::Add( ClientSoundscapeSystem() );
 	IGameSystem::Add( PerfVisualBenchmark() );
 	IGameSystem::Add( MumbleSystem() );
+
+
+	ApplyShaderConstantHack();
 
     // Don't want Source engine running on unsupported hardware
 	if ( g_pMaterialSystemHardwareConfig->GetDXSupportLevel() < 95 )
