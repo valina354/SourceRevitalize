@@ -405,7 +405,7 @@ void CBloom::Shutdown(void)
 	m_BloomCombine.Shutdown();
 }
 
-ConVar r_post_bloom("r_post_bloom", "0", FCVAR_ARCHIVE);
+ConVar r_post_bloom("r_post_bloom", "1", FCVAR_ARCHIVE);
 ConVar r_post_bloom_amount("r_post_bloom_amount", "1", FCVAR_ARCHIVE);
 ConVar r_post_bloom_gaussianamount("r_post_bloom_gaussianamount", "1", FCVAR_ARCHIVE);
 ConVar r_post_bloom_exposure("r_post_bloom_exposure", "1", FCVAR_ARCHIVE);
@@ -604,7 +604,7 @@ private:
 
 ADD_SCREENSPACE_EFFECT( CVignettingEffect, c17_vignetting );
 
-ConVar r_post_vignetting_darkness( "r_post_vignetting_darkness", "1.25", FCVAR_CHEAT, "Controls the vignetting shader's power. 0 for off." );
+ConVar r_post_vignetting_darkness( "r_post_vignetting_darkness", "2", FCVAR_CHEAT, "Controls the vignetting shader's power. 0 for off." );
 ConVar r_post_vignettingeffect_debug( "r_post_vignettingeffect_debug", "0", FCVAR_CHEAT );
 
 ConVar r_post_vignettingeffect( "r_post_vignettingeffect", "1", FCVAR_ARCHIVE );

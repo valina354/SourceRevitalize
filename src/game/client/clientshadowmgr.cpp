@@ -103,9 +103,9 @@ static ConVar r_worldlight_mincastintensity( "r_worldlight_mincastintensity", "0
 
 ConVar r_flashlightdepthtexture("r_flashlightdepthtexture", "1");
 
-ConVar r_flashlightdepthres("r_flashlightdepthres", "512");
+ConVar r_flashlightdepthres("r_flashlightdepthres", "2048");
 
-ConVar r_threaded_client_shadow_manager("r_threaded_client_shadow_manager", "0");
+ConVar r_threaded_client_shadow_manager("r_threaded_client_shadow_manager", "1");
 
 #ifdef _WIN32
 #pragma warning( disable: 4701 )
@@ -1350,7 +1350,7 @@ bool CClientShadowMgr::Init()
 
 	SetShadowBlobbyCutoffArea(0.005);
 
-	m_nMaxDepthTextureShadows = 6;	// Maximum of 6 Projected Textures in one frame, a bit overkill
+	m_nMaxDepthTextureShadows = 64;	// Maximum of 64 Projected Textures in one frame, a bit overkill
 
 	bool bLowEnd = (g_pMaterialSystemHardwareConfig->GetDXSupportLevel() < 80);
 
@@ -3945,7 +3945,7 @@ int CClientShadowMgr::BuildActiveShadowDepthList(const CViewSetup& viewSetup, in
 			continue;
 
 		// Calculate an AABB around the shadow frustum
-		Vector vecAbsMins, vecAbsMaxs;
+		/*Vector vecAbsMins, vecAbsMaxs;
 		CalculateAABBFromProjectionMatrix( shadow.m_WorldToShadow, &vecAbsMins, &vecAbsMaxs );
 
 		Frustum_t viewFrustum;
@@ -3955,8 +3955,9 @@ int CClientShadowMgr::BuildActiveShadowDepthList(const CViewSetup& viewSetup, in
 		// If it's not in the view frustum, move on
 		if ( R_CullBox( vecAbsMins, vecAbsMaxs, viewFrustum ) )
 		{
+			shadowmgr->SetFlashlightDepthTexture( shadow.m_ShadowHandle, NULL, 0 );
 			continue;
-		}
+		}*/
 		
 
 		vActiveShadows.AddToHead(i);

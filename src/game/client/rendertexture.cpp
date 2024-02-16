@@ -81,6 +81,21 @@ ITexture *GetCameraTexture( void )
 }
 
 //=============================================================================
+// Dynamic Scope Texture
+//=============================================================================
+static CTextureReference s_pScopeTexture;
+ITexture *GetScopeTexture( void )
+{
+	if ( !s_pScopeTexture )
+	{
+		s_pScopeTexture.Init( materials->FindTexture( "_rt_Scope", TEXTURE_GROUP_RENDER_TARGET ) );
+		Assert( !IsErrorTexture( s_pScopeTexture ) );
+		AddReleaseFunc();
+	}
+	return s_pScopeTexture;
+}
+
+//=============================================================================
 // Full Frame Depth Texture
 //=============================================================================
 static CTextureReference s_pFullFrameDepthTexture;
@@ -112,21 +127,7 @@ ITexture* GetFullFrameHDRTexture(void)
 	return s_pFullFrameHDRTexture;
 }
 
-//=============================================================================
-// Scope Texture
-//=============================================================================
-static CTextureReference s_pScopeTexture;
-ITexture* GetScopeTexture(void)
-{
-	if (!s_pScopeTexture)
-	{
-		s_pScopeTexture.Init(materials->FindTexture("_rt_Scope", TEXTURE_GROUP_RENDER_TARGET));
-		Assert(!IsErrorTexture(s_pScopeTexture));
-		AddReleaseFunc();
-	}
 
-	return s_pScopeTexture;
-}
 
 //=============================================================================
 // Full Frame Buffer Textures
@@ -279,6 +280,8 @@ void ReleaseRenderTargets( void )
 {
 	s_pPowerOfTwoFrameBufferTexture.Shutdown();
 	s_pCameraTexture.Shutdown();
+	//Release the scope render target too
+	s_pScopeTexture.Shutdown();
 	s_pWaterReflectionTexture.Shutdown();
 	s_pWaterRefractionTexture.Shutdown();
 	s_pQuarterSizedFB0.Shutdown();

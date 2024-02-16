@@ -36,7 +36,7 @@ extern ConVar r_flashlightdepthtexture;
 
 static ConVar r_swingflashlight( "r_swingflashlight", "1", FCVAR_CHEAT );
 static ConVar r_flashlightlockposition( "r_flashlightlockposition", "0", FCVAR_CHEAT );
-ConVar r_flashlightfov( "r_flashlightfov", "90.0", FCVAR_CHEAT );
+ConVar r_flashlightfov( "r_flashlightfov", "60.0", FCVAR_CHEAT );
 ConVar r_flashlightoffsetx( "r_flashlightoffsetright", "5.0", FCVAR_CHEAT );
 ConVar r_flashlightoffsety( "r_flashlightoffsetup", "-5.0", FCVAR_CHEAT );
 ConVar r_flashlightoffsetz( "r_flashlightoffsetforward", "0.0", FCVAR_CHEAT );
@@ -49,14 +49,14 @@ static ConVar r_flashlightvisualizetrace( "r_flashlightvisualizetrace", "0", FCV
 static ConVar r_flashlightambient( "r_flashlightambient", "0.0", FCVAR_CHEAT );
 static ConVar r_flashlightshadowatten( "r_flashlightshadowatten", "0.35", FCVAR_CHEAT );
 static ConVar r_flashlightladderdist( "r_flashlightladderdist", "40.0", FCVAR_CHEAT );
-static ConVar r_flashlight_topdown( "r_flashlight_topdown", "0" );
+static ConVar r_flashlight_topdown( "r_flashlight_topdown", "1" );
 
 static ConVar r_flashlightnearoffsetscale( "r_flashlightnearoffsetscale", "1.0", FCVAR_CHEAT );
 static ConVar r_flashlighttracedistcutoff( "r_flashlighttracedistcutoff", "128" );
 static ConVar r_flashlightbacktraceoffset( "r_flashlightbacktraceoffset", "0.4", FCVAR_CHEAT );
 
-static ConVar mat_slopescaledepthbias_shadowmap("mat_slopescaledepthbias_shadowmap", "16", FCVAR_CHEAT);
-static ConVar mat_depthbias_shadowmap("mat_depthbias_shadowmap", "0.0005", FCVAR_CHEAT);
+static ConVar mat_slopescaledepthbias_shadowmap("mat_slopescaledepthbias_shadowmap", "4", FCVAR_CHEAT);
+static ConVar mat_depthbias_shadowmap("mat_depthbias_shadowmap", "0.00001", FCVAR_CHEAT);
 
 //-----------------------------------------------------------------------------
 CFlashlightEffectManager & FlashlightEffectManager()

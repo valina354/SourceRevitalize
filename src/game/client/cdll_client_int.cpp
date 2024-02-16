@@ -360,7 +360,7 @@ static ConVar s_cl_class("cl_class", "default", FCVAR_USERINFO|FCVAR_ARCHIVE, "D
 
 #ifdef VANCE
 // Discord RPC
-static ConVar cl_discord_appid("cl_discord_appid", "549012876413632533", FCVAR_DEVELOPMENTONLY | FCVAR_CHEAT);
+static ConVar cl_discord_appid("cl_discord_appid", "1207992877318148106", FCVAR_DEVELOPMENTONLY | FCVAR_CHEAT);
 static int64_t startTimestamp = time(0);
 #endif
 
@@ -1144,9 +1144,6 @@ int CHLClient::Init( CreateInterfaceFn appSystemFactory, CreateInterfaceFn physi
 	IGameSystem::Add( PerfVisualBenchmark() );
 	IGameSystem::Add( MumbleSystem() );
 
-
-	ApplyShaderConstantHack();
-
     // Don't want Source engine running on unsupported hardware
 	if ( g_pMaterialSystemHardwareConfig->GetDXSupportLevel() < 95 )
 	{
@@ -1169,6 +1166,8 @@ int CHLClient::Init( CreateInterfaceFn appSystemFactory, CreateInterfaceFn physi
 #if defined( CLIENT_DLL ) && defined( COPY_CHECK_STRESSTEST )
 	IGameSystem::Add( GetPredictionCopyTester() );
 #endif
+
+	ApplyShaderConstantHack();
 
 	modemanager->Init( );
 

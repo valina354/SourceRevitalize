@@ -136,6 +136,10 @@ bool CEnvProjectedTexture::KeyValue( const char *szKeyName, const char *szValue 
 		UTIL_ColorStringToLinearFloatColor( tmp, szValue );
 		m_LinearFloatLightColor = tmp;
 	}
+	else if ( FStrEq( szKeyName, "texturename" ) )
+	{
+		Q_strcpy( m_SpotlightTextureName.GetForModify(), szValue );
+	}
 	else
 	{
 		return BaseClass::KeyValue( szKeyName, szValue );
