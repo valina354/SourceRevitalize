@@ -341,6 +341,11 @@
 	modifier(float) : "Friction Percent" : 100 : "Set the friction to this percent of the regular friction"
 ]
 
+@PointClass base(BasePropPhysics, RenderFields) studioprop() sphere(radius) = prop_sphere : "Creates a perfect sphere."
+[
+	radius(float) : "Radius" : 12 : ""
+]
+
 @PointClass base(Item) studio("models/healthvial.mdl") = item_stim : "Stimulant" []
 @PointClass base(Item) studio("models/healthvial.mdl") = item_tourniquet : "Tourniquet" []
 @PointClass base(Weapon) studio("models/weapons/w_shotgun.mdl") = weapon_anastasia : "10 Gauge" []
