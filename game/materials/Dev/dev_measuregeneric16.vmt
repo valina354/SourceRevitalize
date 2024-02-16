@@ -1,0 +1,5 @@
+"SDK_LightmappedGeneric"
+{
+	"$basetexture" "dev/dev_measuregeneric16"
+	//"$translucent" 1
+}

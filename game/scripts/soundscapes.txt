@@ -1,0 +1,170 @@
+//Bunker
+"pipe-room"
+{
+	"dsp"	"1"
+
+	"playlooping"
+	{
+		"volume"	"0.30"
+		"pitch"		"100"
+		"wave"		"generic/underground.wav"
+	}
+}
+"pipe-generator-room"
+{
+	"dsp"	"1"
+
+	"playlooping"
+	{
+		"volume"	"0.30"
+		"pitch"		"100"
+		"wave"		"generic/underground.wav"
+	}
+	"playlooping"
+	{
+		"volume"	"0.20"
+		"pitch"		"100"
+		"wave"		"generic/indoor.wav"
+	}
+}
+"generator-room"
+{
+	"dsp"	"1"
+	"playlooping"
+	{
+		"volume"	"1"
+		"pitch"		"100"
+		"wave"		"ambient/indoor.wav"
+	}
+}
+"dripping-indoor_01"
+{
+	"dsp"	"10"
+
+	// dripping sound with an indoor hum
+
+	"playlooping"
+	{
+		"volume"	"0.2"
+		"pitch"		"100"
+		"attenuation"	"0"
+		"wave"		"ambient/underground_01.wav"
+	}
+}
+"dripping-indoor_02"
+{
+	"dsp"	"10"
+
+	// dripping sound
+
+	"playlooping"
+	{
+		"volume"	"0.20"
+		"pitch"		"100"
+		"attenuation"	"0"
+		"wave"		"ambient/underground_02.wav"
+	}
+}
+
+"openarea"
+{
+	"dsp"	"1"
+	
+	//Open area
+	
+	"playlooping"
+	{
+		"volume"	"0.5"
+		"wave"		"ambient/outdoor.wav"
+		"pitch"		"100"
+	}
+
+	// wind
+	"playrandom"
+	{
+		"time"	"5,15"
+		"volume"	"0.1,0.2"
+		"pitch"	"80,120"
+		"position"	"random"	
+		"rndwave"
+		{
+			"wave"	"ambient/wind_01.wav"
+			"wave"	"ambient/wind-gust_01.wav"
+		}
+	}
+}
+
+"warehouse"
+{
+	"dsp"	"1"
+	
+	//Open area
+	
+	"playlooping"
+	{
+		"volume"	"0.15"
+		"wave"		"ambient/warehouse.wav"
+		"pitch"		"100"
+	}
+
+	// wind
+	"playrandom"
+	{
+		"time"	"15"
+		"volume"	"0.2"
+		"pitch"	"120"
+		"position"	"random"	
+		"rndwave"
+		{
+			"wave"	"ambient/wind-gust_01.wav"
+		}
+	}
+}
+
+//Basic
+"Nothing"
+{
+	"dsp"	"0"
+}
+
+"GenericIndoor"
+{
+	"dsp"	"1"
+	"playlooping"
+	{
+		"volume"	"1"
+		"pitch"		"100"
+		"wave"		"ambient/atmosphere/indoor2.wav"
+	}
+}
+
+"GenericOutdoor"
+{
+	"dsp"	"19"
+	"playlooping"
+	{
+		"volume"	"0.25"
+		"wave"		"ambient/atmosphere/indoor2.wav"
+	}
+
+	"playlooping"
+	{
+		"volume"	"0.15"
+		"wave"		"ambient/atmosphere/outdoor2.wav"
+		"pitch"		"100"
+		"position"	"0"
+	}
+}
+
+"automatic"
+{
+	"dsp"	"1"
+	"dsp_volume" "1.0"
+}
+
+"automatic_dialog"
+{
+	"dsp"	"1"
+	"dsp_volume" "0.5"
+}
+//Basic//

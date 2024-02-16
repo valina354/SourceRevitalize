@@ -1,0 +1,4 @@
+"fxaa"
+{
+	"$FRAMEBUFFER" "_rt_VanceHDR"
+}

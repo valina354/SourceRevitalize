@@ -1,0 +1,7 @@
+"SDK_LightmappedGeneric"
+{
+	"$basetexture" "Dev/PBR/dev_checkerboard2"
+	"$bumpmap" "Dev/PBR/dev_checkerboard2_n"
+	"$roughness" "Dev/PBR/dev_checkerboard2"
+	"$metallic" "Dev/black"
+}

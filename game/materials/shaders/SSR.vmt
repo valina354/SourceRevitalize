@@ -1,0 +1,9 @@
+"SDK_screenspace_general"
+{
+	"$pixshader" "ssr_ps30"
+	"$basetexture" "_rt_VanceHDR"
+	"$TEXTURE1" "_rt_Normals"
+	"$TEXTURE2" "_rt_MRAO"
+	"$TEXTURE3" "_rt_DepthBuffer"
+	"$USES_VIEWPROJ" "1"
+}

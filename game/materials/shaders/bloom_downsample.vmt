@@ -1,0 +1,5 @@
+"sdk_screenspace_general"
+{
+	"$pixshader" "basicsample_ps30"
+	"$basetexture" "_rt_BloomFB1"
+}

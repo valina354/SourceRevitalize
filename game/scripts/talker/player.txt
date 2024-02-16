@@ -1,0 +1,44 @@
+//============================================================================================================
+// Alyx Vance player
+//============================================================================================================
+//============================================================================================================
+// Alyx concepts
+//============================================================================================================
+criterion "Concept"		"Concept" "TLK_WHATEVER"	"required"
+
+//============================================================================================================
+// Alyx criteria
+//============================================================================================================
+criterion "IsPlayer" "classname" "player" "required"
+criterion "IsWeapon357" "weapon" "weapon_357" "required"
+
+//============================================================================================================
+// Alyx responses
+//============================================================================================================
+response "PlayerKilledHeadcrab"
+{
+	speak "sound/alyx/Alyx_Kill_Headcrab_01.wav" respeakdelay 15 // Causes the player to emit a sound and avoid speaking this response again for 15 seconds.
+speak "alyx/Alyx_Kill_Headcrab_02.wav" respeakdelay 15 
+speak "alyx/Alyx_Kill_Headcrab_03.wav" respeakdelay 15 
+speak "alyx/Alyx_Kill_Headcrab_04.wav" respeakdelay 15 
+speak "alyx/Alyx_Kill_Headcrab_05.wav" respeakdelay 15 
+}
+
+rule "PlayerKilledHeadcrab"
+{
+	criteria		IsPlayer ConceptEnemyDead EnemyIsHeadcrab
+	response		"PlayerKilledHeadcrab"
+}
+
+//
+
+response "PlayerPickup357"
+{
+speak "alyx/Alyx_Pickup_357.wav" respeakdelay 15 
+}
+
+rule "PlayerPickup357"
+{
+	criteria		IsPlayer ConceptNewWeapon IsWeapon357
+	response		"PlayerPickup357"
+}

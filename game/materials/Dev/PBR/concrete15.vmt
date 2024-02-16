@@ -1,0 +1,7 @@
+"SDK_LightmappedGeneric"
+{
+	"$basetexture" "Dev/PBR/concrete15_col"
+	"$bumpmap" "Dev/PBR/concrete15_nrm"
+	"$roughness" "Dev/PBR/concrete15_rgh"
+	"$metallic" "Dev/black"
+}

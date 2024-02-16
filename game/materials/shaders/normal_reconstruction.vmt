@@ -1,0 +1,6 @@
+"SDK_screenspace_general"
+{
+	"$pixshader" "normalmapreconstruct_ps30"
+	"$basetexture" "_rt_DepthBuffer"
+	"$USES_VIEWPROJ" "1"
+}

@@ -1,0 +1,6 @@
+"Gaussian_DepthAware_Roughness"
+{
+	"$FBTEXTURE"			"_rt_SSR"
+	"$MRAO"			"_rt_MRAO"
+	"$HORIZONTAL"			"1"
+}

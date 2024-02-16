@@ -1,0 +1,8 @@
+"LightmappedPBR"
+{
+	// Original shader: BaseTimesLightmap
+	"$basetexture" "Dev/dev_measuregeneric01"
+	"$roughness" "Dev/pbr/dev_gloss"
+	"$bumpmap" "Dev/pbr/dev_measuregeneric_normal"
+	"$surfaceprop" "concrete"
+}

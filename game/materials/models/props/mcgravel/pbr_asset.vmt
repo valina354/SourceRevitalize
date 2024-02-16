@@ -1,0 +1,8 @@
+"VertexlitPBR"
+{
+	$basetexture "models\props\pbr_test\pbr_asset1_d"
+	$bumpmap "models\props\pbr_test\pbr_asset1_n"
+	
+	$envmap "env_cubemap"
+	$model "1"
+}

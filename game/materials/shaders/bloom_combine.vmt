@@ -1,0 +1,8 @@
+"Bloom_Combine"
+{
+	"$FBTEXTURE"			"_rt_VanceHDR"
+	"$BLOOMTEXTURE"		"_rt_BloomFB1"
+	"$BLOOMTEXTURE1"		"_rt_BloomDS1"
+	"$BLOOMTEXTURE2"		"_rt_BloomDS2"
+	"$BLOOMTEXTURE3"		"_rt_BloomDS3"
+}

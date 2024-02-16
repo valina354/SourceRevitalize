@@ -1,0 +1,5 @@
+"ObjectMotionBlur"
+{
+  "$FB_TEXTURE" "_rt_FullFrameFB"
+  "$VELOCITY_TEXTURE" "_rt_SmallHDR0"
+}

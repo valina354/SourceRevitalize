@@ -1,0 +1,9 @@
+"LightmappedPBR"
+{
+   "$basetexture" "pbrtest\slate01_diff"
+   "$roughness" "pbrtest\slate01_rough"
+   "$bumpmap" "pbrtest\slate01_bump"
+   "$ao" "pbrtest\slate01_ao"
+   
+   "$envmap" "env_cubemap"
+}

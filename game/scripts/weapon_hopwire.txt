@@ -1,0 +1,66 @@
+WeaponData
+{
+	// Weapon data is loaded by both the Game and Client DLLs.
+	"printname"	"#HL2_Hopwire"
+	"viewmodel"				"models/weapons/v_grenade.mdl"
+	"playermodel"			"models/weapons/w_warpcore.mdl"
+	// The secondary model is the model of the grenade after it begins hopping
+	"secondarymodel"		"models/weapons/w_warpcore.mdl"
+	"anim_prefix"			"Grenade"
+	"bucket"				"4"
+	"bucket_position"		"2"
+
+	"clip_size"				"3"
+	"primary_ammo"			"None"
+	"secondary_ammo"		"Hopwire"
+	"default_clip2"			"3"
+
+	"weight"				"1"
+	"item_flags"			"2"	// ITEM_FLAG_NOAUTORELOAD
+
+	// Sounds for the weapon. There is a max of 16 sounds per category (i.e. max 16 "single_shot" sounds)
+	SoundData
+	{
+		"special1"		"WeaponFrag.Roll"
+		"double_shot"	"common/null.wav"
+		"single_shot"	"common/null.wav"
+	}
+
+	// Weapon Sprite data is loaded by the Client DLL.
+	TextureData
+	{
+		"weapon"
+		{
+				"font"		"WeaponIcons"
+				"character"	"k"
+		}
+		"weapon_s"
+		{	
+				"font"		"WeaponIconsSelected"
+				"character"	"k"
+		}
+		"weapon_small"
+		{
+				"font"		"WeaponIconsSmall"
+				"character"	"k"
+		}
+		"ammo"
+		{
+				"font"		"WeaponIconsSmall"
+				"character"	"v"
+		}
+		"crosshair"
+		{
+				"font"		"Crosshairs"
+				"character"	"Q"
+		}
+		"autoaim"
+		{
+				"file"		"sprites/crosshairs"
+				"x"			"48"
+				"y"			"72"
+				"width"		"24"
+				"height"	"24"
+		}
+	}
+}

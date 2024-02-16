@@ -1,0 +1,6 @@
+"sdk_screenspace_general"
+{
+	"$pixshader" "bicubicsample_ps30"
+	"$basetexture" "_rt_VolumetricsBuffer"
+	"$additive" "1"
+}

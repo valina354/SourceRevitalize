@@ -1,0 +1,6 @@
+"LightmappedPBR"
+{
+	"$basetexture" "Dev/dev_measuregeneric12"
+	"$roughness" "Dev/pbr/dev_gloss"
+	"$bumpmap" "Dev/pbr/dev_measuregeneric_normal"
+}

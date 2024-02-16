@@ -1,0 +1,5 @@
+"SSGI"
+{
+	"$FRAMEBUFFER" "_rt_VanceHDR"
+	"$noise" "shaders/bluenoise"
+}

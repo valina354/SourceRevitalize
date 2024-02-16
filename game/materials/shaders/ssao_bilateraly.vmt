@@ -1,0 +1,5 @@
+"Gaussian_DepthAware"
+{
+	"$FBTEXTURE"			"_rt_SSAOFBX"
+	"$HORIZONTAL"			"0"
+}
