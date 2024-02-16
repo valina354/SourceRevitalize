@@ -180,5 +180,6 @@ $Project "Client (Vance)"
 	$Folder "Link Libraries"
 	{
 		$Lib	"$LIBCOMMON/discord-rpc"
+		$Lib raytrace
 	}
 }
