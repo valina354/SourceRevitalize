@@ -42,6 +42,25 @@ $Project "Shaders (VANCE)"
 			$File	"vance/skydome_atmosphere_helper.cpp"
 			$File	"vance/skydome_atmosphere_helper.h"
 			$File	"vignetting.cpp"
+			$File	"negative.cpp"
+			$File	"bleach_bypass.cpp"
+			$File	"color_clipping.cpp"
+			$File	"sepia.cpp"
+			$File	"complements.cpp"
+			$File	"cubic_distortion.cpp"
+			$File	"desaturate.cpp"
+			$File	"nightvision.cpp"
+		}
+		
+		$Folder "PBR"
+		{
+		   $File	"VertexlitPBR_dx9.cpp"
+		   $File	"VertexlitPBR_dx9_helper.cpp"
+		   $File	"VertexlitPBR_dx9_helper.h"
+
+		   $File	"LightmappedPBR_dx9.cpp"
+		   $File	"LightmappedPBR_dx9_helper.cpp"
+		   $File	"LightmappedPBR_dx9_helper.h"
 		}
 				
 		$File	"lightmappedgeneric_dx9.cpp"
@@ -53,13 +72,6 @@ $Project "Shaders (VANCE)"
 		$File	"vertexlitgeneric_dx9_helper.cpp"
 		$File	"vertexlitgeneric_dx9_helper.h"
 
-		$File	"VertexlitPBR_dx9.cpp"
-		$File	"VertexlitPBR_dx9_helper.cpp"
-		$File	"VertexlitPBR_dx9_helper.h"
-
-		$File	"LightmappedPBR_dx9.cpp"
-		$File	"LightmappedPBR_dx9_helper.cpp"
-		$File	"LightmappedPBR_dx9_helper.h"
 		
 		$File	"lightpass_helper.cpp"
 		$File	"lightpass_helper.h"

@@ -30,8 +30,6 @@ $Project "Client (Vance)"
 		$File	"worldlight.h"
 		$File	"worldlight.cpp"
 		$File	"shaderapihack.h"
-		$File	"storybook\vgui_keypad.cpp"
-		$File	"storybook\vgui_keypad.h"
 		
 		$Folder	"VANCE"
 		{

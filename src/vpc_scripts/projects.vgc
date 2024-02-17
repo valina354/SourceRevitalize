@@ -143,3 +143,4 @@ $Project "gamepadui"
     "game\gamepadui\gamepadui_episodic.vpc" [$EPISODIC]
     "game\gamepadui\gamepadui_vance.vpc" [$VANCE]
 }
+

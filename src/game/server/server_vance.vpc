@@ -46,8 +46,6 @@ $Project "Server (Vance)"
 		$File	"vehicle_choreo_generic.cpp"
 		$File	"$SRCDIR\game\shared\vehicle_choreo_generic_shared.h"
 		$File	"$SRCDIR\game\shared\Multiplayer\multiplayer_animstate.h"
-		$File	"storybook\point_keypad.cpp"
-		$File	"storybook\point_keypad.h"
 		
 		$Folder	"VANCE"
 		{

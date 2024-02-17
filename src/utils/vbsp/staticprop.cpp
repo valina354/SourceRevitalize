@@ -569,6 +569,7 @@ static void SetLumpData( )
 
 void EmitStaticProps()
 {
+	Msg( "Placing static props...\n" );
 	CreateInterfaceFn physicsFactory = GetPhysicsFactory();
 	if ( physicsFactory )
 	{

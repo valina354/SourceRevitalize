@@ -614,7 +614,7 @@ ConVar r_post_vignettingeffect( "r_post_vignettingeffect", "1", FCVAR_ARCHIVE );
 //------------------------------------------------------------------------------
 void CVignettingEffect::Init()
 {
-	m_VignetMat.Init( materials->FindMaterial( "effects/shaders/vignetting", TEXTURE_GROUP_PIXEL_SHADERS, true ) );
+	m_VignetMat.Init( materials->FindMaterial( "shaders/vignetting", TEXTURE_GROUP_PIXEL_SHADERS, true ) );
 
 	fVignettingAmount = r_post_vignetting_darkness.GetFloat();
 	fVignettingLerpTo = r_post_vignetting_darkness.GetFloat();
@@ -650,5 +650,211 @@ void CVignettingEffect::Render( int x, int y, int w, int h )
 		DrawScreenEffectMaterial( m_VignetMat, x, y, w, h );
 		if ( r_post_vignettingeffect_debug.GetBool() )
 			DevMsg( "Vignetting Amount: %.2f\n", fVignettingAmount );
+	}
+}
+
+class CColorCorrectionEffect : public IScreenSpaceEffect
+{
+public:
+	CColorCorrectionEffect( void ){};
+
+	virtual void Init( void );
+	virtual void Shutdown( void );
+	virtual void SetParameters( KeyValues *params ){};
+	virtual void Enable( bool bEnable )
+	{
+		m_bEnabled = bEnable;
+	}
+	virtual bool IsEnabled()
+	{
+		return m_bEnabled;
+	}
+
+	virtual void Render( int x, int y, int w, int h );
+
+private:
+	bool m_bEnabled;
+
+	CMaterialReference m_Negative;
+	CMaterialReference m_BleachBypass;
+	CMaterialReference m_ColorClipping;
+	CMaterialReference m_CrossProcessing;
+	CMaterialReference m_NextGen;
+	CMaterialReference m_Complements;
+	CMaterialReference m_CubicDistortion;
+	CMaterialReference m_Desaturate;
+	CMaterialReference m_Nightvision;
+};
+
+// Color Correction Extensions
+ADD_SCREENSPACE_EFFECT( CColorCorrectionEffect, c17_colorcorrection );
+
+ConVar r_post_negative( "r_post_negative", "0", FCVAR_CHEAT );
+
+ConVar r_post_bleach_bypass( "r_post_bleach_bypass", "0", FCVAR_CHEAT );
+ConVar r_post_bleach_bypass_opacity( "r_post_bleach_bypass_opacity", "1.0", FCVAR_CHEAT );
+
+ConVar r_post_color_clipping( "r_post_color_clipping", "0", FCVAR_CHEAT );
+ConVar r_post_color_clipping_mincolor_r( "r_post_color_clipping_mincolor_r", "0", FCVAR_CHEAT );
+ConVar r_post_color_clipping_mincolor_g( "r_post_color_clipping_mincolor_g", "0", FCVAR_CHEAT );
+ConVar r_post_color_clipping_mincolor_b( "r_post_color_clipping_mincolor_b", "0", FCVAR_CHEAT );
+ConVar r_post_color_clipping_mincolor_a( "r_post_color_clipping_mincolor_a", "1", FCVAR_CHEAT );
+ConVar r_post_color_clipping_maxcolor_r( "r_post_color_clipping_maxcolor_r", "1", FCVAR_CHEAT );
+ConVar r_post_color_clipping_maxcolor_g( "r_post_color_clipping_maxcolor_g", "1", FCVAR_CHEAT );
+ConVar r_post_color_clipping_maxcolor_b( "r_post_color_clipping_maxcolor_b", "1", FCVAR_CHEAT );
+ConVar r_post_color_clipping_maxcolor_a( "r_post_color_clipping_maxcolor_a", "1", FCVAR_CHEAT );
+ConVar r_post_color_clipping_squish( "r_post_color_clipping_squish", "1", FCVAR_CHEAT );
+
+ConVar r_post_cross_processing( "r_post_cross_processing", "0", FCVAR_CHEAT );
+ConVar r_post_cross_processing_saturation( "r_post_cross_processing_saturation", "0.8", FCVAR_CHEAT );
+ConVar r_post_cross_processing_contrast( "r_post_cross_processing_contrast", "1.0", FCVAR_CHEAT );
+ConVar r_post_cross_processing_brightness( "r_post_cross_processing_brightness", "0.0", FCVAR_CHEAT );
+ConVar r_post_cross_processing_intensity( "r_post_cross_processing_intensity", "0.2", FCVAR_CHEAT );
+
+ConVar r_post_complements_guidehue_r( "r_post_complements_guidehue_r", "1", FCVAR_CHEAT );
+ConVar r_post_complements_guidehue_g( "r_post_complements_guidehue_g", "1", FCVAR_CHEAT );
+ConVar r_post_complements_guidehue_b( "r_post_complements_guidehue_b", "1", FCVAR_CHEAT );
+ConVar r_post_complements_amount( "r_post_complements_amount", "1.0", FCVAR_CHEAT );
+ConVar r_post_complements_concentrate( "r_post_complements_concentrate", "1.0", FCVAR_CHEAT );
+ConVar r_post_complements_desatcorr( "r_post_complements_desatcorr", "1.0", FCVAR_CHEAT );
+
+ConVar r_post_cubic_distortion( "r_post_cubic_distortion", "0", FCVAR_CHEAT );
+ConVar r_post_cubic_distortion_amount( "r_post_cubic_distortion_amount", "-0.15", FCVAR_CHEAT );
+ConVar r_post_cubic_distortion_cubicamount( "r_post_cubic_distortion_cubicamount", "0.5", FCVAR_CHEAT );
+
+ConVar r_post_desaturate( "r_post_desaturate", "0", FCVAR_CHEAT );
+ConVar r_post_desaturate_strength( "r_post_desaturate_strength", "1.0", FCVAR_CHEAT );
+
+ConVar r_post_nightvision( "r_post_nightvision", "0", FCVAR_CHEAT );
+
+void nextgen_callback( IConVar *pConVar, char const *pOldString, float flOldValue );
+
+static ConVar r_post_nextgen( "r_post_nextgen", "0", FCVAR_CHEAT, "THE MOST IMPORTANT ASPECT OF CITY17! IT'LL BLOW. YOUR. MIND.", nextgen_callback );
+
+ConVar r_post_complements( "r_post_complements", "0", FCVAR_CHEAT );
+
+void nextgen_callback( IConVar *pConVar, char const *pOldString, float flOldValue )
+{
+	if ( r_post_nextgen.GetBool() )
+	{
+		Msg( "Shit just got unreal!\n" );
+	}
+}
+
+void CColorCorrectionEffect::Init( void )
+{
+	m_Negative.Init( materials->FindMaterial( "shaders/negative", TEXTURE_GROUP_PIXEL_SHADERS, true ) );
+	m_BleachBypass.Init( materials->FindMaterial( "shaders/bleach_bypass", TEXTURE_GROUP_PIXEL_SHADERS, true ) );
+	m_ColorClipping.Init( materials->FindMaterial( "shaders/color_clipping", TEXTURE_GROUP_PIXEL_SHADERS, true ) );
+	m_CrossProcessing.Init( materials->FindMaterial( "shaders/cross_processing", TEXTURE_GROUP_PIXEL_SHADERS, true ) );
+	m_NextGen.Init( materials->FindMaterial( "shaders/nextgen", TEXTURE_GROUP_PIXEL_SHADERS, true ) );
+	m_Complements.Init( materials->FindMaterial( "shaders/complements", TEXTURE_GROUP_PIXEL_SHADERS, true ) );
+	m_CubicDistortion.Init( materials->FindMaterial( "shaders/cubic_distortion", TEXTURE_GROUP_PIXEL_SHADERS, true ) );
+	m_Desaturate.Init( materials->FindMaterial( "shaders/desaturate", TEXTURE_GROUP_PIXEL_SHADERS, true ) );
+	m_Nightvision.Init( materials->FindMaterial( "shaders/nightvision", TEXTURE_GROUP_PIXEL_SHADERS, true ) );
+}
+
+void CColorCorrectionEffect::Shutdown( void )
+{
+	m_Negative.Shutdown();
+	m_BleachBypass.Shutdown();
+	m_ColorClipping.Shutdown();
+	m_CrossProcessing.Shutdown();
+	m_NextGen.Shutdown();
+	m_Complements.Shutdown();
+	m_CubicDistortion.Shutdown();
+	m_Desaturate.Shutdown();
+	m_Nightvision.Shutdown();
+}
+
+ConVar r_post_colorcorrection( "r_post_colorcorrection", "1", FCVAR_ARCHIVE );
+void CColorCorrectionEffect::Render( int x, int y, int w, int h )
+{
+	VPROF( "CColorCorrectionEffect::Render" );
+
+	if ( !r_post_colorcorrection.GetBool() || !IsEnabled() )
+		return;
+
+	IMaterialVar *var;
+
+	// Grab the render context
+	CMatRenderContextPtr pRenderContext( materials );
+
+	if ( r_post_negative.GetBool() )
+	{
+		DrawScreenEffectMaterial( m_Negative, x, y, w, h );
+	}
+
+	if ( r_post_bleach_bypass.GetBool() )
+	{
+		var = m_BleachBypass->FindVar( "$OPACITY", NULL );
+		var->SetFloatValue( r_post_bleach_bypass_opacity.GetFloat() );
+		DrawScreenEffectMaterial( m_BleachBypass, x, y, w, h );
+	}
+
+	if ( r_post_color_clipping.GetBool() )
+	{
+		var = m_ColorClipping->FindVar( "$mincolor", NULL );
+		var->SetVecValue( r_post_color_clipping_mincolor_r.GetFloat(), r_post_color_clipping_mincolor_g.GetFloat(),
+						  r_post_color_clipping_mincolor_b.GetFloat(), r_post_color_clipping_mincolor_a.GetFloat() );
+		var = m_ColorClipping->FindVar( "$maxcolor", NULL );
+		var->SetVecValue( r_post_color_clipping_maxcolor_r.GetFloat(), r_post_color_clipping_maxcolor_g.GetFloat(),
+						  r_post_color_clipping_maxcolor_b.GetFloat(), r_post_color_clipping_maxcolor_a.GetFloat() );
+		var = m_ColorClipping->FindVar( "$squish", NULL );
+		var->SetIntValue( r_post_color_clipping_squish.GetInt() );
+		DrawScreenEffectMaterial( m_ColorClipping, x, y, w, h );
+	}
+
+	if ( r_post_cross_processing.GetBool() )
+	{
+		var = m_CrossProcessing->FindVar( "$MUTABLE_01", NULL );
+		var->SetFloatValue( r_post_cross_processing_saturation.GetFloat() );
+		var = m_CrossProcessing->FindVar( "$MUTABLE_02", NULL );
+		var->SetFloatValue( r_post_cross_processing_contrast.GetFloat() );
+		var = m_CrossProcessing->FindVar( "$MUTABLE_03", NULL );
+		var->SetFloatValue( r_post_cross_processing_brightness.GetFloat() );
+		var = m_CrossProcessing->FindVar( "$MUTABLE_04", NULL );
+		var->SetFloatValue( r_post_cross_processing_intensity.GetFloat() );
+		DrawScreenEffectMaterial( m_CrossProcessing, x, y, w, h );
+	}
+
+	if ( r_post_nextgen.GetBool() )
+	{
+		DrawScreenEffectMaterial( m_NextGen, x, y, w, h );
+	}
+
+	if ( r_post_complements.GetBool() )
+	{
+		var = m_Complements->FindVar( "$guidehue", NULL );
+		var->SetVecValue( r_post_complements_guidehue_r.GetFloat(), r_post_complements_guidehue_g.GetFloat(),
+						  r_post_complements_guidehue_b.GetFloat() );
+		var = m_Complements->FindVar( "$amount", NULL );
+		var->SetFloatValue( r_post_complements_amount.GetFloat() );
+		var = m_Complements->FindVar( "$concentrate", NULL );
+		var->SetFloatValue( r_post_complements_concentrate.GetFloat() );
+		var = m_Complements->FindVar( "$desatcorr", NULL );
+		var->SetFloatValue( r_post_complements_desatcorr.GetFloat() );
+		DrawScreenEffectMaterial( m_Complements, x, y, w, h );
+	}
+
+	if ( r_post_cubic_distortion.GetBool() )
+	{
+		var = m_CubicDistortion->FindVar( "$distortion", NULL );
+		var->SetFloatValue( r_post_cubic_distortion_amount.GetFloat() );
+		var = m_CubicDistortion->FindVar( "$cubicdistortion", NULL );
+		var->SetFloatValue( r_post_cubic_distortion_cubicamount.GetFloat() );
+		DrawScreenEffectMaterial( m_CubicDistortion, x, y, w, h );
+	}
+
+	if ( r_post_desaturate.GetBool() )
+	{
+		var = m_Desaturate->FindVar( "$strength", NULL );
+		var->SetFloatValue( r_post_desaturate_strength.GetFloat() );
+		DrawScreenEffectMaterial( m_Desaturate, x, y, w, h );
+	}
+
+	if ( r_post_nightvision.GetBool() )
+	{
+		DrawScreenEffectMaterial( m_Nightvision, x, y, w, h );
 	}
 }

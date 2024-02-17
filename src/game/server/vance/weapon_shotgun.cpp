@@ -624,6 +624,15 @@ void CWeaponShotgun::ItemPostFrame( void )
 		// Make shotgun shell invisible
 		SetBodygroup(1,1);
 	}
+
+	if ( m_flReloadTime > gpGlobals->curtime )
+	{
+		m_bReloadBlur = true;
+	}
+	else
+	{
+		m_bReloadBlur = false;
+	}
 	
 	// Shotgun uses same timing and ammo for secondary attack
 	if ((m_bDelayedFire2 || pOwner->m_nButtons & IN_ATTACK2)&&(m_flNextPrimaryAttack <= gpGlobals->curtime))
