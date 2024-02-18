@@ -210,7 +210,7 @@ float2 parallaxCorrect(float2 texCoord, float3 viewRelativeDir, sampler BumpmapS
     float2 vTexOffsetPerStep = fStepSize * vParallaxOffsetTS;
     float2 vTexCurrentOffset = texCoord;
     float  fCurrentBound     = 1.0;
-    float  fParallaxAmount   = 10.0;
+    float  fParallaxAmount   = 0.0;
 
     float2 pt1 = 0;
     float2 pt2 = 0;
