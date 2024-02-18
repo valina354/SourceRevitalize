@@ -898,17 +898,17 @@ ConVar r_post_sunshaft_blur( "r_post_sunshaft_blur", "1", FCVAR_ARCHIVE );
 ConVar r_post_sunshaft_blur_amount( "r_post_sunshaft_blur_amount", "0.5", FCVAR_CHEAT );
 void CSunShaftEffect::Init( void )
 {
-	PrecacheMaterial( "effects/shaders/blurx" );
-	PrecacheMaterial( "effects/shaders/blury" );
-	PrecacheMaterial( "effects/shaders/sunshaft_base" );
-	PrecacheMaterial( "effects/shaders/sunshaft_final" );
+	PrecacheMaterial( "shaders/blurx" );
+	PrecacheMaterial( "shaders/blury" );
+	PrecacheMaterial( "shaders/sunshaft_base" );
+	PrecacheMaterial( "shaders/sunshaft_final" );
 
-	m_SunShaft_BlurX.Init( materials->FindMaterial( "effects/shaders/blurx", TEXTURE_GROUP_PIXEL_SHADERS, true ) );
-	m_SunShaft_BlurY.Init( materials->FindMaterial( "effects/shaders/blury", TEXTURE_GROUP_PIXEL_SHADERS, true ) );
+	m_SunShaft_BlurX.Init( materials->FindMaterial( "shaders/blurx", TEXTURE_GROUP_PIXEL_SHADERS, true ) );
+	m_SunShaft_BlurY.Init( materials->FindMaterial( "shaders/blury", TEXTURE_GROUP_PIXEL_SHADERS, true ) );
 
-	m_SunShaftBlendMat.Init( materials->FindMaterial( "effects/shaders/sunshaft_final", TEXTURE_GROUP_CLIENT_EFFECTS, true ) );
-	m_SunShaftMask.Init( materials->FindMaterial( "effects/shaders/sunshaft_base", TEXTURE_GROUP_PIXEL_SHADERS, true ) );
-	m_SunShaftDebug.Init( materials->FindMaterial( "effects/shaders/sunshaft_base", TEXTURE_GROUP_CLIENT_EFFECTS, true ) );
+	m_SunShaftBlendMat.Init( materials->FindMaterial( "shaders/sunshaft_final", TEXTURE_GROUP_CLIENT_EFFECTS, true ) );
+	m_SunShaftMask.Init( materials->FindMaterial( "shaders/sunshaft_base", TEXTURE_GROUP_PIXEL_SHADERS, true ) );
+	m_SunShaftDebug.Init( materials->FindMaterial( "shaders/sunshaft_base", TEXTURE_GROUP_CLIENT_EFFECTS, true ) );
 }
 
 void CSunShaftEffect::Shutdown( void )
