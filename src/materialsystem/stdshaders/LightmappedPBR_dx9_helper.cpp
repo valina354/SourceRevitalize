@@ -440,6 +440,7 @@ static void DrawLightmappedPBR_DX9_Internal( CBaseVSShader *pShader, IMaterialVa
 		SET_DYNAMIC_PIXEL_SHADER_COMBO( CSM_PERF, MAX( 0, MIN( r_csm_performance.GetInt(), 2 ) ) ); // i just dont know anymore
 		SET_DYNAMIC_PIXEL_SHADER(lightmappedpbr_ps30);
 
+
 		if (bSeamlessMapping)
 		{
 			float scale = params[info.m_nSeamlessMappingScale]->GetFloatValue();
@@ -523,18 +524,18 @@ static void DrawLightmappedPBR_DX9_Internal( CBaseVSShader *pShader, IMaterialVa
 				pShaderAPI->SetPixelShaderConstant( 33, GetDeferredExt()->GetLightData_Global().sizes.Base() );
 			}
 		}
-	}
-	// WRD : This used to be outside of an if-statement, leading to a bunch of crashes on my end...
-	//		 I changed useParallax to a bool and check that here now.
-	if ( bHasParallax )
-	{
-		float flParams[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
-		// Parallax Depth (the strength of the effect)
-		flParams[0] = GetFloatParam( info.ParallaxDepth, params, 3.0f );
-		// Parallax Center (the height at which it's not moved)
-		flParams[1] = GetFloatParam( info.ParallaxCenter, params, 3.0f );
+		// WRD : This used to be outside of an if-statement, leading to a bunch of crashes on my end...
+		//		 I changed useParallax to a bool and check that here now.
+		if ( bHasParallax )
+		{
+			float flParams[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
+			// Parallax Depth (the strength of the effect)
+			flParams[0] = GetFloatParam( info.ParallaxDepth, params, 3.0f );
+			// Parallax Center (the height at which it's not moved)
+			flParams[1] = GetFloatParam( info.ParallaxCenter, params, 3.0f );
 
-		pShaderAPI->SetPixelShaderConstant( 34, flParams, 1 );
+			pShaderAPI->SetPixelShaderConstant( 34, flParams, 1 );
+		}
 	}
 	pShader->Draw();
 }

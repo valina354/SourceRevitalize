@@ -35,6 +35,8 @@ extern IFileSystem *filesystem;
 	static ConVar dispcoll_drawplane( "dispcoll_drawplane", "0" );
 #endif
 
+// client side autojumping
+static ConVar cl_autojump( "cl_autojump", "0", FCVAR_ARCHIVE, "Responsible for whether auto jump is enabled or not." );
 
 // tickcount currently isn't set during prediction, although gpGlobals->curtime and
 // gpGlobals->frametime are. We should probably set tickcount (to player->m_nTickBase),
@@ -49,6 +51,11 @@ ConVar xc_uncrouch_on_jump( "xc_uncrouch_on_jump", "1", FCVAR_ARCHIVE, "Uncrouch
 #if defined( HL2_DLL ) || defined( HL2_CLIENT_DLL )
 ConVar player_limit_jump_speed( "player_limit_jump_speed", "1", FCVAR_REPLICATED );
 #endif
+
+// Accelerated back hopping (un-)fix
+// If enabled, standard backjumping behaviour will be enabled.
+// If disabled, player will save his speed by bunnyjumping (its hard but possible) but will be disallowed to boost
+ConVar sv_abh( "sv_abh", "0", FCVAR_ARCHIVE | FCVAR_REPLICATED, "Accelerated back hopping (1 - on, 0 - off)" );
 
 // option_duck_method is a carrier convar. Its sole purpose is to serve an easy-to-flip
 // convar which is ONLY set by the X360 controller menu to tell us which way to bind the
@@ -2405,10 +2412,11 @@ bool CGameMovement::CheckJumpButton( void )
 		return false;
 #endif
 
-	if ( mv->m_nOldButtons & IN_JUMP )
-		return false;		// don't pogo stick
+	// client autojumping.
+	if ( !cl_autojump.GetBool() && ( mv->m_nOldButtons & IN_JUMP ) )
+		return false; // don't pogo stick.
 
-#ifndef VANCE
+#ifdef VANCE
 	// Cannot jump will in the unduck transition.
 	if ( player->m_Local.m_bDucking && (  player->GetFlags() & FL_DUCKING ) )
 		return false;
@@ -2423,7 +2431,7 @@ bool CGameMovement::CheckJumpButton( void )
     SetGroundEntity( NULL );
 	
 	player->PlayStepSound( (Vector &)mv->GetAbsOrigin(), player->m_pSurfaceData, 1.0, true );
-#ifdef VANCE
+#ifndef VANCE
 	CPASAttenuationFilter filter(player);
 	filter.UsePredictionRules();
 	if (random->RandomInt(0, 4) == 0)
@@ -2477,10 +2485,11 @@ bool CGameMovement::CheckJumpButton( void )
 	}
 
 	// Add a little forward velocity based on your current forward velocity - if you are not sprinting.
-#if defined( HL2_DLL ) || defined( HL2_CLIENT_DLL )
-	if ( gpGlobals->maxClients == 1 )
+	// ABH
+	if ( sv_abh.GetBool() )
 	{
-		CHLMoveData *pMoveData = ( CHLMoveData* )mv;
+		// Add a little forward velocity based on your current forward velocity - if you are not sprinting.
+		CHLMoveData *pMoveData = (CHLMoveData *)mv;
 		Vector vecForward;
 		AngleVectors( mv->m_vecViewAngles, &vecForward );
 		vecForward.z = 0;
@@ -2503,9 +2512,21 @@ bool CGameMovement::CheckJumpButton( void )
 			flSpeedAddition *= -1.0f;
 
 		// Add it on
-		VectorAdd( (vecForward*flSpeedAddition), mv->m_vecVelocity, mv->m_vecVelocity );
+		VectorAdd( ( vecForward * flSpeedAddition ), mv->m_vecVelocity, mv->m_vecVelocity );
 	}
-#endif
+	else
+	{
+		// Cap velocity...
+		Vector velocity = mv->m_vecVelocity;
+		float zspeed = velocity.z;
+		velocity.z = 0;
+
+		if ( velocity.Length() > mv->m_flMaxSpeed )
+		{
+			mv->m_vecVelocity = velocity.Normalized() * mv->m_flMaxSpeed;
+			mv->m_vecVelocity.z = zspeed;
+		}
+	}
 
 	FinishGravity();
 
@@ -3984,7 +4005,7 @@ void CGameMovement::PlayerRoughLandingEffects( float fvol )
 
 		// Play step sound for current texture.
 		player->PlayStepSound( (Vector &)mv->GetAbsOrigin(), player->m_pSurfaceData, fvol, true );
-#ifdef VANCE
+#ifndef VANCE
 		if (fvol > 0.25f)
 		{
 			CPASAttenuationFilter filter(player);
@@ -4288,7 +4309,7 @@ void CGameMovement::StartUnDuckJump( void )
 //-----------------------------------------------------------------------------
 void CGameMovement::SetDuckedEyeOffset( float duckFraction )
 {
-	return; //disabling this function completely, ducking eye offset is now handled by vance_gamemovement
+	
 
  	Vector vDuckHullMin = GetPlayerMins( true );
 	Vector vStandHullMin = GetPlayerMins( false );

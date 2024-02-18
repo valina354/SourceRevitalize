@@ -391,11 +391,14 @@ PS_OUTPUT main(PS_INPUT i) : COLOR
 	float3 tangentSpaceNormal = normalTexel.rgb * 2.0f - 1.0f;
 
 	float3 vWorldNormal = mul( tangentSpaceNormal, i.TBN );
+	float3 surfBase; 
+	float flipSign;
+	float3x3 normalBasis = compute_tangent_frame(normalTexel, i.worldPos_projPosZ.xyz, i.baseTexCoord , tangentSpaceNormal, surfBase, flipSign);
 	
 	#if PARALLAXOCCLUSION
     float3 outgoingLightRay = g_EyePos.xyz - i.worldPos_projPosZ.xyz;
-    //float3 outgoingLightDirectionTS = worldToRelative( outgoingLightRay, surfTangent, surfBase, surfNormal);
-    //float2 correctedTexCoord = parallaxCorrect(i.baseTexCoord, outgoingLightDirectionTS, NormalTextureSampler, PARALLAX_DEPTH, PARALLAX_CENTER);
+    float3 outgoingLightDirectionTS = worldToRelative( outgoingLightRay, tangentSpaceNormal, surfBase, normalTexel);
+    float2 correctedTexCoord = parallaxCorrect(i.baseTexCoord, outgoingLightDirectionTS, BumpmapSampler, PARALLAX_DEPTH, PARALLAX_CENTER);
 #else
     float2 correctedTexCoord = i.baseTexCoord;
 #endif

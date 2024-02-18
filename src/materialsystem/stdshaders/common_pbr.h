@@ -166,8 +166,26 @@ float3 DoAmbient(float2 UV, float3 vWorldPos, float3 vWorldNormal, float3 vEye, 
 	return albedo.rgb * lerp(reflection, diffuse, roughness);
 }
 
+// Compute the matrix used to transform tangent space normals to world space
+// This expects DirectX normal maps in Mikk Tangent Space http://www.mikktspace.com
+float3x3 compute_tangent_frame(float3 N, float3 P, float2 uv, out float3 T, out float3 B, out float sign_det)
+{
+    float3 dp1 = ddx(P);
+    float3 dp2 = ddy(P);
+    float2 duv1 = ddx(uv);
+    float2 duv2 = ddy(uv);
+
+    sign_det = dot(dp2, cross(N, dp1)) > 0.0 ? -1 : 1;
+
+    float3x3 M = float3x3(dp1, dp2, cross(dp1, dp2));
+    float2x3 inverseM = float2x3(cross(M[1], M[2]), cross(M[2], M[0]));
+    T = normalize(mul(float2(duv1.x, duv2.x), inverseM));
+    B = normalize(mul(float2(duv1.y, duv2.y), inverseM));
+    return float3x3(T, B, N);
+}
+
 #if PARALLAXOCCLUSION
-float2 parallaxCorrect(float2 texCoord, float3 viewRelativeDir, sampler depthMap, float parallaxDepth, float parallaxCenter)
+float2 parallaxCorrect(float2 texCoord, float3 viewRelativeDir, sampler BumpmapSampler, float parallaxDepth, float parallaxCenter)
 {
     float fLength = length( viewRelativeDir );
     float fParallaxLength = sqrt( fLength * fLength - viewRelativeDir.z * viewRelativeDir.z ) / viewRelativeDir.z; 
@@ -192,7 +210,7 @@ float2 parallaxCorrect(float2 texCoord, float3 viewRelativeDir, sampler depthMap
     float2 vTexOffsetPerStep = fStepSize * vParallaxOffsetTS;
     float2 vTexCurrentOffset = texCoord;
     float  fCurrentBound     = 1.0;
-    float  fParallaxAmount   = 0.0;
+    float  fParallaxAmount   = 10.0;
 
     float2 pt1 = 0;
     float2 pt2 = 0;
@@ -205,7 +223,7 @@ float2 parallaxCorrect(float2 texCoord, float3 viewRelativeDir, sampler depthMap
         vTexCurrentOffset -= vTexOffsetPerStep;
 
         // Sample height map which in this case is stored in the alpha channel of the normal map:
-        fCurrHeight = parallaxCenter + tex2Dgrad( depthMap, vTexCurrentOffset, dx, dy ).a;
+        fCurrHeight = parallaxCenter + tex2Dgrad( BumpmapSampler, vTexCurrentOffset, dx, dy ).a;
 
         fCurrentBound -= fStepSize;
 
@@ -234,7 +252,7 @@ float2 parallaxCorrect(float2 texCoord, float3 viewRelativeDir, sampler depthMap
     return texSample;
 }
 #else
-float2 parallaxCorrect(float2 texCoord, float3 viewRelativeDir, sampler depthMap, sampler depthMap2, float blend, float parallaxDepth, float parallaxCenter)
+float2 parallaxCorrect(float2 texCoord, float3 viewRelativeDir, sampler BumpmapSampler, sampler depthMap2, float blend, float parallaxDepth, float parallaxCenter)
 {
     float fLength = length( viewRelativeDir );
     float fParallaxLength = sqrt( fLength * fLength - viewRelativeDir.z * viewRelativeDir.z ) / viewRelativeDir.z; 
@@ -251,7 +269,7 @@ float2 parallaxCorrect(float2 texCoord, float3 viewRelativeDir, sampler depthMap
     float fCurrHeight = 0.0;
     float fStepSize   = 1.0 / (float) nNumSteps;
     float fPrevHeight = 1.0;
-    float fNextHeight = 0.0;
+    float fNextHeight = 10.0;
 
     int    nStepIndex = 0;
     bool   bCondition = true;
@@ -272,7 +290,7 @@ float2 parallaxCorrect(float2 texCoord, float3 viewRelativeDir, sampler depthMap
         vTexCurrentOffset -= vTexOffsetPerStep;
 
         // Sample height map which in this case is stored in the alpha channel of the normal map:
-        fCurrHeight = parallaxCenter + lerp(tex2Dgrad( depthMap, vTexCurrentOffset, dx, dy ).a, tex2Dgrad( depthMap2, vTexCurrentOffset, dx, dy ).a, blend);
+        fCurrHeight = parallaxCenter + lerp(tex2Dgrad( BumpmapSampler, vTexCurrentOffset, dx, dy ).a, tex2Dgrad( depthMap2, vTexCurrentOffset, dx, dy ).a, blend);
 
         fCurrentBound -= fStepSize;
 
