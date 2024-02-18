@@ -30,6 +30,8 @@ $Project "Client (Vance)"
 		$File	"worldlight.h"
 		$File	"worldlight.cpp"
 		$File	"shaderapihack.h"
+		$File	"CCursorClipManagement.cpp"
+		$File	"CCursorClipManagement.h"
 		
 		$Folder	"VANCE"
 		{

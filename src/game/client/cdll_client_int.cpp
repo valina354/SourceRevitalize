@@ -107,6 +107,7 @@
 #include "vgui/IVGui.h"
 #include "ixboxsystem.h"
 #include "ipresence.h"
+#include "CCursorClipManagement.h"
 #include "engine/imatchmaking.h"
 #include "cdll_bounded_cvars.h"
 #include "matsys_controls/matsyscontrols.h"
@@ -1366,6 +1367,7 @@ void CHLClient::PostInit()
 		}
 	}
 #endif // GAMEPADUI
+	CCursorClipManagement::Init();
 }
 
 
@@ -2505,6 +2507,7 @@ void OnRenderEnd()
 	UpdatePVSNotifiers();
 
 	DisplayBoneSetupEnts();
+	g_pCursorClipManager->Think();
 }
 
 

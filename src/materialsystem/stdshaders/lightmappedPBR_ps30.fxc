@@ -394,14 +394,7 @@ PS_OUTPUT main(PS_INPUT i) : COLOR
 	float3 surfBase; 
 	float flipSign;
 	float3x3 normalBasis = compute_tangent_frame(normalTexel, i.worldPos_projPosZ.xyz, i.baseTexCoord , tangentSpaceNormal, surfBase, flipSign);
-	
-	#if PARALLAXOCCLUSION
-    float3 outgoingLightRay = g_EyePos.xyz - i.worldPos_projPosZ.xyz;
-    float3 outgoingLightDirectionTS = worldToRelative( outgoingLightRay, tangentSpaceNormal, surfBase, normalTexel);
-    float2 correctedTexCoord = parallaxCorrect(i.baseTexCoord, outgoingLightDirectionTS, BumpmapSampler, PARALLAX_DEPTH, PARALLAX_CENTER);
-#else
-    float2 correctedTexCoord = i.baseTexCoord;
-#endif
+
 	
     PS_OUTPUT output = (PS_OUTPUT)0;
     
@@ -489,6 +482,14 @@ PS_OUTPUT main(PS_INPUT i) : COLOR
     output.Normal = float4(vWorldNormal.xyz, 1.0f);
     output.MRAO = float4(metallicMap, roughnessMap, AOSample, 1.0f);
     output.Albedo = float4(baseColor.xyz, 1.0f);
+#endif
+	
+	#if PARALLAXOCCLUSION
+    float3 outgoingLightRay = g_EyePos.xyz - i.worldPos_projPosZ.xyz;
+    float3 outgoingLightDirectionTS = worldToRelative( outgoingLightRay, tangentSpaceNormal, surfBase, normalTexel);
+    float2 correctedTexCoord = parallaxCorrect(i.baseTexCoord, outgoingLightDirectionTS, BumpmapSampler, PARALLAX_DEPTH, PARALLAX_CENTER);
+#else
+    float2 correctedTexCoord = i.baseTexCoord;
 #endif
 	
     return output;

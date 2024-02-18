@@ -48,7 +48,7 @@
 #include <convar.h>
 #include "ienginevgui.h"
 #include "iclientmode.h"
-
+#include "../CCursorClipManagement.h"
 #include "tier0/etwprof.h"
 
 #if defined( REPLAY_ENABLED )
@@ -231,6 +231,7 @@ void CBaseViewport::OnScreenSizeChanged(int iOldWide, int iOldTall)
 	{
 		ShowPanel( PANEL_SPECGUI, true );
 	}
+	g_pCursorClipManager->SetLockAction( CURSOR_CLIPMANAGEMENT_RELOCKREQUIRED );
 }
 
 void CBaseViewport::CreateDefaultPanels( void )

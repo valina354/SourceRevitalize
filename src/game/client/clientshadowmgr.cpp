@@ -1350,7 +1350,8 @@ bool CClientShadowMgr::Init()
 
 	SetShadowBlobbyCutoffArea(0.005);
 
-	m_nMaxDepthTextureShadows = 64;	// Maximum of 64 Projected Textures in one frame, a bit overkill
+	#define MAX_PROJECTED_TEXTURE 16
+	m_nMaxDepthTextureShadows = MAX_PROJECTED_TEXTURE; // Maximum of 16 Projected Textures in one frame, a bit overkill
 
 	bool bLowEnd = (g_pMaterialSystemHardwareConfig->GetDXSupportLevel() < 80);
 
