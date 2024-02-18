@@ -269,7 +269,7 @@ float2 parallaxCorrect(float2 texCoord, float3 viewRelativeDir, sampler BumpmapS
     float fCurrHeight = 0.0;
     float fStepSize   = 1.0 / (float) nNumSteps;
     float fPrevHeight = 1.0;
-    float fNextHeight = 10.0;
+    float fNextHeight = 0.0;
 
     int    nStepIndex = 0;
     bool   bCondition = true;
