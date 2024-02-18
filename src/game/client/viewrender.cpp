@@ -168,6 +168,7 @@ static ConVar mat_clipz( "mat_clipz", "1" );
 static ConVar r_screenfademinsize( "r_screenfademinsize", "0" );
 static ConVar r_screenfademaxsize( "r_screenfademaxsize", "0" );
 static ConVar cl_drawmonitors( "cl_drawmonitors", "1" );
+ConVar r_post_sunshaft( "r_post_sunshaft", "0", FCVAR_ARCHIVE, 0 );
 static ConVar r_eyewaterepsilon( "r_eyewaterepsilon", "10.0f", FCVAR_CHEAT );
 
 static ConVar r_csm_angle("r_csm_angle", "0");
