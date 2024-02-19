@@ -5,6 +5,12 @@
 
 #include "common_vs_fxc.h"
 
+#define WAVE_FREQUENCY_X 10.0  // Adjust frequency for x-axis wave motion
+#define WAVE_FREQUENCY_Y 10.0  // Adjust frequency for y-axis wave motion
+#define WAVE_AMPLITUDE_Y 0.2   // Adjust amplitude for y-axis waving
+#define WAVE_AMPLITUDE_Z 0.2   // Adjust amplitude for z-axis waving
+
+
 const float4 cBumpTexCoordTransform[2]	:  register( SHADER_SPECIFIC_CONST_1 );
 const float4 TexOffsets	:  register( SHADER_SPECIFIC_CONST_3 );
 
@@ -111,6 +117,16 @@ VS_OUTPUT main( const VS_INPUT v )
 
 	o.lightmapTexCoord3.xy = lightmapTexCoord3;
 #endif
+
+    // Calculate waving effect (modifying z-component)
+    float waveOffset = sin(TexOffsets.x + v.vPos.x * WAVE_FREQUENCY_X + v.vPos.y * WAVE_FREQUENCY_Y);
+    float waveOffsetY = sin(TexOffsets.x + v.vPos.x * WAVE_FREQUENCY_X);
+    float waveOffsetZ = sin(TexOffsets.x + v.vPos.y * WAVE_FREQUENCY_Y);
+    float3 newPos = v.vPos.xyz + float3(0, waveOffsetY * WAVE_AMPLITUDE_Y, waveOffsetZ * WAVE_AMPLITUDE_Z);
+
+    // Update vertex position
+    o.vProjPos = o.vProjPos_POSITION = mul(float4(newPos, 1.0), cModelViewProj);
+
 
 	return o;
 }

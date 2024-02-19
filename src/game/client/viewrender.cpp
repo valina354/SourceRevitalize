@@ -83,6 +83,8 @@
 #include "c_light_manager.h"
 #include "callqueue.h"
 
+#include "ShaderEditor/ShaderEditorSystem.h"
+
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
 
@@ -873,8 +875,10 @@ CLIENTEFFECT_REGISTER_BEGIN( PrecachePostProcessingEffects )
 	CLIENTEFFECT_MATERIAL( "dev/pyro_post" )
 #endif
 
-	CLIENTEFFECT_MATERIAL( "effects/shaders/screen_blurx" )
-	CLIENTEFFECT_MATERIAL( "effects/shaders/screen_blury" )
+	CLIENTEFFECT_MATERIAL( "shaders/bokeh" )
+
+	CLIENTEFFECT_MATERIAL( "shaders/screen_blurx" )
+	CLIENTEFFECT_MATERIAL( "shaders/screen_blury" )
 
 CLIENTEFFECT_REGISTER_END_CONDITIONAL( engine->GetDXSupportLevel() >= 90 )
 
@@ -1015,7 +1019,7 @@ CViewRender::CViewRender()
 // Purpose: 
 // Output : Returns true on success, false on failure.
 //-----------------------------------------------------------------------------
-inline bool CViewRender::ShouldDrawEntities( void )
+bool CViewRender::ShouldDrawEntities( void )
 {
 	return ( !m_pDrawEntities || (m_pDrawEntities->GetInt() != 0) );
 }
@@ -1693,6 +1697,12 @@ void CViewRender::ViewDrawScene( bool bDrew3dSkybox, SkyboxVisibility_t nSkyboxV
 
 	DrawWorldAndEntities( drawSkybox, view, nClearFlags, pCustomVisibility );
 
+	VisibleFogVolumeInfo_t fogVolumeInfo;
+	render->GetVisibleFogVolume( view.origin, &fogVolumeInfo );
+	WaterRenderInfo_t info;
+	DetermineWaterRenderInfo( fogVolumeInfo, info );
+	g_ShaderEditorSystem->CustomViewRender( &g_CurrentViewID, fogVolumeInfo, info );
+
 	// Disable fog for the rest of the stuff
 	DisableFog();
 
@@ -2322,6 +2332,7 @@ void CViewRender::RenderView( const CViewSetup &view, int nClearFlags, int whatT
 		if ((bDrew3dSkybox = pSkyView->Setup(view, &nClearFlags, &nSkyboxVisible)) != false)
 		{
 			AddViewToScene(pSkyView);
+			g_ShaderEditorSystem->UpdateSkymask( false, view.x, view.y, view.width, view.height );
 		}
 		SafeRelease(pSkyView);
 
@@ -2416,6 +2427,8 @@ void CViewRender::RenderView( const CViewSetup &view, int nClearFlags, int whatT
 		// Now actually draw the viewmodel
 		DrawViewModels( view, whatToDraw & RENDERVIEW_DRAWVIEWMODEL );
 
+		g_ShaderEditorSystem->UpdateSkymask( bDrew3dSkybox, view.x, view.y, view.width, view.height );
+
 		GetLightingManager()->RenderLights(view);
 
 		DrawUnderwaterOverlay();
@@ -2454,6 +2467,8 @@ void CViewRender::RenderView( const CViewSetup &view, int nClearFlags, int whatT
 			}
 			pRenderContext.SafeRelease();
 		}
+
+		g_ShaderEditorSystem->CustomPostRender();
 
 		// And here are the screen-space effects
 
@@ -2734,11 +2749,30 @@ void CViewRender::Render2DEffectsPostHUD( const CViewSetup &view )
 {
 }
 
+ConVar r_post_bokeh( "r_post_bokeh", "1", FCVAR_ARCHIVE );
+ConVar r_post_bokeh_blur_amount( "r_post_bokeh_blur_amount", "5.0", FCVAR_CHEAT );
+
+void CViewRender::PerformBokeh( int x, int y, int width, int height )
+{
+	if ( !r_post_bokeh.GetBool() )
+		return;
+
+	IMaterialVar *var;
+
+	IMaterial *pBokeh = materials->FindMaterial( "shaders/bokeh", TEXTURE_GROUP_PIXEL_SHADERS, true );
+
+	var = pBokeh->FindVar( "$MUTABLE_01", NULL );
+	var->SetFloatValue( r_post_bokeh_blur_amount.GetFloat() );
+
+	DrawScreenEffectMaterial( pBokeh, x, y, width, height );
+}
+
+
 ConVar r_post_reload_blur( "r_post_reload_blur", "1", FCVAR_ARCHIVE );
 ConVar r_post_reload_blur_amount( "r_post_reload_blur_amount", "2.0", FCVAR_CHEAT );
 ConVar r_post_reload_blur_rate( "r_post_reload_blur_rate", "0.1", FCVAR_CHEAT );
 
-void CViewRender::PerformPreViewmodelPostProcessEffects( int x, int y, int width, int height )
+void CViewRender::PerformReloadBlur( int x, int y, int width, int height )
 {
 	if ( !r_post_reload_blur.GetBool() )
 		return;
@@ -2782,6 +2816,12 @@ void CViewRender::PerformPreViewmodelPostProcessEffects( int x, int y, int width
 
 	DrawScreenEffectMaterial( pBlurX, x, y, width, height );
 	DrawScreenEffectMaterial( pBlurY, x, y, width, height );
+}
+
+void CViewRender::PerformPreViewmodelPostProcessEffects( int x, int y, int width, int height )
+{
+	PerformBokeh( x, y, width, height );
+	PerformReloadBlur( x, y, width, height );
 }
 
 //-----------------------------------------------------------------------------
@@ -3441,6 +3481,8 @@ void CViewRender::ViewDrawScene_Intro( const CViewSetup &view, int nClearFlags, 
 
 	// issue the pixel visibility tests
 	PixelVisibility_EndCurrentView();
+
+	
 
 	// And here are the screen-space effects
 	PerformScreenSpaceEffects( 0, 0, view.width, view.height );

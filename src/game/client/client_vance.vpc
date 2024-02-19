@@ -14,7 +14,7 @@ $Configuration
 	$Compiler
 	{
 		$AdditionalIncludeDirectories	"$BASE;$SRCDIR\game\shared\hl2;$SRCDIR\game\shared\episodic;$SRCDIR\game\shared\vance;.\hl2;.\episodic;.\vance"
-		$PreprocessorDefinitions		"$BASE;HL2_CLIENT_DLL;HL2_EPISODIC;VANCE;GAMEPADUI"
+		$PreprocessorDefinitions		"$BASE;HL2_CLIENT_DLL;HL2_EPISODIC;VANCE;GAMEPADUI;SOURCE_2013"
 	}
 }
 
@@ -32,6 +32,25 @@ $Project "Client (Vance)"
 		$File	"shaderapihack.h"
 		$File	"CCursorClipManagement.cpp"
 		$File	"CCursorClipManagement.h"
+		
+		$Folder "Shader Editor" [$WIN32]
+		{
+			$Folder	"Header Files"
+			{
+				$File	"$SRCDIR\game\client\ShaderEditor\ISEdit_ModelRender.h"
+				$File	"$SRCDIR\game\client\ShaderEditor\IVShaderEditor.h"
+				$File	"$SRCDIR\game\client\ShaderEditor\ShaderEditorSystem.h"
+				$File	"$SRCDIR\game\client\ShaderEditor\SEdit_ModelRender.h"
+				//$File	"$SRCDIR\game\client\ShaderEditor\Grass\CGrassCluster.h"
+			}
+		
+			$Folder	"Implementation Files"
+			{
+				$File	"$SRCDIR\game\client\ShaderEditor\ShaderEditorSystem.cpp"
+				$File	"$SRCDIR\game\client\ShaderEditor\SEdit_ModelRender.cpp"
+				//$File	"$SRCDIR\game\client\ShaderEditor\Grass\CGrassCluster.cpp"
+			}
+		}
 		
 		$Folder	"VANCE"
 		{
