@@ -277,6 +277,8 @@ BEGIN_DATADESC( CBasePlayer )
 	DEFINE_FIELD( m_iDefaultFOV,FIELD_INTEGER ),
 	DEFINE_FIELD( m_flVehicleViewFOV, FIELD_FLOAT ),
 
+	DEFINE_FIELD( m_bShouldDrawBloodOverlay, FIELD_BOOLEAN ),
+
 	//DEFINE_FIELD( m_fOnTarget, FIELD_BOOLEAN ), // Don't need to restore
 	DEFINE_FIELD( m_iObserverMode, FIELD_INTEGER ),
 	DEFINE_FIELD( m_iObserverLastMode, FIELD_INTEGER ),
@@ -585,6 +587,8 @@ CBasePlayer::CBasePlayer( )
 	Weapon_SetLast( NULL );
 	m_bitsDamageType = 0;
 
+	m_bShouldDrawBloodOverlay = false;
+
 	m_bForceOrigin = false;
 	m_hVehicle = NULL;
 	m_pCurrentCommand = NULL;
@@ -851,6 +855,7 @@ void CBasePlayer::DeathSound( const CTakeDamageInfo &info )
 
 int CBasePlayer::TakeHealth( float flHealth, int bitsDamageType )
 {
+	m_bShouldDrawBloodOverlay = false;
 	// clear out any damage types we healed.
 	// UNDONE: generic health should not heal any
 	// UNDONE: time-based damage
@@ -2008,6 +2013,9 @@ void CBasePlayer::WaterMove()
 			m_bitsDamageType &= ~DMG_DROWN;
 		}
 	}
+
+	if ( GetWaterLevel() > WL_Waist )
+		m_bShouldDrawBloodOverlay = false;
 
 	UpdateUnderwaterState();
 }
@@ -8021,6 +8029,7 @@ void SendProxy_CropFlagsToPlayerFlagBitsLength( const SendProp *pProp, const voi
 		SendPropEHandle	(SENDINFO(m_hZoomOwner) ),
 		SendPropArray	( SendPropEHandle( SENDINFO_ARRAY( m_hViewModel ) ), m_hViewModel ),
 		SendPropString	(SENDINFO(m_szLastPlaceName) ),
+		SendPropBool( SENDINFO(m_bShouldDrawBloodOverlay) ),
 
 #if defined USES_ECON_ITEMS
 		SendPropUtlVector( SENDINFO_UTLVECTOR( m_hMyWearables ), MAX_WEARABLES_SENT_FROM_SERVER, SendPropEHandle( NULL, 0 ) ),

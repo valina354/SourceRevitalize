@@ -217,7 +217,7 @@ float3 DoFlashlight(float3 vWorldNormal, float3 vWorldPos, float3 albedo, float 
 #elif CSM == 1
 float DoCSM( sampler DepthSampler, const float3 vProjCoords, float vViewDepth, float LdN )
 {
-	float2 rtSize = g_CascadeResolution;//float2(4096.0f * 4.0f, 4096.0f) * 2.0f;
+	float2 rtSize = float2(2048.0f * 4.0f, 2048.0f) * 2.0f;
 	float fEpsilonX    = 1.0f / rtSize.y;
 	float fEpsilonY    = 1.0f / rtSize.x;
 

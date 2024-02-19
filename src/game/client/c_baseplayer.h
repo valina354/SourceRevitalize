@@ -144,6 +144,8 @@ public:
 	int		GetBonusProgress() const { return m_iBonusProgress; }
 	int		GetBonusChallenge() const { return m_iBonusChallenge; }
 
+	bool m_bShouldDrawBloodOverlay;
+
 	// observer mode
 	virtual int			GetObserverMode() const;
 	void				SetObserverMode ( int iNewMode );

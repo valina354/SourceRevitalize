@@ -32,6 +32,7 @@ $Project "Client (Vance)"
 		$File	"shaderapihack.h"
 		$File	"CCursorClipManagement.cpp"
 		$File	"CCursorClipManagement.h"
+		$File	"bloodoverlayproxy.cpp"
 		
 		$Folder "Shader Editor" [$WIN32]
 		{
