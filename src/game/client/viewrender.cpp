@@ -1480,8 +1480,8 @@ bool CViewRender::UpdateShadowDepthTexture( ITexture *pRenderTarget, ITexture *p
 }
 
 static ConVar r_csm_size("r_csm_size", "512");
-static ConVar r_csm_bias("r_csm_bias", "0.0002");
-static ConVar r_csm_slopescalebias("r_csm_slopescale_depthbias", "3");
+static ConVar r_csm_bias("r_csm_bias", "0");
+static ConVar r_csm_slopescalebias("r_csm_slopescale_depthbias", "0");
 static ConVar r_csm_performance("r_csm_performance", "0");
 void CViewRender::UpdateLighting(const CViewSetup& view)
 {
