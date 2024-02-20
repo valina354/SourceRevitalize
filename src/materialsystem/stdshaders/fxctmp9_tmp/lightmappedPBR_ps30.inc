@@ -177,7 +177,7 @@ private:
 public:
 	void SetPARALLAXOCCLUSION( int i )
 	{
-		Assert( i >= 0 && i <= 1 );
+		Assert( i >= 1 && i <= 1 );
 		m_nPARALLAXOCCLUSION = i;
 #ifdef _DEBUG
 		m_bPARALLAXOCCLUSION = true;

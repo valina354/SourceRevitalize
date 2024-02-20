@@ -17,6 +17,7 @@ ITexture *GetFullscreenTexture( void );
 ITexture *GetCameraTexture( void );
 //Dynamic Scope Texture
 ITexture *GetScopeTexture();
+ITexture *GetSunShaftBlackTexture( void );
 ITexture *GetFullFrameDepthTexture( void );
 ITexture* GetFullFrameHDRTexture(void);
 ITexture* GetScopeTexture(void);

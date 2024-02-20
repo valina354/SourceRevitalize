@@ -96,6 +96,21 @@ ITexture *GetScopeTexture( void )
 }
 
 //=============================================================================
+// Sun Shaft Black Texture
+//=============================================================================
+static CTextureReference s_pSunShaftBlackTexture;
+ITexture *GetSunShaftBlackTexture( void )
+{ 
+	if ( !s_pSunShaftBlackTexture )
+	{
+		s_pSunShaftBlackTexture.Init( materials->FindTexture( "_rt_SunShaftBlack", TEXTURE_GROUP_RENDER_TARGET ) );
+		Assert( !IsErrorTexture( s_pSunShaftBlackTexture ) );
+		AddReleaseFunc();
+	}
+	return s_pSunShaftBlackTexture;
+}
+
+//=============================================================================
 // Full Frame Depth Texture
 //=============================================================================
 static CTextureReference s_pFullFrameDepthTexture;

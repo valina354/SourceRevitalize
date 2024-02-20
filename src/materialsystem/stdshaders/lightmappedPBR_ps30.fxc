@@ -12,7 +12,7 @@
 // STATIC: "SEAMLESS"                   "0..1"
 // STATIC: "BUMPMAP"                    "0..1"
 // STATIC: "BUMPALPHASMOOTHNESS"		"0..1"
-// STATIC: "PARALLAXOCCLUSION"          "0..1"
+// STATIC: "PARALLAXOCCLUSION"          "1..1"
 
 // DYNAMIC: "WRITEWATERFOGTODESTALPHA"  "0..1"
 // DYNAMIC: "PIXELFOGTYPE"				"0..1"
@@ -395,19 +395,7 @@ PS_OUTPUT main(PS_INPUT i) : COLOR
 	float flipSign;
 	float3x3 normalBasis = compute_tangent_frame(normalTexel, i.worldPos_projPosZ.xyz, i.baseTexCoord , tangentSpaceNormal, surfBase, flipSign);
 	
-	float3 outgoingLightRay = g_EyePos.xyz - i.worldPos_projPosZ.xyz;
-    float3 outgoingLightDirectionTS = worldToRelative(outgoingLightRay, tangentSpaceNormal, surfBase, normalTexel);
-    float2 correctedTexCoord;
 
-    #if PARALLAXOCCLUSION
-    correctedTexCoord = parallaxCorrect(i.baseTexCoord, outgoingLightDirectionTS, BumpmapSampler, PARALLAX_DEPTH, PARALLAX_CENTER);
-    #else
-    correctedTexCoord = i.baseTexCoord;
-    #endif
-	
-	// Perform texture sampling with correctedTexCoord
-    float4 Albedo = tex2D(BaseTextureSampler, correctedTexCoord.xy);
-    float4 Normal = tex2D(BumpmapSampler, correctedTexCoord.xy);
 	
 
 
@@ -502,6 +490,13 @@ PS_OUTPUT main(PS_INPUT i) : COLOR
     output.Albedo = float4(baseColor.xyz, 1.0f);
 #endif
 	
+	#if PARALLAXOCCLUSION
+    float3 outgoingLightRay = g_EyePos.xyz - i.worldPos_projPosZ.xyz;
+    float3 outgoingLightDirectionTS = worldToRelative( outgoingLightRay, tangentSpaceNormal, surfBase, normalTexel);
+    float2 correctedTexCoord = parallaxCorrect(i.baseTexCoord, outgoingLightDirectionTS, BumpmapSampler, PARALLAX_DEPTH, PARALLAX_CENTER);
+#else
+    float2 correctedTexCoord = i.baseTexCoord;
+#endif
 	
     return output;
 #endif
