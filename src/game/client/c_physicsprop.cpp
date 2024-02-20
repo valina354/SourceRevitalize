@@ -37,6 +37,8 @@ C_PhysicsProp::C_PhysicsProp( void )
 
 	// default true so static lighting will get recomputed when we go to sleep
 	m_bAwakeLastTime = true;
+
+	m_bPBR = false;
 }
 
 //-----------------------------------------------------------------------------
@@ -56,6 +58,14 @@ ConVar r_visualizeproplightcaching( "r_visualizeproplightcaching", "0" );
 //-----------------------------------------------------------------------------
 bool C_PhysicsProp::OnInternalDrawModel( ClientModelRenderInfo_t *pInfo )
 {
+	if ( !BaseClass::OnInternalDrawModel( pInfo ) )
+		return false;
+
+	if ( pInfo->flags & STUDIO_UPDATE_SHADOW_DIR )
+		return true;
+
+	if ( m_bPBR )
+		return true;
 	CreateModelInstance();
 
 	if ( r_PhysPropStaticLighting.GetBool() && m_bAwakeLastTime != m_bAwake )
@@ -92,4 +102,35 @@ bool C_PhysicsProp::OnInternalDrawModel( ClientModelRenderInfo_t *pInfo )
 	m_bAwakeLastTime = m_bAwake;
 
 	return true;
+}
+
+CStudioHdr *C_PhysicsProp::OnNewModel( void )
+{
+	m_bPBR = false;
+
+	CStudioHdr *pHdr = BaseClass::OnNewModel();
+	if ( pHdr )
+	{
+		const model_t *pModel = GetModel();
+		if ( pModel )
+		{
+			int nMaterials = modelinfo->GetModelMaterialCount( pModel );
+			if ( nMaterials > 0 )
+			{
+				IMaterial **ppMaterials = (IMaterial **)stackalloc( sizeof( intp ) * nMaterials );
+				modelinfo->GetModelMaterials( pModel, nMaterials, ppMaterials );
+
+				for ( int i = 0; i < nMaterials; i++ )
+				{
+					if ( Q_stristr( ppMaterials[i]->GetShaderName(), "PBR" ) != 0 )
+					{
+						m_bPBR = true;
+						break;
+					}
+				}
+			}
+		}
+	}
+
+	return pHdr;
 }

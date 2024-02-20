@@ -22,7 +22,7 @@
 // DYNAMIC: "LIGHT_PREVIEW"				"0..2"
 
 // We don't care about those in the editor
-// SKIP: ($CUBEMAP || FLASHLIGHT ) && $LIGHT_PREVIEW
+// SKIP: ($CUBEMAP || $FLASHLIGHT) && $LIGHT_PREVIEW
 
 // SKIP: ($PIXELFOGTYPE == 0) && ($WRITEWATERFOGTODESTALPHA != 0)
 
@@ -37,7 +37,7 @@
 
 // SKIP: $CUBEMAP_SPHERE_LEGACY && ($CUBEMAP == 0)
 
-// SKIP: ($CUBEMAP || FLASHLIGHT )
+// SKIP: ($LIGHTMAP && $FLASHLIGHT)
 
 #include "common_flashlight_fxc.h"
 #include "common_ps_fxc.h"
@@ -108,16 +108,16 @@ float3 DoPBRLights(float3 vEye, float3 vWorldNormal, float3 vWorldPos, float4 al
 		linearColor += DoPBRLight(vWorldPos, vWorldNormal, albedo, cLightInfo[0].pos, cLightInfo[0].color.rgb, vEye, atten.x, metallic, roughness);
 		if ( NUM_LIGHTS > 1 )
 		{
-			linearColor += DoPBRLight( vWorldPos, vWorldNormal, albedo, cLightInfo[1].pos, cLightInfo[1].color.rgb, vEye, atten.x, metallic, roughness);
+			linearColor += DoPBRLight( vWorldPos, vWorldNormal, albedo, cLightInfo[1].pos, cLightInfo[1].color.rgb, vEye, atten.y, metallic, roughness);
 			if ( NUM_LIGHTS > 2 )
 			{
-				linearColor += DoPBRLight( vWorldPos, vWorldNormal, albedo, cLightInfo[2].pos, cLightInfo[2].color.rgb, vEye, atten.x, metallic, roughness);
+				linearColor += DoPBRLight( vWorldPos, vWorldNormal, albedo, cLightInfo[2].pos, cLightInfo[2].color.rgb, vEye, atten.z, metallic, roughness);
 				if ( NUM_LIGHTS > 3 )
 				{
 					// Unpack the 4th light's data from tight constant packing
 					float3 vLight3Color = float3( cLightInfo[0].color.w, cLightInfo[0].pos.w, cLightInfo[1].color.w );
 					float3 vLight3Pos = float3( cLightInfo[1].pos.w, cLightInfo[2].color.w, cLightInfo[2].pos.w );
-					linearColor += DoPBRLight( vWorldPos, vWorldNormal, albedo, vLight3Pos, vLight3Color, vEye, atten.x, metallic, roughness);
+					linearColor += DoPBRLight( vWorldPos, vWorldNormal, albedo, vLight3Pos, vLight3Color, vEye, atten.w, metallic, roughness);
 				}
 			}
 		}

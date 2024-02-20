@@ -33,6 +33,8 @@ $Project "Client (Vance)"
 		$File	"CCursorClipManagement.cpp"
 		$File	"CCursorClipManagement.h"
 		$File	"bloodoverlayproxy.cpp"
+		$File	"tne_RenderTargets.cpp"
+		$File	"tne_RenderTargets.h"
 		
 		$Folder "Shader Editor" [$WIN32]
 		{

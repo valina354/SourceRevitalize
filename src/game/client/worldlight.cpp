@@ -68,14 +68,20 @@ static float Engine_WorldLightDistanceFalloff( const dworldlight_t *wl, const Ve
 		{
 			float dist2, dist;
 
-			dist2 = DotProduct( delta, delta );
-			dist = FastSqrt( dist2 );
+			Vector vecLightToPoint = -delta;
+			dist = VectorNormalize( vecLightToPoint );
 
 			// Cull out stuff that's too far
 			if ( wl->radius != 0 && dist > wl->radius )
 				return 0.0f;
 
-			return 1.0f / ( wl->constant_attn + wl->linear_attn * dist + wl->quadratic_attn * dist2 );
+			dist2 = dist * dist;
+			falloff = 1.f / ( wl->constant_attn + wl->linear_attn * dist + wl->quadratic_attn * dist2 );
+			if ( wl->type == emit_point )
+				return falloff;
+
+			float flDot = DotProduct( vecLightToPoint, wl->normal );
+			return RemapValClamped( flDot, wl->stopdot2, wl->stopdot, 0.f, falloff );
 		}
 	}
 
@@ -226,7 +232,7 @@ bool CWorldLights::GetBrightestLightSource( const Vector &vecPosition, Vector &v
 
 			// If we did hit something, and it wasn't the skybox, then skip
 			// this worldlight
-			if ( !( tr.surface.flags & SURF_SKY ) && !( tr.surface.flags & SURF_SKY2D ) )
+			if ( ( tr.surface.flags & SURF_SKY ) || ( tr.surface.flags & SURF_SKY2D ) )
 			{
 				//engine->Con_NPrintf( i, "%d: skylight: no sight to sun", i );
 				continue;
@@ -246,6 +252,17 @@ bool CWorldLights::GetBrightestLightSource( const Vector &vecPosition, Vector &v
 		float flDistSqr = vecDelta.LengthSqr();
 		float flRadiusSqr = light->radius * light->radius;
 
+		if ( light->type == emit_spotlight )
+		{
+			Vector vecLightToPoint = -vecDelta;
+			VectorNormalize( vecLightToPoint );
+
+			float flDot = DotProduct( vecLightToPoint, light->normal );
+
+			if ( flDot < light->stopdot2 )
+				continue;
+		}
+
 		// Skip lights that are out of our radius
 		if ( flRadiusSqr > 0 && flDistSqr >= flRadiusSqr )
 		{
@@ -261,8 +278,8 @@ bool CWorldLights::GetBrightestLightSource( const Vector &vecPosition, Vector &v
 		}
 
 		// Calculate intensity at our position
-		float flRatio = Engine_WorldLightDistanceFalloff( light, vecDelta );
-		Vector vecIntensity = light->intensity * flRatio;
+		float flRatio = Engine_WorldLightDistanceFalloff( light, vecDelta ) * engine->LightStyleValue( light->style );
+		Vector vecIntensity = light->intensity * flRatio * engine->LightStyleValue( light->style );
 
 		// Is this light more intense than the one we already found?
 		if ( vecIntensity.LengthSqr() <= vecLightBrightness.LengthSqr() )

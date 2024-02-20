@@ -125,7 +125,7 @@ static ConVar r_mapextents( "r_mapextents", "16384", FCVAR_CHEAT,
 						   "Set the max dimension for the map.  This determines the far clipping plane" );
 
 // UNDONE: Delete this or move to the material system?
-ConVar	gl_clear( "gl_clear", "0");
+ConVar	gl_clear( "gl_clear", "1");
 ConVar	gl_clear_randomcolor( "gl_clear_randomcolor", "0", FCVAR_CHEAT, "Clear the back buffer to random colors every frame. Helps spot open seams in geometry." );
 
 static ConVar r_farz( "r_farz", "-1", FCVAR_CHEAT, "Override the far clipping plane. -1 means to use the value in env_fog_controller." );
@@ -355,13 +355,7 @@ void CViewRender::Init( void )
 		TEXTUREFLAGS_CLAMPS | TEXTUREFLAGS_CLAMPT,
 		CREATERENDERTARGETFLAGS_HDR);
 
-	materials->CreateNamedRenderTargetTextureEx(
-		"_rt_Scope",
-		iW, iH, RT_SIZE_FULL_FRAME_BUFFER,
-		IMAGE_FORMAT_RGBA16161616F,
-		MATERIAL_RT_DEPTH_SHARED,
-		TEXTUREFLAGS_CLAMPS | TEXTUREFLAGS_CLAMPT,
-		CREATERENDERTARGETFLAGS_HDR);
+	
 
 	m_NormalBuffer = materials->CreateNamedRenderTargetTextureEx(
 		"_rt_Normals",

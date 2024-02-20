@@ -26,6 +26,9 @@
 // Not a studio flag, but used to flag when we want studio stats
 #define STUDIO_GENERATE_STATS			0x01000000
 
+// Not a studio flag, but used to flag when updating shadow direction
+#define STUDIO_UPDATE_SHADOW_DIR 0x02000000
+
 // Not a studio flag, but used to flag model as using shadow depth material override
 #define STUDIO_SSAODEPTHTEXTURE			0x08000000
 

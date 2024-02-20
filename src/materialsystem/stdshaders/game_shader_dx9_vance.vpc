@@ -78,6 +78,9 @@ $Project "Shaders (VANCE)"
 		$File	"light_volumetrics.cpp"
 		$File	"vance_scope_dx9.cpp"
 		$File	"deferred/IDeferredExt.cpp"
+		
+		$File	"deferred/deferred_volumetricfog.cpp"
+		$File	"deferred/deferred_composite.cpp"
 
 		$File	"vance/light_mesh.cpp"
 		

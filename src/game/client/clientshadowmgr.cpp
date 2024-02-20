@@ -4383,6 +4383,12 @@ void CClientShadowMgr::UpdateShadowDirectionFromLocalLightSource( ClientShadowHa
 		return;
 	}
 
+	if ( ShouldUseParentShadow( pRenderable ) )
+	{
+		shadow.m_LightPosLerp = FLT_MAX;
+		return;
+	}
+
 	Vector bbMin, bbMax;
 	pRenderable->GetRenderBoundsWorldspace( bbMin, bbMax );
 	Vector origin( 0.5f * ( bbMin + bbMax ) );
@@ -4391,18 +4397,50 @@ void CClientShadowMgr::UpdateShadowDirectionFromLocalLightSource( ClientShadowHa
 	Vector lightPos;
 	Vector lightBrightness;
 
+	ClientModelRenderInfo_t shadowModelInfo;
+	shadowModelInfo.flags = STUDIO_UPDATE_SHADOW_DIR;
+
+	C_BaseEntity *pEnt = ClientEntityList().GetBaseEntityFromHandle( shadow.m_Entity );
+	if ( pEnt )
+	{
+		C_BaseAnimating *pAnim = pEnt->GetBaseAnimating();
+		if ( pAnim )
+		{
+			pAnim->OnInternalDrawModel( &shadowModelInfo );
+		}
+	}
+
 	if ( shadow.m_LightPosLerp >= 1.0f ) // Skip finding new light source if we're in the middle of a lerp
 	{
 		// Calculate minimum brightness squared
 		float flMinBrightnessSqr = r_worldlight_mincastintensity.GetFloat();
 		flMinBrightnessSqr *= flMinBrightnessSqr;
 
-		if ( g_pWorldLights->GetBrightestLightSource( pRenderable->GetRenderOrigin(), lightPos, lightBrightness ) == false ||
+		Vector vTransformedOrigin = origin;
+		if ( shadowModelInfo.pLightingOrigin )
+			vTransformedOrigin = *shadowModelInfo.pLightingOrigin;
+		else if ( shadowModelInfo.pLightingOffset )
+			VectorTransform( origin, *shadowModelInfo.pLightingOffset, vTransformedOrigin );
+
+		if ( g_pWorldLights->GetBrightestLightSource( vTransformedOrigin + Vector( 0, 0, 8.f ), lightPos, lightBrightness ) == false ||
 			 lightBrightness.LengthSqr() < flMinBrightnessSqr )
 		{
 			// Didn't find a light source at all, use default shadow direction
 			// TODO: Could switch to using blobby shadow in this case
 			lightPos.Init( FLT_MAX, FLT_MAX, FLT_MAX );
+		}
+		else if ( shadowModelInfo.pLightingOrigin )
+		{
+			Vector vDelta = origin - vTransformedOrigin;
+			lightPos += vDelta;
+		}
+		else if ( shadowModelInfo.pLightingOffset )
+		{
+			matrix3x4_t matInvLightingOffset;
+			MatrixInvert( *shadowModelInfo.pLightingOffset, matInvLightingOffset );
+
+			Vector vOldLightPos = lightPos;
+			VectorTransform( vOldLightPos, matInvLightingOffset, lightPos );
 		}
 	}
 

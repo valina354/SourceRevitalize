@@ -197,7 +197,7 @@ float2 parallaxCorrect(float2 texCoord, float3 viewRelativeDir, sampler BumpmapS
     float2 dx = ddx( texCoord );
     float2 dy = ddy( texCoord );
 
-    int nNumSteps = 20;
+    int nNumSteps = 0.01;
 
     float fCurrHeight = 0.0;
     float fStepSize   = 1.0 / (float) nNumSteps;
@@ -264,7 +264,7 @@ float2 parallaxCorrect(float2 texCoord, float3 viewRelativeDir, sampler BumpmapS
     float2 dx = ddx( texCoord );
     float2 dy = ddy( texCoord );
 
-    int nNumSteps = 20;
+    int nNumSteps = 0.01;
 
     float fCurrHeight = 0.0;
     float fStepSize   = 1.0 / (float) nNumSteps;
