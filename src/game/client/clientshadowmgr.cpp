@@ -873,10 +873,26 @@ private:
 
 public:
 	// NOTE: this will ONLY return SHADOWS_NONE, SHADOWS_SIMPLE, or SHADOW_RENDER_TO_TEXTURE.
-	ShadowType_t GetActualShadowCastType(ClientShadowHandle_t handle) const;
-	ShadowHandle_t GetShadowHandle( ClientShadowHandle_t clienthandle ) { return m_Shadows[clienthandle].m_ShadowHandle; };
-	int GetNumShadowDepthtextures()	{ return m_DepthTextureCache.Count(); }
-	CTextureReference GetShadowDepthTex( int num ) { return m_DepthTextureCache[num]; }
+public:
+	ShadowHandle_t GetShadowHandle( ClientShadowHandle_t clienthandle )
+	{
+		return m_Shadows[clienthandle].m_ShadowHandle;
+	};
+	int GetNumShadowDepthtextures()
+	{
+		return m_DepthTextureCache.Count();
+	};
+	CTextureReference GetShadowDepthTex( int num )
+	{
+		return m_DepthTextureCache[num];
+	};
+
+	ShadowType_t GetActualShadowCastType( ClientShadowHandle_t handle ) const;
+
+private:
+	//ShadowHandle_t GetShadowHandle( ClientShadowHandle_t clienthandle ) { return m_Shadows[clienthandle].m_ShadowHandle; };
+	//int GetNumShadowDepthtextures()	{ return m_DepthTextureCache.Count(); }
+	//CTextureReference GetShadowDepthTex( int num ) { return m_DepthTextureCache[num]; }
 
 	virtual ShadowHandle_t GetShadowDepthHandle(int num)
 	{

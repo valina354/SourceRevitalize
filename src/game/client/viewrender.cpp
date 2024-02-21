@@ -49,7 +49,8 @@
 #include "KeyValues.h"
 #include "renderparm.h"
 #include "studio_stats.h"
-#include "con_nprint.h"
+#include "con_nprint.h"	
+#include "ShaderEditor/Grass/CGrassCluster.h"
 #include "clientmode_shared.h"
 #include "sourcevr/isourcevirtualreality.h"
 #include "client_virtualreality.h"
@@ -4573,6 +4574,7 @@ void CRendering3dView::DrawOpaqueRenderables( ERenderDepthMode DepthMode )
 			//
 			RopeManager()->DrawRenderCache( bShadowDepth );
 			g_pParticleSystemMgr->DrawRenderCache( bShadowDepth );
+			CGrassClusterManager::GetInstance()->RenderClusters( DepthMode == DEPTH_MODE_SHADOW );
 
 			return;
 		}
