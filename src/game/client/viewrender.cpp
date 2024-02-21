@@ -2837,6 +2837,7 @@ void CViewRender::PerformReloadBlur( int x, int y, int width, int height )
 void CViewRender::PerformPreViewmodelPostProcessEffects( int x, int y, int width, int height )
 {
 	PerformBokeh( x, y, width, height );
+	PerformDust( x, y, width, height );
 	PerformReloadBlur( x, y, width, height );
 }
 
