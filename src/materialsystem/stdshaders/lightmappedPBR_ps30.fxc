@@ -12,7 +12,7 @@
 // STATIC: "SEAMLESS"                   "0..1"
 // STATIC: "BUMPMAP"                    "0..1"
 // STATIC: "BUMPALPHASMOOTHNESS"		"0..1"
-// STATIC: "PARALLAXOCCLUSION"          "1..1"
+// STATIC: "PARALLAXOCCLUSION"          "0..1"
 
 // DYNAMIC: "WRITEWATERFOGTODESTALPHA"  "0..1"
 // DYNAMIC: "PIXELFOGTYPE"				"0..1"
