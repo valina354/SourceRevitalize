@@ -58,10 +58,10 @@ ssr_ps30.fxc
 
 
 
-VertexlitPBR_ps30.fxc
+//VertexlitPBR_ps30.fxc
 //vertexlitPBR_vs30.fxc
 
-//lightmappedPBR_ps30.fxc
+lightmappedPBR_ps30.fxc
 //lightmappedPBR_vs30.fxc
 
 //water

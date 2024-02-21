@@ -184,6 +184,15 @@ float3x3 compute_tangent_frame(float3 N, float3 P, float2 uv, out float3 T, out 
     return float3x3(T, B, N);
 }
 
+float3 worldToRelative(float3 worldVector, float3 surfTangent, float3 surfBasis, float3 surfNormal)
+{
+   return float3(
+       dot(worldVector, surfTangent),
+       dot(worldVector, surfBasis),
+       dot(worldVector, surfNormal)
+   );
+}
+
 #if PARALLAXOCCLUSION
 float2 parallaxCorrect(float2 texCoord, float3 viewRelativeDir, sampler BumpmapSampler, float parallaxDepth, float parallaxCenter)
 {
@@ -319,12 +328,3 @@ float2 parallaxCorrect(float2 texCoord, float3 viewRelativeDir, sampler BumpmapS
     return texSample;
 }
 #endif
-
-float3 worldToRelative(float3 worldVector, float3 surfTangent, float3 surfBasis, float3 surfNormal)
-{
-   return float3(
-       dot(worldVector, surfTangent),
-       dot(worldVector, surfBasis),
-       dot(worldVector, surfNormal)
-   );
-}

@@ -876,6 +876,7 @@ CLIENTEFFECT_REGISTER_BEGIN( PrecachePostProcessingEffects )
 #endif
 
 	CLIENTEFFECT_MATERIAL( "shaders/bokeh" )
+	CLIENTEFFECT_MATERIAL( "shaders/dust" )
 
 	CLIENTEFFECT_MATERIAL( "shaders/screen_blurx" )
 	CLIENTEFFECT_MATERIAL( "shaders/screen_blury" )
@@ -2750,7 +2751,6 @@ void CViewRender::Render2DEffectsPostHUD( const CViewSetup &view )
 }
 
 ConVar r_post_bokeh( "r_post_bokeh", "1", FCVAR_ARCHIVE );
-ConVar r_post_bokeh_blur_amount( "r_post_bokeh_blur_amount", "5.0", FCVAR_CHEAT );
 
 void CViewRender::PerformBokeh( int x, int y, int width, int height )
 {
@@ -2762,11 +2762,27 @@ void CViewRender::PerformBokeh( int x, int y, int width, int height )
 	IMaterial *pBokeh = materials->FindMaterial( "shaders/bokeh", TEXTURE_GROUP_PIXEL_SHADERS, true );
 
 	var = pBokeh->FindVar( "$MUTABLE_01", NULL );
-	var->SetFloatValue( r_post_bokeh_blur_amount.GetFloat() );
+	//var->SetFloatValue( r_post_bokeh_blur_amount.GetFloat() );
 
 	DrawScreenEffectMaterial( pBokeh, x, y, width, height );
 }
 
+ConVar r_post_dust( "r_post_dust", "1", FCVAR_ARCHIVE );
+
+void CViewRender::PerformDust( int x, int y, int width, int height )
+{
+	if ( !r_post_dust.GetBool() )
+		return;
+
+	IMaterialVar *var;
+
+	IMaterial *pDust = materials->FindMaterial( "shaders/dust", TEXTURE_GROUP_PIXEL_SHADERS, true );
+
+	var = pDust->FindVar( "$MUTABLE_01", NULL );
+	//var->SetFloatValue( r_post_bokeh_blur_amount.GetFloat() );
+
+	DrawScreenEffectMaterial( pDust, x, y, width, height );
+}
 
 ConVar r_post_reload_blur( "r_post_reload_blur", "1", FCVAR_ARCHIVE );
 ConVar r_post_reload_blur_amount( "r_post_reload_blur_amount", "2.0", FCVAR_CHEAT );
