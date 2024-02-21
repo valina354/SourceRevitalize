@@ -1814,7 +1814,7 @@ void CreateDirectLights (void)
 		}
 		else if (!strcmp(name, "light")) 
 		{
-			ParseLightSpot( e );
+			ParseLightPoint( e );
 		}
 		else
 		{
