@@ -26,6 +26,7 @@
 static ConVar cl_showfps( "cl_showfps", "0", 0, "Draw fps meter at top of screen (1 = fps, 2 = smooth fps)" );
 static ConVar cl_showpos( "cl_showpos", "0", 0, "Draw current position at top of screen" );
 static ConVar cl_showbattery( "cl_showbattery", "0", 0, "Draw current battery level at top of screen when on battery power" );
+static ConVar cl_showmod( "cl_showmod", "1", 0, "Draw mod watermark and version at top of screen" );
 
 extern bool g_bDisplayParticlePerformance;
 int GetParticlePerformance();
@@ -71,7 +72,7 @@ private:
 	float			m_lastBatteryPercent;
 };
 
-#define FPS_PANEL_WIDTH 300
+#define FPS_PANEL_WIDTH 360
 
 //-----------------------------------------------------------------------------
 // Purpose: 
@@ -128,7 +129,7 @@ void CFPSPanel::ComputeSize( void )
 		y += XBOX_MINBORDERSAFE * tall;
 	}
 	SetPos( x, y );
-	SetSize( FPS_PANEL_WIDTH, 4 * vgui::surface()->GetFontTall( m_hFont ) + 8 );
+	SetSize( FPS_PANEL_WIDTH, 6 * vgui::surface()->GetFontTall( m_hFont ) + 8 );
 }
 
 void CFPSPanel::ApplySchemeSettings(vgui::IScheme *pScheme)
@@ -162,8 +163,7 @@ bool CFPSPanel::ShouldDraw( void )
 {
 	if ( g_bDisplayParticlePerformance )
 		return true;
-	if ( ( !cl_showfps.GetInt() || ( gpGlobals->absoluteframetime <= 0 ) ) &&
-		 ( !cl_showpos.GetInt() ) )
+	if ( ( !cl_showfps.GetBool() || gpGlobals->absoluteframetime <= 0 ) && !cl_showpos.GetBool() && !cl_showmod.GetBool() )
 	{
 		m_bLastDraw = false;
 		return false;
@@ -239,6 +239,17 @@ void CFPSPanel::Paint()
 {
 	int i = 0;
 	int x = 2;
+	int iFontTall = g_pVGuiSurface->GetFontTall( m_hFont );
+
+	if ( cl_showmod.GetBool() )
+	{
+#ifdef _DEBUG
+		const char *pszConfig = "DEBUG";
+#else
+		const char *pszConfig = "RELEASE";
+#endif
+		g_pMatSystemSurface->DrawColoredText( m_hFont, x, 2 + ( i++ * iFontTall ), 255, 255, 255, 255, "%s %u.%u.%u-%s", MOD_WATERMARK_STR, MOD_VERSION_MAJOR, MOD_VERSION_MINOR, MOD_VERSION_PATCH, pszConfig );
+	}
 
 	if ( g_bDisplayParticlePerformance )
 	{
