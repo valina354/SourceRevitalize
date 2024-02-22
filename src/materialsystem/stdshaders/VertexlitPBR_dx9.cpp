@@ -74,6 +74,11 @@ void SetupVars(DrawLightPass_Vars_t& info)
 
 SHADER_INIT_PARAMS()
 {
+	if ( params[BUMPMAP]->IsDefined() && ( params[LIGHTMAP] ) )
+	{
+		//params[NORMALTEXTURE]->SetString( params[BUMPMAP]->GetString() );
+		params[BUMPMAP]->SetUndefined();
+	}
 	VertexLitPBR_DX9_Vars_t info;
 	SetupVars(info);
 	InitParamsVertexLitPBR_DX9(this, params, pMaterialName, info);
