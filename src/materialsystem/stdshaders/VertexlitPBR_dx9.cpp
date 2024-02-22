@@ -9,7 +9,7 @@
 #include "vertexlitpbr_dx9_helper.h"
 #include "lightpass_helper.h"
 
-//#define USE_NORMALMAP_LIGHTMAP //defines if to allow normalmaps on models with lightmaps, breaks vertexlit lighting on models as of now
+//#define USE_NORMALMAP_INSTEAD //defines if to allow normalmaps on models with lightmaps, breaks vertexlit lighting on models as of now
 
 #ifdef STDSHADER
 BEGIN_VS_SHADER(VertexLitPBR,
@@ -22,7 +22,7 @@ BEGIN_VS_SHADER(VertexLitPBR,
 BEGIN_SHADER_PARAMS
 SHADER_PARAM(ALPHATESTREFERENCE, SHADER_PARAM_TYPE_FLOAT, "0.0", "")
 SHADER_PARAM(ENVMAP, SHADER_PARAM_TYPE_TEXTURE, "shadertest/shadertest_env", "envmap")
-#ifdef USE_NORMALMAP_LIGHTMAP
+#ifdef USE_NORMALMAP_INSTEAD
 SHADER_PARAM(NORMALMAP, SHADER_PARAM_TYPE_TEXTURE, "models/shadertest/shader1_normal", "bump map")
 #else
 SHADER_PARAM( BUMPMAP, SHADER_PARAM_TYPE_TEXTURE, "models/shadertest/shader1_normal", "bump map" )
@@ -51,7 +51,7 @@ void SetupVars(VertexLitPBR_DX9_Vars_t& info)
 	info.m_nAO = AO;
 	info.m_nEmissive = EMISSIVE;
 	info.m_nEnvmap = ENVMAP;
-    #ifdef USE_NORMALMAP_LIGHTMAP
+    #ifdef USE_NORMALMAP_INSTEAD
 	info.m_nBumpmap = NORMALMAP;
 	#else
 	info.m_nBumpmap = BUMPMAP;
@@ -69,7 +69,7 @@ void SetupVars(DrawLightPass_Vars_t& info)
 	info.m_nBaseTexture = BASETEXTURE;
 	info.m_nBaseTextureFrame = FRAME;
 	info.m_nNoise = NOISE;
-    #ifdef USE_NORMALMAP_LIGHTMAP
+    #ifdef USE_NORMALMAP_INSTEAD
 	info.m_nBumpmap = NORMALMAP;
 	#else
 	info.m_nBumpmap = BUMPMAP;
