@@ -79,6 +79,9 @@ void SetupVars(DrawLightPass_Vars_t& info)
 	info.m_nBaseTexture2 = -1;
 	info.m_nBaseTexture2Frame = -1;
 	info.m_nSeamlessMappingScale = -1;
+	info.UseParallax = PARALLAX;
+	info.ParallaxDepth = PARALLAXDEPTH;
+	info.ParallaxCenter = PARALLAXCENTER;
 	info.bModel = false;
 	info.m_nUseSmoothness = USESMOOTHNESS;
 }
