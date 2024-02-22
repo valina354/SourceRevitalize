@@ -10,6 +10,11 @@
 #include "fmtstr.h"
 #include "mathlib\mathlib.h"
 #include <KeyValues.h>
+
+#include "tier0/memdbgon.h"
+
+C_SkyDome* g_pSkyDome;
+
 ConVarRef cl_sky_sunpos ("cl_sky_sunpos");
 ConVarRef cl_sky_windspeed ("cl_sky_windspeed");
 ConVarRef cl_sky_thickness ("cl_sky_thickness");
@@ -17,23 +22,19 @@ ConVarRef cl_sky_coverage ("cl_sky_coverage");
 ConVar cl_skydome("cl_skydome", "1");
 
 
-C_SkyDome *g_pSkyDome;
-
-C_SkyDome *GetSkyDome()
-{
-	return cl_skydome.GetBool() ? g_pSkyDome : NULL;
-}
-
+IMPLEMENT_CLIENTCLASS_DT(C_SkyDome, DT_SkyDome, CSkyDome)
+RecvPropBool(RECVINFO(m_bEnableDynamicSky)),
+RecvPropVector(RECVINFO(m_vDesiredSunPos)),
+RecvPropVector(RECVINFO(m_vDesiredWindSpeed)),
+RecvPropFloat(RECVINFO(m_flDesiredThickness)),
+RecvPropFloat(RECVINFO(m_flDesiredCoverage)),
+END_RECV_TABLE()
 
 C_SkyDome::C_SkyDome()
-{
-	if (!g_pSkyDome)
-		g_pSkyDome = this;
-
-	m_vCurrentSunPos = vec3_origin;
-	m_vCurrentWindSpeed = vec3_origin;
-	m_flCurrentThickness = 0.0f;
-	m_flCurrentThickness = 0.0f;
+	: m_vCurrentSunPos(vec3_origin)
+	, m_vCurrentWindSpeed(vec3_origin)
+	, m_flCurrentThickness(0.0f)
+	{
 }
 
 
@@ -45,23 +46,36 @@ C_SkyDome::~C_SkyDome()
 	}
 }
 
-void C_SkyDome::Precache()
+bool C_SkyDome::IsDynamicSkyEnabled() const
 {
-	PrecacheModel("models/effects/skydome.mdl");
+	return m_bEnableDynamicSky;
 }
+
+void C_SkyDome::OnDataChanged(DataUpdateType_t updateType)
+{
+
+	if (g_pSkyDome == NULL)
+	{
+		g_pSkyDome = this;
+	}
+
+	BaseClass::OnDataChanged(updateType);
+}
+
 
 void C_SkyDome::Spawn()
 {
-	Precache();
-	SetModel("models/effects/skydome.mdl");
+	BaseClass::Spawn();
 
 	SetNextClientThink(CLIENT_THINK_ALWAYS);
 }
 
 
+
+
 void C_SkyDome::ClientThink()
 {
-	BaseClass::ClientThink();
+	
 
 	if (m_vCurrentSunPos != m_vDesiredSunPos)
 	{
@@ -96,11 +110,6 @@ void C_SkyDome::ClientThink()
 	if (cl_sky_coverage.IsValid())
 		cl_sky_coverage.SetValue(VarArgs("%f", m_flCurrentCoverage));
 
+	BaseClass::ClientThink();
 }
 
-IMPLEMENT_CLIENTCLASS_DT(C_SkyDome, DT_SkyDome, CSkyDome)
-RecvPropVector(RECVINFO(m_vDesiredSunPos)),
-RecvPropVector(RECVINFO(m_vDesiredWindSpeed)),
-RecvPropFloat(RECVINFO(m_flDesiredThickness)),
-RecvPropFloat(RECVINFO(m_flDesiredCoverage)),
-END_RECV_TABLE()

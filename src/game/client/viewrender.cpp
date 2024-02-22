@@ -54,6 +54,7 @@
 #include "clientmode_shared.h"
 #include "sourcevr/isourcevirtualreality.h"
 #include "client_virtualreality.h"
+#include "c_env_skydome.h"
 
 #ifdef PORTAL
 //#include "C_Portal_Player.h"
@@ -1220,47 +1221,47 @@ void CViewRender::DrawViewModels( const CViewSetup &view, bool drawViewmodel )
 	pRenderContext->PopMatrix();
 }
 
-void CViewRender::DrawSky(const CViewSetup& view)
+void CViewRender::DrawSky( const CViewSetup &view )
 {
 	float flRadius = 32.0f;
 	int nTheta = 8;
 	int nPhi = 8;
 
-	CMatRenderContextPtr pRenderContext(materials);
-	pRenderContext->OverrideDepthEnable(true, false);
+	CMatRenderContextPtr pRenderContext( materials );
+	pRenderContext->OverrideDepthEnable( true, false );
 
-	int nTriangles = 2 * nTheta * (nPhi - 1); // Two extra degenerate triangles per row (except the last one)
-	int nIndices = 2 * (nTheta + 1) * (nPhi - 1);
+	int nTriangles = 2 * nTheta * ( nPhi - 1 ); // Two extra degenerate triangles per row (except the last one)
+	int nIndices = 2 * ( nTheta + 1 ) * ( nPhi - 1 );
 
-	pRenderContext->Bind(m_SkydomeMaterial);
+	pRenderContext->Bind( m_SkydomeMaterial );
 
 	CMeshBuilder meshBuilder;
-	IMesh* pMesh = pRenderContext->GetDynamicMesh();
+	IMesh *pMesh = pRenderContext->GetDynamicMesh();
 
-	meshBuilder.Begin(pMesh, MATERIAL_TRIANGLE_STRIP, nTriangles, nIndices);
+	meshBuilder.Begin( pMesh, MATERIAL_TRIANGLE_STRIP, nTriangles, nIndices );
 
 	//
 	// Build the index buffer.
 	//
 	int i, j;
-	for (i = 0; i < nPhi; ++i)
+	for ( i = 0; i < nPhi; ++i )
 	{
-		for (j = 0; j < nTheta; ++j)
+		for ( j = 0; j < nTheta; ++j )
 		{
-			float u = j / (float)(nTheta - 1);
-			float v = i / (float)(nPhi - 1);
+			float u = j / (float)( nTheta - 1 );
+			float v = i / (float)( nPhi - 1 );
 			float theta = 2.0f * M_PI * u;
 			float phi = M_PI * v;
 
 			Vector vecPos;
-			vecPos.x = flRadius * sin(phi) * cos(theta);
-			vecPos.y = flRadius * sin(phi) * sin(theta);
-			vecPos.z = flRadius * cos(phi);
+			vecPos.x = flRadius * sin( phi ) * cos( theta );
+			vecPos.y = flRadius * sin( phi ) * sin( theta );
+			vecPos.z = flRadius * cos( phi );
 
 			Vector vecNormal = vecPos;
-			VectorNormalize(vecNormal);
+			VectorNormalize( vecNormal );
 
-			meshBuilder.Position3f(vecPos.x, vecPos.y, vecPos.z);
+			meshBuilder.Position3f( vecPos.x, vecPos.y, vecPos.z );
 			meshBuilder.AdvanceVertex();
 		}
 	}
@@ -1269,16 +1270,16 @@ void CViewRender::DrawSky(const CViewSetup& view)
 	// Emit the triangle strips.
 	//
 	int idx = 0;
-	for (i = nPhi - 2; i >= 0; --i)
+	for ( i = nPhi - 2; i >= 0; --i )
 	{
-		for (j = nTheta - 1; j >= 0; --j)
+		for ( j = nTheta - 1; j >= 0; --j )
 		{
 			idx = nTheta * i + j;
 
-			meshBuilder.Index(idx + nTheta);
+			meshBuilder.Index( idx + nTheta );
 			meshBuilder.AdvanceIndex();
 
-			meshBuilder.Index(idx);
+			meshBuilder.Index( idx );
 			meshBuilder.AdvanceIndex();
 		}
 
@@ -1286,28 +1287,28 @@ void CViewRender::DrawSky(const CViewSetup& view)
 		// Emit a degenerate triangle to skip to the next row without
 		// a connecting triangle.
 		//
-		if (i < nPhi - 2)
+		if ( i < nPhi - 2 )
 		{
-			meshBuilder.Index(idx);
+			meshBuilder.Index( idx );
 			meshBuilder.AdvanceIndex();
 
-			meshBuilder.Index(idx + nTheta + 1);
+			meshBuilder.Index( idx + nTheta + 1 );
 			meshBuilder.AdvanceIndex();
 		}
 	}
 
-	pRenderContext->MatrixMode(MATERIAL_MODEL);
+	pRenderContext->MatrixMode( MATERIAL_MODEL );
 	pRenderContext->PushMatrix();
 	pRenderContext->LoadIdentity();
-	pRenderContext->Translate(view.origin.x, view.origin.y, view.origin.z);
+	pRenderContext->Translate( view.origin.x, view.origin.y, view.origin.z );
 
 	meshBuilder.End();
 	pMesh->Draw();
 
-	pRenderContext->MatrixMode(MATERIAL_MODEL);
+	pRenderContext->MatrixMode( MATERIAL_MODEL );
 	pRenderContext->PopMatrix();
 
-	pRenderContext->OverrideDepthEnable(false, true);
+	pRenderContext->OverrideDepthEnable( false, true );
 }
 
 
@@ -4064,11 +4065,13 @@ void CRendering3dView::DrawWorld( float waterZAdjust )
 		return;
 	}
 
-	if ((m_DrawFlags & DF_DRAWSKYBOX) && (g_pCSMLight && g_pCSMLight->IsDynamicSkyEnabled()))
+
+
+	if ( ( m_DrawFlags & DF_DRAWSKYBOX ) && ( g_pSkyDome && g_pSkyDome->IsDynamicSkyEnabled() ) )
 	{
 		m_DrawFlags &= ~DF_DRAWSKYBOX; // dont render engine sky, we have our own sky now
 
-		m_pMainView->DrawSky(*this);
+		m_pMainView->DrawSky( *this );
 	}
 
 	unsigned long engineFlags = BuildEngineDrawWorldListFlags( m_DrawFlags );

@@ -1,26 +1,24 @@
 #ifndef C_SKYDOME_H
 #define C_SKYDOME_H
 
-#include "cbase.h"
-#include "c_baseanimating.h"
-#include "weapon_parse.h"
-#include "baseentity_shared.h"
+#include "c_baseentity.h"
 
-class C_SkyDome : public C_BaseAnimating
+
+class C_SkyDome : public C_BaseEntity
 {
-	DECLARE_CLASS(C_SkyDome, C_BaseAnimating);
+	DECLARE_CLASS(C_SkyDome, C_BaseEntity);
 public:
 	DECLARE_CLIENTCLASS();
 
 	C_SkyDome();
-	~C_SkyDome();
+	virtual ~C_SkyDome();
 
-	virtual int ObjectCaps() {
-		return FCAP_DONT_SAVE;
-	};
+	void Spawn();
 
-	virtual void Precache();
-	virtual void Spawn();
+	void OnDataChanged(DataUpdateType_t updateType);
+
+
+	bool IsDynamicSkyEnabled() const;
 
 	virtual void ClientThink();
 
@@ -35,14 +33,12 @@ public:
 	CNetworkVar(float, m_flDesiredThickness);
 	CNetworkVar(float, m_flDesiredCoverage);
 
-	// Should this object cast shadows?
-	virtual ShadowType_t			ShadowCastType() { return SHADOWS_NONE; }
 
-	virtual bool ShouldDraw() { return false; }
-	virtual int DrawModel(int flags) { return BaseClass::DrawModel(flags); }
 	virtual void FireEvent(const Vector& origin, const QAngle& angles, int event, const char *options) {}
+private:
+	bool m_bEnableDynamicSky;
 };
 
-extern C_SkyDome *GetSkyDome();
+extern C_SkyDome* g_pSkyDome;
 
 #endif
