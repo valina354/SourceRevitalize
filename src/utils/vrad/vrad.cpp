@@ -184,7 +184,7 @@ typedef struct
 	char	*filename;
 } texlight_t;
 
-#define	MAX_TEXLIGHTS	128
+#define	MAX_TEXLIGHTS	1024
 
 texlight_t	texlights[MAX_TEXLIGHTS];
 int			num_texlights;
