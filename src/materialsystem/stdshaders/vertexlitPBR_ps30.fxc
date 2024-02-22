@@ -87,7 +87,7 @@ PixelShaderLightInfo cLightInfo[3]			: register( PSREG_LIGHT_INFO_ARRAY );				//
 sampler BaseTextureSampler		: register( s0 );	// Base map, selfillum in alpha
 sampler RoughnessSampler		: register( s1 );	// Roughness
 sampler MetallicSampler			: register( s2 );	// Metallic
-sampler NormalTextureSampler			: register( s3 );	// Bump map
+sampler BumpmapSampler			: register( s3 );	// Bump map
 
 
 
@@ -407,7 +407,7 @@ PS_OUTPUT main(PS_INPUT i) : COLOR
 	float2 screenUV = i.projPos.xy / i.projPos.w;
 	screenUV = screenUV * 0.5f + 0.5f;
 	float4 baseColor = tex2D(BaseTextureSampler, UV);
-    float4 normalTexel = tex2D(NormalTextureSampler, UV);
+    float4 normalTexel = tex2D(BumpmapSampler, UV);
 
 #if BUMPALPHASMOOTHNESS
 	float roughnessMap = 1.0f - normalTexel.a;

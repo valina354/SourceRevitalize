@@ -20,7 +20,7 @@ BEGIN_VS_SHADER(LightmappedPBR,
 BEGIN_SHADER_PARAMS
 SHADER_PARAM(ALPHATESTREFERENCE, SHADER_PARAM_TYPE_FLOAT, "0.0", "")
 SHADER_PARAM(ENVMAP, SHADER_PARAM_TYPE_TEXTURE, "shadertest/shadertest_env", "envmap")
-SHADER_PARAM(BUMPMAP, SHADER_PARAM_TYPE_TEXTURE, "models/shadertest/shader1_normal", "bump map")
+SHADER_PARAM(NORMALMAP, SHADER_PARAM_TYPE_TEXTURE, "models/shadertest/shader1_normal", "bump map")
 SHADER_PARAM(SEAMLESS_SCALE, SHADER_PARAM_TYPE_FLOAT, "0", "Scale factor for 'seamless' texture mapping. 0 means to use ordinary mapping")
 
 SHADER_PARAM(BRDF, SHADER_PARAM_TYPE_TEXTURE, "models/PBRTest/BRDF", "")
@@ -51,7 +51,7 @@ void SetupVars(LightmappedPBR_DX9_Vars_t& info)
 	info.m_nAO = AO;
 	info.m_nEmissive = EMISSIVE;
 	info.m_nEnvmap = ENVMAP;
-	info.m_nBumpmap = BUMPMAP;
+	info.m_nBumpmap = NORMALMAP;
 	info.m_nFlashlightTexture = FLASHLIGHTTEXTURE;
 	info.m_nFlashlightTextureFrame = FLASHLIGHTTEXTUREFRAME;
 	info.m_nBRDF = BRDF;
@@ -70,7 +70,7 @@ void SetupVars(DrawLightPass_Vars_t& info)
 	info.m_nBaseTexture = BASETEXTURE;
 	info.m_nBaseTextureFrame = FRAME;
 	info.m_nNoise = NOISE;
-	info.m_nBumpmap = BUMPMAP;
+	info.m_nBumpmap = NORMALMAP;
 	info.m_nRoughness = ROUGHNESS;
 	info.m_nMetallic = METALLIC;
 	info.m_nBumpmap2 = -1;
