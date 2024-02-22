@@ -46,7 +46,7 @@ void InitParamsVertexLitPBR_DX9( CBaseVSShader *pShader, IMaterialVar** params, 
 		params[FLASHLIGHTTEXTURE]->SetStringValue( "effects/flashlight001" );
 	}
 
-	if (((info.m_nBumpmap != -1) && g_pConfig->UseBumpmapping() && params[info.m_nBumpmap]->IsDefined())
+	if ( ( ( info.m_nNormalTexture != -1 ) && g_pConfig->UseBumpmapping() && params[info.m_nNormalTexture]->IsDefined() )
 		// we don't need a tangent space if we have envmap without bumpmap
 		//		|| ( info.m_nEnvmap != -1 && params[info.m_nEnvmap]->IsDefined() ) 
 		)
@@ -125,9 +125,9 @@ void InitVertexLitPBR_DX9( CBaseVSShader *pShader, IMaterialVar** params, Vertex
 
 	if (g_pConfig->UseBumpmapping())
 	{
-		if ((info.m_nBumpmap != -1) && params[info.m_nBumpmap]->IsDefined())
+		if ( ( info.m_nNormalTexture != -1 ) && params[info.m_nNormalTexture]->IsDefined() )
 		{
-			pShader->LoadBumpMap(info.m_nBumpmap);
+			pShader->LoadBumpMap( info.m_nNormalTexture );
 			SET_FLAGS2(MATERIAL_VAR2_DIFFUSE_BUMPMAPPED_MODEL);
 		}
 	}
@@ -156,7 +156,7 @@ static void DrawVertexLitPBR_DX9_Internal( CBaseVSShader *pShader, IMaterialVar*
 	bool bIsAlphaTested = IS_FLAG_SET( MATERIAL_VAR_ALPHATEST ) != 0;
 	bool bHasEnvmap =(info.m_nEnvmap != -1) && params[info.m_nEnvmap]->IsTexture();
 	bool bHasLegacyEnvSphereMap = bHasEnvmap && IS_FLAG_SET(MATERIAL_VAR_ENVMAPSPHERE);
-	bool bHasBump = IsTextureSet(info.m_nBumpmap, params);
+	bool bHasBump = IsTextureSet( info.m_nNormalTexture, params );
 	bool bBumpAlphaSmoothness =
 		bHasBump && info.m_nBumpAlphaSmoothness != -1 && params[info.m_nBumpAlphaSmoothness]->GetIntValue() == 1;
 	bool bUseSmoothness =
@@ -348,7 +348,7 @@ static void DrawVertexLitPBR_DX9_Internal( CBaseVSShader *pShader, IMaterialVar*
 		{
 			if (bHasBump)
 			{
-				pShader->BindTexture(SHADER_SAMPLER3, info.m_nBumpmap);
+				pShader->BindTexture( SHADER_SAMPLER3, info.m_nNormalTexture );
 			}
 			else
 			{

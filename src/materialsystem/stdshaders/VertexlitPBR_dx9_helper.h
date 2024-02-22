@@ -34,6 +34,7 @@ struct VertexLitPBR_DX9_Vars_t
 	int m_nEmissive;
 	int m_nEnvmap;
 	int m_nBumpmap;
+	int m_nNormalTexture;
 	int m_nFlashlightTexture;
 	int m_nFlashlightTextureFrame;
 	int m_nBRDF;

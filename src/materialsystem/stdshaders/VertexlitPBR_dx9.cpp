@@ -21,6 +21,7 @@ BEGIN_SHADER_PARAMS
 SHADER_PARAM(ALPHATESTREFERENCE, SHADER_PARAM_TYPE_FLOAT, "0.0", "")
 SHADER_PARAM(ENVMAP, SHADER_PARAM_TYPE_TEXTURE, "shadertest/shadertest_env", "envmap")
 SHADER_PARAM(BUMPMAP, SHADER_PARAM_TYPE_TEXTURE, "models/shadertest/shader1_normal", "bump map")
+SHADER_PARAM( NORMALTEXTURE, SHADER_PARAM_TYPE_TEXTURE, "models/shadertest/shader1_normal", "bump map" )
 
 SHADER_PARAM(BRDF, SHADER_PARAM_TYPE_TEXTURE, "models/PBRTest/BRDF", "")
 SHADER_PARAM(NOISE, SHADER_PARAM_TYPE_TEXTURE, "shaders/bluenoise", "")
@@ -46,6 +47,7 @@ void SetupVars(VertexLitPBR_DX9_Vars_t& info)
 	info.m_nEmissive = EMISSIVE;
 	info.m_nEnvmap = ENVMAP;
 	info.m_nBumpmap = BUMPMAP;
+	info.m_nNormalTexture = NORMALTEXTURE;
 	info.m_nFlashlightTexture = FLASHLIGHTTEXTURE;
 	info.m_nFlashlightTextureFrame = FLASHLIGHTTEXTUREFRAME;
 	info.m_nBRDF = BRDF;
@@ -74,10 +76,10 @@ void SetupVars(DrawLightPass_Vars_t& info)
 
 SHADER_INIT_PARAMS()
 {
-	if ( params[BUMPMAP]->IsDefined() && ( params[LIGHTMAP] ) )
+	if ( params[BUMPMAP]->IsDefined() )
 	{
-		//params[NORMALTEXTURE]->SetString( params[BUMPMAP]->GetString() );
-		params[BUMPMAP]->SetUndefined();
+		params[NORMALTEXTURE]->SetStringValue( params[BUMPMAP]->GetStringValue() );
+		//params[BUMPMAP]->SetUndefined();
 	}
 	VertexLitPBR_DX9_Vars_t info;
 	SetupVars(info);
