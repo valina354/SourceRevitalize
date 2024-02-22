@@ -92,7 +92,7 @@
 #define	MAX_MAP_TEXTURES				8192
 #define MAX_MAP_WORLDLIGHTS				65536
 #define MAX_MAP_CUBEMAPSAMPLES			4096
-#define MAX_MAP_OVERLAYS				8192 
+#define MAX_MAP_OVERLAYS				16384
 #define MAX_MAP_WATEROVERLAYS			16384
 #define MAX_MAP_TEXDATA_STRING_DATA		256000
 #define MAX_MAP_TEXDATA_STRING_TABLE	65536
@@ -149,8 +149,8 @@
 #endif // BSP_USE_LESS_MEMORY
 
 // key / value pair sizes
-#define	MAX_KEY		32
-#define	MAX_VALUE	1024
+#define	MAX_KEY		256
+#define	MAX_VALUE	4096
 
 
 // ------------------------------------------------------------------------------------------------ //
