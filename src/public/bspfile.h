@@ -40,7 +40,7 @@
 #define MAX_LIGHTMAP_DIM_WITHOUT_BORDER		MAX_DISP_LIGHTMAP_DIM_WITHOUT_BORDER
 #define MAX_LIGHTMAP_DIM_INCLUDING_BORDER	MAX_DISP_LIGHTMAP_DIM_INCLUDING_BORDER
 
-#define	MAX_LIGHTSTYLES	64
+#define	MAX_LIGHTSTYLES	512
 
 
 // upper design bounds
@@ -57,7 +57,7 @@
 // Common limits
 // leaffaces, leafbrushes, planes, and verts are still bounded by
 // 16 bit short limits
-#define	MAX_MAP_MODELS					1024
+#define	MAX_MAP_MODELS					16384
 #define	MAX_MAP_BRUSHES					8192
 #define	MAX_MAP_ENTITIES				65536
 #define	MAX_MAP_TEXINFO					12288
@@ -69,7 +69,7 @@
 #define MAX_DISPTRIS					NUM_DISP_POWER_TRIS( MAX_MAP_DISP_POWER )
 #define	MAX_MAP_AREAS					256
 #define MAX_MAP_AREA_BYTES				(MAX_MAP_AREAS/8)
-#define	MAX_MAP_AREAPORTALS				1024
+#define	MAX_MAP_AREAPORTALS				4096
 // Planes come in pairs, thus an even number.
 #define	MAX_MAP_PLANES					65536
 #define	MAX_MAP_NODES					65536
