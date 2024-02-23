@@ -97,7 +97,7 @@
 #define MAX_MAP_TEXDATA_STRING_DATA		256000
 #define MAX_MAP_TEXDATA_STRING_TABLE	65536
 // this is stuff for trilist/tristrips, etc.
-#define MAX_MAP_PRIMITIVES				32768
+#define MAX_MAP_PRIMITIVES				65536
 #define MAX_MAP_PRIMVERTS				65536
 #define MAX_MAP_PRIMINDICES				65536
 

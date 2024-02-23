@@ -10,7 +10,7 @@
 #include "common_flashlight_fxc.h"
 #include "shader_constant_register_map.h"
 
-#define PI 3.141
+#define PI 3.1
 #define iSteps 2
 #define jSteps 0
 
