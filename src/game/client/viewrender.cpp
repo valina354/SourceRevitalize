@@ -1511,7 +1511,7 @@ void CViewRender::UpdateLighting(const CViewSetup& view)
 	Vector vecCascadeOrigin(view.origin);
 	vecCascadeOrigin -= vecFwd * 4096.0f;
 
-	float flOrthoSize = 2048.0f;
+	float flOrthoSize = 1024.0f;
 
 	struct ShadowConfig_t
 	{
