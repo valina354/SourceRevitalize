@@ -1,0 +1,5 @@
+"editor_shader"
+{
+	"$shadername"	"postproc_gaussblur_2d_singlepass"
+	"$MUTABLE_01" "1"
+}

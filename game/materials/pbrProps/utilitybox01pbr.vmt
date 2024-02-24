@@ -1,0 +1,4 @@
+"VertexlitPBR"
+{
+ $basetexture "utilitybox01_pbr_diff"
+}

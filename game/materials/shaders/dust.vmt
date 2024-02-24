@@ -1,0 +1,5 @@
+"editor_shader"
+{
+	"$shadername"	"postproc_dust"
+	"$MUTABLE_01" "1"
+}

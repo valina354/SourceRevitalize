@@ -1,0 +1,220 @@
+"canvas"
+{
+	"cfmt_version"		"canvasver#003"
+	"flowgraph_type"		"4"
+	"config_ppe"
+	{
+		"updatefbcopy"		"0"
+	}
+	"Nodes"
+	{
+		"Node_000"
+		{
+			"iType"		"2001"
+			"pos_x"		"-320.000000"
+			"pos_y"		"15.000000"
+			"size_x"		"55.000000"
+			"size_y"		"-17.000000"
+			"iPreview"		"0"
+		}
+		"Node_001"
+		{
+			"iType"		"2002"
+			"pos_x"		"534.884399"
+			"pos_y"		"-437.740784"
+			"size_x"		"55.000000"
+			"size_y"		"-17.000000"
+			"iPreview"		"0"
+			"bridges"
+			{
+				"jackIn_00"
+				{
+					"iTarget_node"		"5"
+					"iTarget_jack"		"0"
+				}
+			}
+		}
+		"Node_002"
+		{
+			"iType"		"2004"
+			"pos_x"		"-131.648972"
+			"pos_y"		"-268.080292"
+			"size_x"		"160.000000"
+			"size_y"		"-80.000000"
+			"iPreview"		"1"
+			"bridges"
+			{
+				"jackIn_00"
+				{
+					"iTarget_node"		"0"
+					"iTarget_jack"		"0"
+				}
+				"jackIn_01"
+				{
+					"iTarget_node"		"7"
+					"iTarget_jack"		"0"
+				}
+				"jackIn_02"
+				{
+					"iTarget_node"		"6"
+					"iTarget_jack"		"0"
+				}
+			}
+			"iSizingMode_Tg"		"0"
+			"iSizingMode_Src"		"0"
+			"iPushTg"		"1"
+			"iSHEETHINT_enable_tg"		"1"
+			"iSHEETHINT_enable_src"		"0"
+			"iDst_x"		"0"
+			"iDst_y"		"0"
+			"iDst_w"		"0"
+			"iDst_h"		"0"
+			"flSrcUV_x0"		"0.000000"
+			"flSrcUV_y0"		"0.000000"
+			"flSrcUV_x"		"0.000000"
+			"flSrcUV_y"		"0.000000"
+			"iSrc_w"		"0"
+			"iSrc_h"		"0"
+		}
+		"Node_003"
+		{
+			"iType"		"2009"
+			"szName"		"small rt 1"
+			"pos_x"		"-480.902069"
+			"pos_y"		"-374.196930"
+			"size_x"		"96.000000"
+			"size_y"		"-80.000000"
+			"iPreview"		"1"
+			"szRTName"		"_rt_fbquarter_1"
+		}
+		"Node_004"
+		{
+			"iType"		"2004"
+			"pos_x"		"-130.229141"
+			"pos_y"		"-433.645508"
+			"size_x"		"160.000000"
+			"size_y"		"-80.000000"
+			"iPreview"		"1"
+			"bridges"
+			{
+				"jackIn_00"
+				{
+					"iTarget_node"		"2"
+					"iTarget_jack"		"0"
+				}
+				"jackIn_01"
+				{
+					"iTarget_node"		"8"
+					"iTarget_jack"		"0"
+				}
+				"jackIn_02"
+				{
+					"iTarget_node"		"3"
+					"iTarget_jack"		"0"
+				}
+			}
+			"iSizingMode_Tg"		"0"
+			"iSizingMode_Src"		"0"
+			"iPushTg"		"1"
+			"iSHEETHINT_enable_tg"		"1"
+			"iSHEETHINT_enable_src"		"0"
+			"iDst_x"		"0"
+			"iDst_y"		"0"
+			"iDst_w"		"0"
+			"iDst_h"		"0"
+			"flSrcUV_x0"		"0.000000"
+			"flSrcUV_y0"		"0.000000"
+			"flSrcUV_x"		"0.000000"
+			"flSrcUV_y"		"0.000000"
+			"iSrc_w"		"0"
+			"iSrc_h"		"0"
+		}
+		"Node_005"
+		{
+			"iType"		"2004"
+			"pos_x"		"184.128525"
+			"pos_y"		"-432.614990"
+			"size_x"		"160.000000"
+			"size_y"		"-80.000000"
+			"iPreview"		"1"
+			"bridges"
+			{
+				"jackIn_00"
+				{
+					"iTarget_node"		"4"
+					"iTarget_jack"		"0"
+				}
+				"jackIn_01"
+				{
+					"iTarget_node"		"9"
+					"iTarget_jack"		"0"
+				}
+			}
+			"iSizingMode_Tg"		"0"
+			"iSizingMode_Src"		"0"
+			"iPushTg"		"1"
+			"iSHEETHINT_enable_tg"		"0"
+			"iSHEETHINT_enable_src"		"0"
+			"iDst_x"		"0"
+			"iDst_y"		"0"
+			"iDst_w"		"0"
+			"iDst_h"		"0"
+			"flSrcUV_x0"		"0.000000"
+			"flSrcUV_y0"		"0.000000"
+			"flSrcUV_x"		"0.000000"
+			"flSrcUV_y"		"0.000000"
+			"iSrc_w"		"0"
+			"iSrc_h"		"0"
+		}
+		"Node_006"
+		{
+			"iType"		"2009"
+			"szName"		"small rt 0"
+			"pos_x"		"-480.851349"
+			"pos_y"		"-189.115936"
+			"size_x"		"96.000000"
+			"size_y"		"-80.000000"
+			"iPreview"		"1"
+			"szRTName"		"_rt_fbquarter_0"
+		}
+		"Node_007"
+		{
+			"iType"		"2010"
+			"szName"		"blur x"
+			"pos_x"		"-346.332153"
+			"pos_y"		"-299.707764"
+			"size_x"		"80.000000"
+			"size_y"		"-17.000000"
+			"iPreview"		"0"
+			"iInline"		"1"
+			"szVMTString_num_strings"		"1"
+			"szVMTString_partial_00"		"\'EDITOR_SHADER\'\r\n{\r\n	\'$SHADERNAME\'	\'gauss_blur_13_x\'\r\n\r\n	\'$BaseTexture\'	\'_rt_SmallFB1\'\r\n}"
+		}
+		"Node_008"
+		{
+			"iType"		"2010"
+			"szName"		"blur y"
+			"pos_x"		"-340.328552"
+			"pos_y"		"-471.827332"
+			"size_x"		"80.000000"
+			"size_y"		"-17.000000"
+			"iPreview"		"0"
+			"iInline"		"1"
+			"szVMTString_num_strings"		"1"
+			"szVMTString_partial_00"		"\'EDITOR_SHADER\'\r\n{\r\n	\'$SHADERNAME\'	\'gauss_blur_13_y\'\r\n\r\n	\'$BaseTexture\'	\'_rt_fbquarter_0\'\r\n}"
+		}
+		"Node_009"
+		{
+			"iType"		"2010"
+			"szName"		"bloomflare"
+			"pos_x"		"105.021957"
+			"pos_y"		"-267.755890"
+			"size_x"		"80.000000"
+			"size_y"		"-17.000000"
+			"iPreview"		"0"
+			"iInline"		"1"
+			"szVMTString_num_strings"		"1"
+			"szVMTString_partial_00"		"\'EDITOR_SHADER\'\r\n{\r\n	\'$SHADERNAME\'	\'bloomflare_calc\'\r\n}"
+		}
+	}
+}

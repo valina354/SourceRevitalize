@@ -56,7 +56,7 @@
 ]
 
 //-------------------------------------------------------------------------
-// Environment (Global Light copy, also handles dynamic sky)
+// Environment (Global Light copy)
 //-------------------------------------------------------------------------
 @PointClass base(Targetname, EnableDisable) iconsprite("editor/shadow_control.vmt") = env_environment : 
 	"An entity to control the sunlight that casts shadows in the map and dynamic sky."
@@ -65,21 +65,6 @@
 
 	color(color255) : "Light Color" : "255 255 255 1" : "This is the color of the sunlight."
 	ambient(color255) : "Ambient Color" : "255 255 255 1" : "This is the color of the sunlight."
-
-	enabledynamicsky(integer) : "Enable Dynamic sky" : 0 : "Enable dynamic sky."
-	usetimeforangles(integer) : "Use time of day for angles" : 0 : "Enable this to use 'Time of day' value to automatically compute sun angles"
-	timescale(float) : "Day/Night Time Scale" : "1" : "Speed of the day/night cycle. By default 1 seconds = 1 hour (0.016 will make so 1 real minute = 1 in-game hour)"
-	time(float) : "Time of day" : "0" : "Set time of day (0-24). -1 will enable day/night cycle and use Time Scale for speed."
-
-
-	// Inputs
-	input SetLightColor(color255) : "Set the light color."
-	input SetAmbientColor(color255) : "Set the ambient color."
-	input SetAngles(string) : "Set the sun direction."
-
-	input EnableDynamicSky(bool) : "Enable dynamic sky."
-	input EnableSetTimescale(float) : "Set Day/Night time scale."
-	input SetTime(float) : "Set time (0-24). -1 will enable day/night cycle and use Time Scale for speed"
 ]
 
 
@@ -344,6 +329,26 @@
 @PointClass base(BasePropPhysics, RenderFields) studioprop() sphere(radius) = prop_sphere : "Creates a perfect sphere."
 [
 	radius(float) : "Radius" : 12 : ""
+]
+
+//-------------------------------------------------------------------------
+// Dynamic Sky
+//-------------------------------------------------------------------------
+@PointClass base(Targetname) iconsprite("editor/shadow_control.vmt") = env_skydome : 
+	"An entity to control the sky dynamic sky."
+[
+	sunpos(vector) : "Pitch Yaw Roll (Y Z X)" : "1 1 1 5" : "This is the light cast direction. Pitch is rotation around the Y axis, yaw is the rotation around the Z axis, and roll is the rotation around the X axis. THE LAST 0 IS FOR HOW BRIGHT THE SUN IS!!!!"
+	coverage(float) : "Coverage of clouds" : "0.50" : "How much of the clouds cover the sky"
+	thickness(float) : "Thickness of clouds" : "3" : "How thicker, how weirder the sky looks, DON'T GO ABOVE 100!"
+	windspeed(string) : "Dir and clearity of wind (X Y Z Clear)" : "0 0 0 5" : "Using stuff like .01 is a good habit as it is the most realistic"
+
+	// Inputs
+	input SetSunPos(vector) : "Set the position of the sun."
+	input SetWindSpeed(vector) : "Set the ambient color."
+
+	input InputSetThicknes(float) : "Set the thickness of the clouds."
+	input InputSetCoverage(float) : "Set how many clouds cover the sky."
+	input EnableDynamicSky(integer) : "Set if the sky is on or off"
 ]
 
 @PointClass base(Item) studio("models/healthvial.mdl") = item_stim : "Stimulant" []

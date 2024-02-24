@@ -1,0 +1,9 @@
+"VertexlitPBR"
+{
+ "$basetexture" "pbrprops\utilitybox01_pbr_diff"
+ "$roughness" "pbrprops\utilitybox01_pbr_rough"
+ "$metalness" "pbrprops\utilitybox01_pbr_metal"
+ "$normalmap" "pbrprops\utilitybox01_pbr_bump"
+ 
+ //"$envmap" "env_cubemap"
+}

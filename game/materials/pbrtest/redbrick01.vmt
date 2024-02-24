@@ -1,9 +1,12 @@
 "LightmappedPBR"
 {
   "$basetexture" "pbrtest\redbrick01_diff"
-  "$bumpmap" "pbrtest\redbrick01_bump"
+  "$normalmap" "pbrtest\redbrick01_bump"
   "$ao" "pbrtest\redbrick01_ao"
   "$roughness" "pbrtest\redbrick01_rough"
   "$envmap" "env_cubemap"
+  "$parallax" "1"
+	"$parallaxdepth" "0.25"
+    "$parallaxcenter" "0.5"
 
 }

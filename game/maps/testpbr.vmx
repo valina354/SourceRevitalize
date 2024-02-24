@@ -2,7 +2,7 @@ versioninfo
 {
 	"editorversion" "400"
 	"editorbuild" "8864"
-	"mapversion" "72"
+	"mapversion" "161"
 	"formatversion" "100"
 	"prefab" "0"
 }
@@ -14,7 +14,7 @@ viewsettings
 	"bSnapToGrid" "1"
 	"bShowGrid" "1"
 	"bShowLogicalGrid" "0"
-	"nGridSpacing" "8"
+	"nGridSpacing" "1"
 }
 palette_plus
 {
@@ -72,7 +72,7 @@ bgimages_plus
 world
 {
 	"id" "1"
-	"mapversion" "72"
+	"mapversion" "161"
 	"classname" "worldspawn"
 	"detailmaterial" "detail/detailsprites"
 	"detailvbsp" "detail.vbsp"
@@ -805,110 +805,24 @@ world
 }
 entity
 {
-	"id" "299"
-	"classname" "info_player_start"
-	"angles" "0 0 0"
-	"spawnflags" "0"
-	"origin" "-624 -384 -186.909"
-	editor
-	{
-		"color" "0 255 0"
-		"visgroupshown" "1"
-		"visgroupautoshown" "1"
-		"logicalpos" "[0 13500]"
-	}
-}
-entity
-{
-	"id" "402"
-	"classname" "light"
-	"_constant_attn" "0"
-	"_distance" "0"
-	"_fifty_percent_distance" "0"
-	"_hardfalloff" "0"
-	"_light" "255 255 255 1"
-	"_lightHDR" "-1 -1 -1 1"
-	"_lightscaleHDR" "1"
-	"_linear_attn" "0"
-	"_quadratic_attn" "1"
-	"_zero_percent_distance" "0"
-	"spawnflags" "0"
-	"style" "0"
-	"origin" "-772.047 -576.532 -186.909"
-	editor
-	{
-		"color" "220 30 220"
-		"visgroupshown" "1"
-		"visgroupautoshown" "1"
-		"logicalpos" "[0 14000]"
-	}
-}
-entity
-{
-	"id" "327"
-	"classname" "env_cubemap"
-	"cubemapsize" "7"
-	"radius" "276"
-	"origin" "-628 -424 -120"
-	editor
-	{
-		"color" "0 0 255"
-		"visgroupshown" "1"
-		"visgroupautoshown" "1"
-		"logicalpos" "[0 14500]"
-	}
-}
-entity
-{
-	"id" "348"
-	"classname" "env_projectedtexture"
-	"angles" "30 -180 180"
-	"cameraspace" "0"
-	"constant" "0"
-	"enableshadows" "1"
-	"enablevolumetrics" "1"
-	"farz" "750.0"
-	"lightcolor" "206 96 53 500"
-	"lightfov" "90.0"
-	"lightonlytarget" "0"
-	"lightworld" "1"
-	"linear" "0"
-	"nearz" "4.0"
-	"quadratic" "2500"
-	"shadowquality" "1"
-	"spawnflags" "1"
-	"static" "0"
-	"texturename" "effects/flashlight001"
-	"volumetricsmultiplier" "1.0"
-	"origin" "-412 -480 -61.0909"
-	editor
-	{
-		"color" "220 30 220"
-		"visgroupshown" "1"
-		"visgroupautoshown" "1"
-		"logicalpos" "[0 15000]"
-	}
-}
-entity
-{
-	"id" "412"
+	"id" "516"
 	"classname" "prop_static"
-	"angles" "0 0 0"
+	"angles" "0 90 0"
 	"fademindist" "-1"
 	"fadescale" "1"
-	"generatelightmaps" "1"
-	"lightmapresolutionx" "32"
-	"lightmapresolutiony" "32"
-	"model" "models/props_wasteland/prison_gate001b.mdl"
+	"generatelightmaps" "0"
+	"lightmapresolutionx" "128"
+	"lightmapresolutiony" "128"
+	"model" "models/pbrprops/utilitybox01pbr.mdl"
 	"skin" "0"
 	"solid" "6"
-	"origin" "-472 -484 -138.909"
+	"origin" "-634 -590 -197"
 	editor
 	{
 		"color" "255 255 0"
 		"visgroupshown" "1"
 		"visgroupautoshown" "1"
-		"logicalpos" "[0 15500]"
+		"logicalpos" "[0 0]"
 	}
 }
 entity
@@ -947,6 +861,106 @@ entity
 		"visgroupshown" "1"
 		"visgroupautoshown" "1"
 		"logicalpos" "[0 16000]"
+	}
+}
+entity
+{
+	"id" "299"
+	"classname" "info_player_start"
+	"angles" "0 0 0"
+	"spawnflags" "0"
+	"origin" "-624 -384 -186.909"
+	editor
+	{
+		"color" "0 255 0"
+		"visgroupshown" "1"
+		"visgroupautoshown" "1"
+		"logicalpos" "[0 13500]"
+	}
+}
+entity
+{
+	"id" "541"
+	"classname" "light"
+	"_constant_attn" "0"
+	"_distance" "0"
+	"_fifty_percent_distance" "0"
+	"_hardfalloff" "0"
+	"_light" "255 255 255 1"
+	"_lightHDR" "-1 -1 -1 1"
+	"_lightscaleHDR" "1"
+	"_linear_attn" "0"
+	"_quadratic_attn" "1"
+	"_zero_percent_distance" "0"
+	"spawnflags" "0"
+	"style" "0"
+	"origin" "-766.999 -566 -148"
+	editor
+	{
+		"color" "220 30 220"
+		"visgroupshown" "1"
+		"visgroupautoshown" "1"
+		"logicalpos" "[0 14000]"
+	}
+}
+entity
+{
+	"id" "412"
+	"classname" "prop_static"
+	"angles" "0 0 0"
+	"fademindist" "-1"
+	"fadescale" "1"
+	"generatelightmaps" "0"
+	"lightmapresolutionx" "256"
+	"lightmapresolutiony" "256"
+	"model" "models/props_wasteland/prison_gate001b.mdl"
+	"skin" "0"
+	"solid" "6"
+	"origin" "-472 -484 -138.909"
+	editor
+	{
+		"color" "255 255 0"
+		"visgroupshown" "1"
+		"visgroupautoshown" "1"
+		"logicalpos" "[0 15500]"
+	}
+}
+entity
+{
+	"id" "327"
+	"classname" "env_cubemap"
+	"cubemapsize" "7"
+	"radius" "0"
+	"origin" "-628 -424 -120"
+	editor
+	{
+		"color" "0 0 255"
+		"visgroupshown" "1"
+		"visgroupautoshown" "1"
+		"logicalpos" "[0 14500]"
+	}
+}
+entity
+{
+	"id" "550"
+	"classname" "light_deferred"
+	"_cone" "45"
+	"_constant_attn" "0"
+	"_exponent" "1"
+	"_inner_cone" "30"
+	"_light" "255 255 255 1200"
+	"_linear_attn" "0"
+	"_quadratic_attn" "1"
+	"angles" "0 0 0"
+	"lighttype" "0"
+	"StartDisabled" "0"
+	"origin" "-579.5 -339.5 -186.909"
+	editor
+	{
+		"color" "220 30 220"
+		"visgroupshown" "1"
+		"visgroupautoshown" "1"
+		"logicalpos" "[0 0]"
 	}
 }
 cameras

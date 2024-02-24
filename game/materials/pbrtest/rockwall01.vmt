@@ -1,0 +1,8 @@
+"LightmappedPBR"
+{
+    "$Basetexture" "pbrtest\rockwall01_diff"
+	"$roughness" "pbrtest\rockwall01_rough"
+	"$normalmap" "pbrtest\rockwall01_bump"
+	"$ao" "pbrtest\rockwall01_ao"
+	"$envmap" "env_cubemap"
+}

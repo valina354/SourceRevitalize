@@ -1,0 +1,9 @@
+"complements"
+{
+	"$FBTEXTURE"		"_rt_FullFrameFB" 
+	"$GUIDEHUE"		"[1 1 1]"
+	"$AMOUNT"		"1.0"
+	"$CONCENTRATE"	"1.0"
+	"$DESATCORR"		"1.0"
+	"$ignorez"		1
+}
