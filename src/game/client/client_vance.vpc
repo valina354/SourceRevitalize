@@ -36,6 +36,8 @@ $Project "Client (Vance)"
 		$File	"tne_RenderTargets.cpp"
 		$File	"tne_RenderTargets.h"
 		$File	"object_motion_blur_effect.cpp"
+		$File	"mapbase_rendertargets.cpp"
+		$File	"mapbase_rendertargets.h"
 		
 		$Folder "Shader Editor" 
 		{
