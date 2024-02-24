@@ -76,6 +76,10 @@ void SetupVars(DrawLightPass_Vars_t& info)
 
 SHADER_INIT_PARAMS()
 {
+	// PBR relies heavily on envmaps
+	if ( !params[ENVMAP]->IsDefined() )
+		params[ENVMAP]->SetStringValue( "env_cubemap" );
+
 	if ( params[NORMALMAP]->IsDefined() && ( !LIGHTMAP ) )
 	{
 		params[NORMALMAP]->SetUndefined();

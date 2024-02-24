@@ -17,6 +17,8 @@ BEGIN_VS_SHADER(LightmappedPBR,
 	"Help for LightmappedPBR")
 #endif
 
+
+
 BEGIN_SHADER_PARAMS
 SHADER_PARAM(ALPHATESTREFERENCE, SHADER_PARAM_TYPE_FLOAT, "0.0", "")
 SHADER_PARAM(ENVMAP, SHADER_PARAM_TYPE_TEXTURE, "shadertest/shadertest_env", "envmap")
@@ -88,6 +90,9 @@ void SetupVars(DrawLightPass_Vars_t& info)
 
 SHADER_INIT_PARAMS()
 {
+	// PBR relies heavily on envmaps
+	if ( !params[ENVMAP]->IsDefined() )
+		params[ENVMAP]->SetStringValue( "env_cubemap" );
 	LightmappedPBR_DX9_Vars_t info;
 	SetupVars(info);
 	InitParamsLightmappedPBR_DX9(this, params, pMaterialName, info);
