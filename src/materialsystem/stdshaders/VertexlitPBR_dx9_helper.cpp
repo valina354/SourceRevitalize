@@ -20,6 +20,9 @@
 
 
 
+static ConVar cvPbr_model_parallax_samples( "pbr_model_parallax_samples", "20", 0, "Count of parallax layers for models." );
+static ConVar cvPbr_model_parallax_depth( "pbr_model_parallax_depth", "0", 0, "Multiplier of parallax depth on models." );
+static ConVar cvPbr_model_parallax_range( "pbr_model_parallax_depth", "0", 0, "Parallax range value in 0.0 - 1.0 for models." );
 static ConVar mat_fullbright( "mat_fullbright", "0", FCVAR_CHEAT );
 static ConVar r_rimlight( "r_rimlight", "1", FCVAR_CHEAT );
 

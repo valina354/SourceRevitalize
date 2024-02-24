@@ -26,26 +26,5 @@ ipch
 .vs/
 Release*/
 Debug*/
-*.db
-*.VC.db
-
-*.vpc.sentinel
-*.vpc_cache
-*.vcxproj.*
-*.opendb
-
-# OSX/Linux build products
-*.mak
-*.mak.vpc_crc
-*.xcodeproj/
-obj*/
-!devtools/*.mak
-!utils/smdlexp/smdlexp.mak
-
-# Specific Source build products
-generated_proto/
-
-# shader files
-*.tmp
 
 
