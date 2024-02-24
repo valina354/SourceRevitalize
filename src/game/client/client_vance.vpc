@@ -35,6 +35,7 @@ $Project "Client (Vance)"
 		$File	"bloodoverlayproxy.cpp"
 		$File	"tne_RenderTargets.cpp"
 		$File	"tne_RenderTargets.h"
+		$File	"object_motion_blur_effect.cpp"
 		
 		$Folder "Shader Editor" 
 		{

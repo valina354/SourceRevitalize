@@ -24,6 +24,7 @@ extern bool g_bDumpRenderTargets; // in viewpostprocess.cpp
 
 CGlowObjectManager g_GlowObjectManager;
 
+#ifndef MAPBASE
 struct ShaderStencilState_t
 {
 	bool m_bEnable;
@@ -56,6 +57,7 @@ struct ShaderStencilState_t
 		pRenderContext->SetStencilWriteMask( m_nWriteMask );
 	}
 };
+#endif // !MAPBASE
 
 void CGlowObjectManager::RenderGlowEffects( const CViewSetup *pSetup, int nSplitScreenSlot )
 {
