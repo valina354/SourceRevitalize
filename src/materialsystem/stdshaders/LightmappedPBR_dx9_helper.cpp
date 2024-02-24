@@ -279,6 +279,28 @@ static void DrawLightmappedPBR_DX9_Internal( CBaseVSShader *pShader, IMaterialVa
 			bHasParallax = false;
 		}
 
+		 // Determining the max level of detail for the envmap
+		int iEnvMapLOD = 6;
+		auto envTexture = params[info.m_nEnvmap]->GetTextureValue();
+		if ( envTexture )
+		{
+			// Get power of 2 of texture width
+			int width = envTexture->GetMappingWidth();
+			int mips = 0;
+			while ( width >>= 1 )
+				++mips;
+
+			// Cubemap has 4 sides so 2 mips less
+			iEnvMapLOD = mips;
+		}
+
+		// Dealing with very high and low resolution cubemaps
+		// WRD : Note, this only works when the cubemap is flagged to have all mips OR if you run the game with -forceallmips
+		if ( iEnvMapLOD > 12 )
+			iEnvMapLOD = 12;
+		if ( iEnvMapLOD < 4 )
+			iEnvMapLOD = 4;
+
 		DECLARE_STATIC_VERTEX_SHADER( lightmappedpbr_vs30 );
 		SET_STATIC_VERTEX_SHADER_COMBO(VERTEXCOLOR, bHasVertexColor || bHasVertexAlpha);
 		SET_STATIC_VERTEX_SHADER_COMBO(BUMPMAP, bHasBump);
