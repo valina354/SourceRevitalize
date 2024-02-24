@@ -95,6 +95,8 @@ SHADER_INIT_PARAMS()
 
 SHADER_FALLBACK
 {
+	if ( !g_pHardwareConfig->SupportsShaderModel_3_0() )
+		return "SDK_VertexLitGeneric";
 	return 0;
 }
 

@@ -2416,7 +2416,7 @@ bool CGameMovement::CheckJumpButton( void )
 	if ( !cl_autojump.GetBool() && ( mv->m_nOldButtons & IN_JUMP ) )
 		return false; // don't pogo stick.
 
-#ifdef VANCE
+#ifndef VANCE
 	// Cannot jump will in the unduck transition.
 	if ( player->m_Local.m_bDucking && (  player->GetFlags() & FL_DUCKING ) )
 		return false;
