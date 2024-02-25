@@ -683,7 +683,6 @@ private:
 	CMaterialReference m_Complements;
 	CMaterialReference m_CubicDistortion;
 	CMaterialReference m_Desaturate;
-	CMaterialReference m_Nightvision;
 };
 
 // Color Correction Extensions
@@ -725,7 +724,7 @@ ConVar r_post_cubic_distortion_cubicamount( "r_post_cubic_distortion_cubicamount
 ConVar r_post_desaturate( "r_post_desaturate", "0", FCVAR_CHEAT );
 ConVar r_post_desaturate_strength( "r_post_desaturate_strength", "1.0", FCVAR_CHEAT );
 
-ConVar r_post_nightvision( "r_post_nightvision", "0", FCVAR_CHEAT );
+
 
 void nextgen_callback( IConVar *pConVar, char const *pOldString, float flOldValue );
 
@@ -751,7 +750,6 @@ void CColorCorrectionEffect::Init( void )
 	m_Complements.Init( materials->FindMaterial( "shaders/complements", TEXTURE_GROUP_PIXEL_SHADERS, true ) );
 	m_CubicDistortion.Init( materials->FindMaterial( "shaders/cubic_distortion", TEXTURE_GROUP_PIXEL_SHADERS, true ) );
 	m_Desaturate.Init( materials->FindMaterial( "shaders/desaturate", TEXTURE_GROUP_PIXEL_SHADERS, true ) );
-	m_Nightvision.Init( materials->FindMaterial( "shaders/nightvision", TEXTURE_GROUP_PIXEL_SHADERS, true ) );
 }
 
 void CColorCorrectionEffect::Shutdown( void )
@@ -764,7 +762,6 @@ void CColorCorrectionEffect::Shutdown( void )
 	m_Complements.Shutdown();
 	m_CubicDistortion.Shutdown();
 	m_Desaturate.Shutdown();
-	m_Nightvision.Shutdown();
 }
 
 ConVar r_post_colorcorrection( "r_post_colorcorrection", "1", FCVAR_ARCHIVE );
@@ -853,10 +850,7 @@ void CColorCorrectionEffect::Render( int x, int y, int w, int h )
 		DrawScreenEffectMaterial( m_Desaturate, x, y, w, h );
 	}
 
-	if ( r_post_nightvision.GetBool() )
-	{
-		DrawScreenEffectMaterial( m_Nightvision, x, y, w, h );
-	}
+	
 }
 
 class CSunShaftEffect : public IScreenSpaceEffect

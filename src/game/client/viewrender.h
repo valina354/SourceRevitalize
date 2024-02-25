@@ -370,7 +370,9 @@ public:
 	virtual void	Render2DEffectsPostHUD( const CViewSetup &view );
 
 	void PerformBokeh( int x, int y, int width, int height );
-	void PerformDust( int x, int y, int width, int height );
+	void PerformVideoFeed( int x, int y, int width, int height );
+	void PerformFilmGrain( int x, int y, int width, int height );
+	void PerformNightVision( int x, int y, int width, int height );
 	void PerformReloadBlur( int x, int y, int width, int height );
 	void PerformPreViewmodelPostProcessEffects( int x, int y, int width, int height );
 

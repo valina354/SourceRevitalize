@@ -2642,6 +2642,7 @@ void DoEnginePostProcessing( int x, int y, int w, int h, bool bFlashlightIsOn, b
 		}
 	}
 
+
 #if defined( _X360 )
 	pRenderContext->PopVertexShaderGPRAllocation();
 #endif

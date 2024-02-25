@@ -878,7 +878,9 @@ CLIENTEFFECT_REGISTER_BEGIN( PrecachePostProcessingEffects )
 #endif
 
 	CLIENTEFFECT_MATERIAL( "shaders/bokeh" )
-	CLIENTEFFECT_MATERIAL( "shaders/dust" )
+	CLIENTEFFECT_MATERIAL( "shaders/nightvision" )
+	CLIENTEFFECT_MATERIAL( "shaders/videofeed" )
+	CLIENTEFFECT_MATERIAL( "shaders/filmgrain" )
 
 	CLIENTEFFECT_MATERIAL( "shaders/screen_blurx" )
 	CLIENTEFFECT_MATERIAL( "shaders/screen_blury" )
@@ -2775,22 +2777,58 @@ void CViewRender::PerformBokeh( int x, int y, int width, int height )
 	DrawScreenEffectMaterial( pBokeh, x, y, width, height );
 }
 
-ConVar r_post_dust( "r_post_dust", "1", FCVAR_ARCHIVE );
 
-void CViewRender::PerformDust( int x, int y, int width, int height )
+ConVar r_post_nightvision( "r_post_nightvision", "0", FCVAR_ARCHIVE );
+
+void CViewRender::PerformNightVision( int x, int y, int width, int height )
 {
-	if ( !r_post_dust.GetBool() )
+	if ( !r_post_nightvision.GetBool() )
 		return;
 
 	IMaterialVar *var;
 
-	IMaterial *pDust = materials->FindMaterial( "shaders/dust", TEXTURE_GROUP_PIXEL_SHADERS, true );
+	IMaterial *pNightVision = materials->FindMaterial( "shaders/nightvision", TEXTURE_GROUP_PIXEL_SHADERS, true );
 
-	var = pDust->FindVar( "$MUTABLE_01", NULL );
+	var = pNightVision->FindVar( "$MUTABLE_01", NULL );
 	//var->SetFloatValue( r_post_bokeh_blur_amount.GetFloat() );
 
-	DrawScreenEffectMaterial( pDust, x, y, width, height );
+	DrawScreenEffectMaterial( pNightVision, x, y, width, height );
 }
+
+ConVar r_post_videofeed( "r_post_videofeed", "0", FCVAR_ARCHIVE );
+
+void CViewRender::PerformVideoFeed( int x, int y, int width, int height )
+{
+	if ( !r_post_videofeed.GetBool() )
+		return;
+
+	IMaterialVar *var;
+
+	IMaterial *pVideoFeed = materials->FindMaterial( "shaders/videofeed", TEXTURE_GROUP_PIXEL_SHADERS, true );
+
+	var = pVideoFeed->FindVar( "$MUTABLE_01", NULL );
+	//var->SetFloatValue( r_post_bokeh_blur_amount.GetFloat() );
+
+	DrawScreenEffectMaterial( pVideoFeed, x, y, width, height );
+}
+
+ConVar r_post_filmgrain( "r_post_filmgrain", "0", FCVAR_ARCHIVE );
+
+void CViewRender::PerformFilmGrain( int x, int y, int width, int height )
+{
+	if ( !r_post_filmgrain.GetBool() )
+		return;
+
+	IMaterialVar *var;
+
+	IMaterial *pFilmGrain = materials->FindMaterial( "shaders/filmgrain", TEXTURE_GROUP_PIXEL_SHADERS, true );
+
+	var = pFilmGrain->FindVar( "$MUTABLE_01", NULL );
+	//var->SetFloatValue( r_post_bokeh_blur_amount.GetFloat() );
+
+	DrawScreenEffectMaterial( pFilmGrain, x, y, width, height );
+}
+
 
 ConVar r_post_reload_blur( "r_post_reload_blur", "1", FCVAR_ARCHIVE );
 ConVar r_post_reload_blur_amount( "r_post_reload_blur_amount", "2.0", FCVAR_CHEAT );
@@ -2845,7 +2883,9 @@ void CViewRender::PerformReloadBlur( int x, int y, int width, int height )
 void CViewRender::PerformPreViewmodelPostProcessEffects( int x, int y, int width, int height )
 {
 	PerformBokeh( x, y, width, height );
-	PerformDust( x, y, width, height );
+	PerformVideoFeed( x, y, width, height );
+	PerformFilmGrain( x, y, width, height );
+	PerformNightVision( x, y, width, height );
 	PerformReloadBlur( x, y, width, height );
 }
 
