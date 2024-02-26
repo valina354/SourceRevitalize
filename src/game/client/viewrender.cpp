@@ -2248,8 +2248,12 @@ const char *COM_GetModDirectory();
 //			whatToDraw - 
 //-----------------------------------------------------------------------------
 // This renders the entire 3D view.
-void CViewRender::RenderView( const CViewSetup &view, int nClearFlags, int whatToDraw )
+void CViewRender::RenderView( const CViewSetup &viewIn, int nClearFlags, int whatToDraw )
 {
+	CViewSetup view = viewIn;
+
+	if ( building_cubemaps.GetBool() )
+		view.fov += 2.0 * atanf( 64.0f / ( 64.0f - 0.5 ) );
 	m_UnderWaterOverlayMaterial.Shutdown();					// underwater view will set
 
 	m_CurrentView = view;
