@@ -27,6 +27,8 @@ extern ConVar r_csm_slopescalebias;
 extern ConVar r_csm_performance;
 extern ConVar mat_cubemapparallax;
 
+
+
 //-----------------------------------------------------------------------------
 // Initialize shader parameters
 //-----------------------------------------------------------------------------
@@ -106,6 +108,8 @@ void InitLightmappedPBR_DX9( CBaseVSShader *pShader, IMaterialVar** params, Ligh
 		pShader->LoadTexture(info.m_nBRDF);
 	}
 
+	
+
 	if (info.m_nEnvmap != -1 && params[info.m_nEnvmap]->IsDefined())
 	{
 		if (!IS_FLAG_SET(MATERIAL_VAR_ENVMAPSPHERE))
@@ -165,6 +169,7 @@ static void DrawLightmappedPBR_DX9_Internal( CBaseVSShader *pShader, IMaterialVa
 		!bBumpAlphaSmoothness && info.m_nUseSmoothness != -1 && params[info.m_nUseSmoothness]->GetIntValue() == 1;
 	bool bSeamlessMapping = ((info.m_nSeamlessMappingScale != -1) && (params[info.m_nSeamlessMappingScale]->GetFloatValue() != 0.0));
 	bool bHasParallax = params[info.UseParallax]->GetIntValue() != 0;
+
 
 	bool bHasVertexColor = IS_FLAG_SET(MATERIAL_VAR_VERTEXCOLOR);
 	bool bHasVertexAlpha = IS_FLAG_SET(MATERIAL_VAR_VERTEXALPHA);
@@ -265,6 +270,8 @@ static void DrawLightmappedPBR_DX9_Internal( CBaseVSShader *pShader, IMaterialVa
 		pShaderShadow->EnableTexture( SHADER_SAMPLER3, true );		// Normal map
 		pShaderShadow->EnableTexture( SHADER_SAMPLER5, true );		// Normalizing cube map
 		pShaderShadow->EnableSRGBWrite( true );
+
+
 		
 		// texcoord0 : base texcoord
 		// texcoord1 : lightmap texcoord
@@ -387,6 +394,8 @@ static void DrawLightmappedPBR_DX9_Internal( CBaseVSShader *pShader, IMaterialVa
 		}
 
 		pShader->BindTexture(SHADER_SAMPLER8, info.m_nBRDF);
+
+		
 		
 		LightState_t lightState = { 0, false, false };
 		bool bFlashlightShadows = false;
@@ -446,6 +455,8 @@ static void DrawLightmappedPBR_DX9_Internal( CBaseVSShader *pShader, IMaterialVa
 			float scale = params[info.m_nSeamlessMappingScale]->GetFloatValue();
 			pShaderAPI->SetVertexShaderConstant(VERTEX_SHADER_SHADER_SPECIFIC_CONST_0, &scale);
 		}
+
+		
 
 		pShader->SetVertexShaderTextureTransform( VERTEX_SHADER_SHADER_SPECIFIC_CONST_2, info.m_nBaseTextureTransform );
 		pShader->SetModulationPixelShaderDynamicState_LinearColorSpace( 1 );

@@ -36,6 +36,8 @@ SHADER_PARAM( PARALLAX, SHADER_PARAM_TYPE_BOOL, "0", "Use Parallax Occlusion Map
 SHADER_PARAM( PARALLAXDEPTH, SHADER_PARAM_TYPE_FLOAT, "0.0030", "Depth of the Parallax Map" );
 SHADER_PARAM( PARALLAXCENTER, SHADER_PARAM_TYPE_FLOAT, "0.5", "Center depth of the Parallax Map" );
 
+
+
 SHADER_PARAM(ENVMAPORIGIN, SHADER_PARAM_TYPE_VEC3, "[0 0 0]", "Origin of the env_cubemap (for sphere projected cubemap)")
 SHADER_PARAM(ENVMAPRADIUS, SHADER_PARAM_TYPE_INTEGER, "0", "Radius of the env_cubemap (for sphere projected cubemap)")
 END_SHADER_PARAMS
@@ -100,6 +102,9 @@ SHADER_FALLBACK
 
 SHADER_INIT
 {
+	// PBR relies heavily on envmaps
+	if ( !params[ENVMAP]->IsDefined() )
+		params[ENVMAP]->SetStringValue( "env_cubemap" );
 	LightmappedPBR_DX9_Vars_t info;
 	SetupVars(info);
 	InitLightmappedPBR_DX9(this, params, info);
