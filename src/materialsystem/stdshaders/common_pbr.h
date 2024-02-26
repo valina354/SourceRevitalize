@@ -1,4 +1,4 @@
-#define PI 3.1415926
+#define PI 3.14159
 float luminance(float3 rgb)
 {
     const float3 W = float3(0.5125, 0.7154, 0.7121);
@@ -51,10 +51,13 @@ float DistributionTrowbridgeReitz(float HN, float roughness, float aP)
 
 }
 
-float3 fresnelSchlick(float cosTheta, float3 F0)
+float FresnelCookTorrance( float VdotH, float F0 )
 {
-    return F0 + (1.0f.xxx - F0) * pow(1.0f - cosTheta, 5.0);
-}  
+	float sqrtF = sqrt( F0 );
+	float Eta = ( 1.0 + sqrtF ) / ( 1.0 - sqrtF );
+	float g = sqrt( Eta * Eta + VdotH * VdotH - 1.0 );
+	return 0.5 * pow( ( g - VdotH ) / ( g + VdotH ), 2 ) * ( 1 + pow( ( ( g + VdotH ) * VdotH - 1.0 ) / ( ( g - VdotH ) * VdotH + 1.0 ), 2 ) );
+}
 
 float3 Diffuse_OrenNayar(float3 DiffuseColor, float Roughness, float NoV, float NoL, float VoH)
 {
@@ -103,8 +106,8 @@ float3 DoPBRLight(float3 vWorldPos, float3 vWorldNormal, float3 albedo, float3 v
 
     float3 F0 = 0.04f.xxx; 
     F0      = lerp(F0, albedo, metallic);
-    float3 F = fresnelSchlick(HL, F0);
-    float3 F2 = fresnelSchlick(HV, F0);
+    float3 F = FresnelCookTorrance(HL, F0);
+    float3 F2 = FresnelCookTorrance(HV, F0);
     //float3 F = Diffuse_OrenNayar(F0, roughness, NV, LN, HV);
 
 	// D - Calculate normal distribution for specular BRDF.
