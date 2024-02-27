@@ -11,7 +11,7 @@
 #include "screenspace_simple_vs30.inc"
 #include "gaussian_depthaware_roughness_ps30.inc"
 
-ConVar r_post_ssr_blursize("r_post_ssr_blursize", "5.0", FCVAR_CHEAT);
+ConVar r_post_ssr_blursize("r_post_ssr_blursize", "3.0", FCVAR_CHEAT);
 ConVar r_post_ssr_blurarea("r_post_ssr_blurarea", "0.001", FCVAR_CHEAT);
 ConVar r_post_ssr_blurangle_theshold("r_post_ssr_blurangle_theshold", "30", FCVAR_CHEAT);
 
