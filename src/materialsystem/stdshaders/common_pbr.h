@@ -1,4 +1,4 @@
-#define PI 3.14159
+#define PI 3.1415926
 float luminance(float3 rgb)
 {
     const float3 W = float3(0.5125, 0.7154, 0.7121);
@@ -51,7 +51,7 @@ float DistributionTrowbridgeReitz(float HN, float roughness, float aP)
 
 }
 
-float FresnelCookTorrance( float VdotH, float F0 )
+float3 FresnelCookTorrance( float VdotH, float F0 )
 {
 	float sqrtF = sqrt( F0 );
 	float Eta = ( 1.0 + sqrtF ) / ( 1.0 - sqrtF );

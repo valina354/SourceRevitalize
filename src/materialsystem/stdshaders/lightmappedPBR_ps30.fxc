@@ -131,7 +131,10 @@ bias *= saturate( 50.0 * specularColor.y );
 return specularColor * scale + bias;
 }
 
-
+float3 fresnelSchlickRoughness(float cosTheta, float3 F0, float roughness)
+{
+    return F0 + (max(1.0f.xxx - roughness, F0) - F0) * pow(1.0 - cosTheta, 5.0);
+}
 
 float3 DoIBL(float3 vWorldNormal, float3 vWorldPos, float3 albedo, float metallness, float roughness, float3 lightmap,float3 vLightpos)
 {
@@ -180,7 +183,7 @@ float3 DoIBL(float3 vWorldNormal, float3 vWorldPos, float3 albedo, float metalln
 	f0 = lerp(f0, albedo.rgb, metallic);
     float3 F = FresnelCookTorrance(HV, f0); // ambient Lighting Fresnel Term 
 
-	half3 BRDF = EnvDFGPolynomial(f0, roughness, NV);
+	float3 BRDF = EnvDFGPolynomial(f0, roughness, NV);
 
 	float3 kD = 1.0f.xxx - F;
 	kD *= 1.0 - metallic;	
@@ -202,7 +205,7 @@ float3 DoIBL(float3 vWorldNormal, float3 vWorldPos, float3 albedo, float metalln
 	
 	float3 f0 = 0.04f.xxx;
 	f0 = lerp(f0, albedo.rgb, metallic);
-    float3 F = FresnelCookTorrance(HV, f0); // ambient Lighting Fresnel Term 
+    float3 F = fresnelSchlickRoughness(NV, f0, roughness); // ambient Lighting Fresnel Term 
 
 	float3 kD = 1.0f.xxx - F;
 	kD *= 1.0 - metallic;	

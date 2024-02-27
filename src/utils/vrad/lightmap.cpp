@@ -1648,7 +1648,10 @@ static void ParseLightEnvironment( entity_t *e )
 		BuildVisForLightEnvironment();
  
 		// Add sky and sky ambient lights to the list.
-		AddDLightToActiveList( gSkyLight );
+		if ( IntForKey( e, "builddlight" ) )
+		{
+			AddDLightToActiveList( gSkyLight );
+		}
 		AddDLightToActiveList( gAmbient );
 	}
 }

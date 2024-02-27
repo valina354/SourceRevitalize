@@ -221,7 +221,7 @@ float3 DoIBL(float3 vEye, float3 vWorldNormal, float3 vWorldPos, float2 screenUV
 	f0 = lerp(f0, albedo.rgb, metallic);
     float3 F = FresnelCookTorrance(HV, f0); // ambient Lighting Fresnel Term 
 
-	half3 BRDF = EnvDFGPolynomial(f0, roughness, NV);
+	float3 BRDF = EnvDFGPolynomial(f0, roughness, NV);
 
 	float3 kD = 1.0f.xxx - F;
 	kD *= 1.0 - metallic;	
