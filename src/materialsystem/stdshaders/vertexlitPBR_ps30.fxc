@@ -96,8 +96,6 @@ sampler BRDFSampler				: register( s8 );	// for IBL
 sampler AOSampler				: register( s9 );	// AO
 sampler EmissiveSampler			: register( s10 );	// Emissive map
 sampler LightmapSampler			: register( s11 );	// Lightmap texture from the engine
-const float3 vLightpos          : register( c50 );
-
 
 //DoPBRLight(float3 vWorldPos, float3 vWorldNormal, float3 albedo, float3 vPosition, float3 vColor, float3 vEye, float atten_radius, float3 metallic, float3 roughness)
 float3 DoPBRLights(float3 vEye, float3 vWorldNormal, float3 vWorldPos, float4 albedo, float4 atten, float3 lightmap, float metallic, float roughness)
@@ -157,47 +155,31 @@ float3 DoPBRLights(float3 vEye, float3 vWorldNormal, float3 vWorldPos, float4 al
 	return linearColor;
 }
 
-float3 EnvDFGPolynomial( float3 specularColor, float Roughness, float ndotv )
+// https://www.unrealengine.com/en-US/blog/physically-based-shading-on-mobile
+half3 EnvBRDFApprox( half3 SpecularColor, half Roughness, half NoV )
 {
-float x = Roughness;
-float y = ndotv;
-
-float b1 = -0.1688;
-float b2 = 1.895;
-float b3 = 0.9903;
-float b4 = -4.853;
-float b5 = 8.404;
-float b6 = -5.069;
-float bias = saturate( min( b1 * x + b2 * x * x, b3 + b4 * y + b5 * y * y + b6 * y * y * y ) );
-
-float d0 = 0.6045;
-float d1 = 1.699;
-float d2 = -0.5228;
-float d3 = -3.603;
-float d4 = 1.404;
-float d5 = 0.1939;
-float d6 = 2.661;
-float delta = saturate( d0 + d1 * x + d2 * y + d3 * x * x + d4 * x * y + d5 * y * y + d6 * x * x * x );
-float scale = delta - bias;
-
-bias *= saturate( 50.0 * specularColor.y );
-return specularColor * scale + bias;
+	const half4 c0 = { -1, -0.0275, -0.572, 0.022 };
+	const half4 c1 = { 1, 0.0425, 1.04, -0.04 };
+	half4 r = Roughness * c0 + c1;
+	half a004 = min( r.x * r.x, exp2( -9.28 * NoV ) ) * r.x + r.y;
+	half2 AB = half2( -1.04, 1.04 ) * a004 + r.zw;
+	return SpecularColor * AB.x + AB.y;
 }
 
+float3 fresnelSchlickRoughness(float cosTheta, float3 F0, float roughness)
+{
+    return F0 + (max(1.0f.xxx - roughness, F0) - F0) * pow(1.0 - cosTheta, 5.0);
+}
 
-
-float3 DoIBL(float3 vEye, float3 vWorldNormal, float3 vWorldPos, float2 screenUV, float3 albedo, float metallness, float roughness, float3 lightmap,float3 vLightpos)
+float3 DoIBL(float3 vEye, float3 vWorldNormal, float3 vWorldPos, float2 screenUV, float3 albedo, float metallness, float roughness, float3 lightmap)
 {
     float3 metallic = clamp(metallness, 0.0f, 0.9f);
 #if CUBEMAP == 1
 	float3 V = normalize( vEye - vWorldPos );
 	float3 N = normalize( vWorldNormal );
-	float3 L = (vLightpos - vWorldPos );
-	float3 H = normalize(V + L);
 
 	//precompute dots
     float NV = max(0.0,dot(N, V));
-	float HV = max( 0.0, dot( H, V ) );
 
 	HALF3 reflectVect = 2.0 * NV * N - V;
 	float4 directionPosX = { 1.0f, 0.01f, 0.01f, 12.0f }; float4 directionNegX = {-1.0f, 0.01f, 0.01f, 12.0f };
@@ -219,9 +201,9 @@ float3 DoIBL(float3 vEye, float3 vWorldNormal, float3 vWorldPos, float2 screenUV
 
 	float3 f0 = 0.04f.xxx;
 	f0 = lerp(f0, albedo.rgb, metallic);
-    float3 F = FresnelCookTorrance(HV, f0); // ambient Lighting Fresnel Term 
+    float3 F = fresnelSchlickRoughness(NV, f0, roughness); // ambient Lighting Fresnel Term 
 
-	float3 BRDF = EnvDFGPolynomial(f0, roughness, NV);
+	half3 BRDF = EnvBRDFApprox(f0, roughness, NV);
 
 	float3 kD = 1.0f.xxx - F;
 	kD *= 1.0 - metallic;	
@@ -236,12 +218,9 @@ float3 DoIBL(float3 vEye, float3 vWorldNormal, float3 vWorldPos, float2 screenUV
 
 	float3 V = normalize( vEye - vWorldPos );
 	float3 N = normalize( vWorldNormal );
-	float3 L = (vLightpos - vWorldPos );
-	float3 H = normalize(V + L);
 
 	//precompute dots
     float NV = max(0.0,dot(N, V));
-	float HV = max( 0.0, dot( H, V ) );
 
 #if LIGHTMAP == 0
 	float3 irradiance = PixelShaderAmbientLight( N, cAmbientCube );
@@ -251,7 +230,7 @@ float3 DoIBL(float3 vEye, float3 vWorldNormal, float3 vWorldPos, float2 screenUV
 
 	float3 f0 = 0.04f.xxx;
 	f0 = lerp(f0, albedo.rgb, metallic);
-    float3 F = FresnelCookTorrance(HV, f0); // ambient Lighting Fresnel Term 
+    float3 F = fresnelSchlickRoughness(NV, f0, roughness); // ambient Lighting Fresnel Term 
 
 	float3 kD = 1.0f.xxx - F;
 	kD *= 1.0 - metallic;	
@@ -462,7 +441,7 @@ PS_OUTPUT main(PS_INPUT i) : COLOR
 	// Summation of diffuse illumination from all local lights
 	Lighting = DoPBRLights(g_EyePos.xyz, vWorldNormal, worldPos, baseColor, i.lightAtten, lightmapTexel, metallicMap, roughnessMap);
 #endif
-	float3 IBL = DoIBL(g_EyePos.xyz, vWorldNormal, worldPos, screenUV, baseColor.rgb, metallicMap, roughnessMap, lightmapTexel,vLightpos);
+	float3 IBL = DoIBL(g_EyePos.xyz, vWorldNormal, worldPos, screenUV, baseColor.rgb, metallicMap, roughnessMap, lightmapTexel);
 #if FLASHLIGHT
 	float3 Flashlight = DoFlashlight(vWorldNormal, worldPos, baseColor.rgb, metallicMap, roughnessMap);
 #elif CSM == 1
