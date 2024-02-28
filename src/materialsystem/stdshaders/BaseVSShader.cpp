@@ -22,6 +22,9 @@
 
 static ConVar mat_fullbright( "mat_fullbright","0", FCVAR_CHEAT );
 
+// NOTE: This is externed in BaseVSShader.h so it needs to be here
+ConVar r_flashlightbrightness( "r_flashlightbrightness", "0.25", FCVAR_CHEAT );
+
 // These functions are to be called from the shaders.
 
 //-----------------------------------------------------------------------------
@@ -859,6 +862,7 @@ void CBaseVSShader::SetFlashlightVertexShaderConstants( bool bBump, int bumpTran
 	atten[1] = flashlightState.m_fLinearAtten;
 	atten[2] = flashlightState.m_fQuadraticAtten;
 	atten[3] = flashlightState.m_FarZ;
+	/*atten[3] = flashlightState.m_FarZAtten;*/
 	s_pShaderAPI->SetVertexShaderConstant( VERTEX_SHADER_SHADER_SPECIFIC_CONST_5, atten, 1 );
 
 	if ( bDetail )
@@ -1165,6 +1169,7 @@ void CBaseVSShader::DrawFlashlight_dx90( IMaterialVar** params, IShaderDynamicAP
 		atten[1] = flashlightState.m_fLinearAtten;
 		atten[2] = flashlightState.m_fQuadraticAtten;
 		atten[3] = flashlightState.m_FarZ;
+		/*atten[3] = flashlightState.m_FarZAtten;*/
 		s_pShaderAPI->SetPixelShaderConstant( PSREG_FLASHLIGHT_ATTENUATION, atten, 1 );
 
 		SetFlashlightVertexShaderConstants( vars.m_bBump, vars.m_nBumpTransform, bDetail, vars.m_nDetailScale,  bSeamless ? false : true );

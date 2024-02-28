@@ -235,6 +235,8 @@ private:
 
 };
 
+extern ConVar r_flashlightbrightness;
+
 FORCEINLINE void SetFlashLightColorFromState( FlashlightState_t const &state, IShaderDynamicAPI *pShaderAPI, int nPSRegister=28, bool bFlashlightNoLambert=false )
 {
 	// Old code
@@ -247,8 +249,7 @@ FORCEINLINE void SetFlashLightColorFromState( FlashlightState_t const &state, IS
 	//	flToneMapScale = 1.0f;
 	//float flFlashlightScale = 1.0f / flToneMapScale;
 
-	// Force flashlight to 25% bright always
-	float flFlashlightScale = 0.25f;
+	float flFlashlightScale = r_flashlightbrightness.GetFloat();
 
 	if ( !g_pHardwareConfig->GetHDREnabled() )
 	{
