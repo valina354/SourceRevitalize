@@ -124,7 +124,7 @@ float4 main(PS_INPUT i) : COLOR0
     float depth_current = WorldToView(RayCurPos.xyz).z / 4000.0f;
     float depth_compare = readDepth_Normalized(i.texCoord) + 0.1f; // to ensure the first loop always starts
     float depthMask = 1.0f;
-    [unroll(16)]
+    [unroll(8)]
     while (1)
     {
         RayCurPos += RayDir * RayStep;
