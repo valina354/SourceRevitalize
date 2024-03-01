@@ -193,7 +193,7 @@ float3 worldToRelative(float3 worldVector, float3 surfTangent, float3 surfBasis,
    );
 }
 
-#if PARALLAXOCCLUSION
+
 float2 parallaxCorrect(float2 texCoord, float3 viewRelativeDir, sampler BumpmapSampler, float parallaxDepth, float parallaxCenter)
 {
     float fLength = length( viewRelativeDir );
@@ -260,71 +260,3 @@ float2 parallaxCorrect(float2 texCoord, float3 viewRelativeDir, sampler BumpmapS
     float2 texSample = texCoord - vParallaxOffset;
     return texSample;
 }
-#else
-float2 parallaxCorrect(float2 texCoord, float3 viewRelativeDir, sampler BumpmapSampler, sampler depthMap2, float blend, float parallaxDepth, float parallaxCenter)
-{
-    float fLength = length( viewRelativeDir );
-    float fParallaxLength = sqrt( fLength * fLength - viewRelativeDir.z * viewRelativeDir.z ) / viewRelativeDir.z; 
-    float2 vParallaxDirection = normalize(  viewRelativeDir.xy );
-    float2 vParallaxOffsetTS = vParallaxDirection * fParallaxLength;
-    vParallaxOffsetTS *= parallaxDepth;
-
-     // Compute all the derivatives:
-    float2 dx = ddx( texCoord );
-    float2 dy = ddy( texCoord );
-
-    int nNumSteps = 20;
-
-    float fCurrHeight = 0.0;
-    float fStepSize   = 1.0 / (float) nNumSteps;
-    float fPrevHeight = 1.0;
-    float fNextHeight = 0.0;
-
-    int    nStepIndex = 0;
-    bool   bCondition = true;
-
-    float2 vTexOffsetPerStep = fStepSize * vParallaxOffsetTS;
-    float2 vTexCurrentOffset = texCoord;
-    float  fCurrentBound     = 1.0;
-    float  fParallaxAmount   = 0.0;
-
-    float2 pt1 = 0;
-    float2 pt2 = 0;
-
-    float2 texOffset2 = 0;
-
-    [unroll]
-    while ( nStepIndex < nNumSteps ) 
-    {
-        vTexCurrentOffset -= vTexOffsetPerStep;
-
-        // Sample height map which in this case is stored in the alpha channel of the normal map:
-        fCurrHeight = parallaxCenter + lerp(tex2Dgrad( BumpmapSampler, vTexCurrentOffset, dx, dy ).a, tex2Dgrad( depthMap2, vTexCurrentOffset, dx, dy ).a, blend);
-
-        fCurrentBound -= fStepSize;
-
-        if ( fCurrHeight > fCurrentBound ) 
-        {     
-            pt1 = float2( fCurrentBound, fCurrHeight );
-            pt2 = float2( fCurrentBound + fStepSize, fPrevHeight );
-
-            texOffset2 = vTexCurrentOffset - vTexOffsetPerStep;
-
-            nStepIndex = nNumSteps + 1;
-        }
-        else
-        {
-            nStepIndex++;
-            fPrevHeight = fCurrHeight;
-        }
-    }   // End of while ( nStepIndex < nNumSteps )
-
-    float fDelta2 = pt2.x - pt2.y;
-    float fDelta1 = pt1.x - pt1.y;
-    fParallaxAmount = (pt1.x * fDelta2 - pt2.x * fDelta1 ) / ( fDelta2 - fDelta1 );
-    float2 vParallaxOffset = vParallaxOffsetTS * (1 - fParallaxAmount);
-    // The computed texture offset for the displaced point on the pseudo-extruded surface:
-    float2 texSample = texCoord - vParallaxOffset;
-    return texSample;
-}
-#endif

@@ -13,7 +13,7 @@
 ConVar r_post_tonemap_underexposure("r_post_tonemap_underexposure", "1");
 ConVar r_post_tonemap_overexposure("r_post_tonemap_overexposure", "1");
 ConVar r_post_tonemap_exposure("r_post_tonemap_exposure", "1");
-ConVar r_post_tonemap_mode("r_post_tonemap_mode", "1");
+ConVar r_post_tonemap_mode("r_post_tonemap_mode", "3");
 
 BEGIN_VS_SHADER_FLAGS(Vance_Tonemap, "Help for Bloom", SHADER_NOT_EDITABLE)
 BEGIN_SHADER_PARAMS

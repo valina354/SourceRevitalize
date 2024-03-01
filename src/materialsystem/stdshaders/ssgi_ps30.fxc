@@ -28,7 +28,7 @@ uniform float4x4 g_Proj : register(c20);
 #define g_zNear g_zPlanes.x
 #define g_zFar g_zPlanes.y
 
-#define PI 3.1415926
+#define PI 3.14
 
 float LinearizeDepth(float d, float f, float n)
 {
@@ -42,19 +42,19 @@ float2 ClipToScreen(float2 UV)
 
 float readDepth(in float2 coord)  
 {  
-    float3 pos = tex2D(som, float2(coord.x + g_resolution.x / 2.0f, coord.y + g_resolution.y / 2.0f)).xyz;
+    float3 pos = tex2D(som, float2(coord.x + g_resolution.x / 1.0f, coord.y + g_resolution.y / 1.0f)).xyz;
     return LinearizeDepth(pos.z, g_zFar, g_zNear) / 4000.0f;
 }
 
 float3 readView(in float2 coord)
 {
-    float3 pos = tex2D(som, float2(coord.x + g_resolution.x / 2.0f, coord.y + g_resolution.y / 2.0f)).xyz;
+    float3 pos = tex2D(som, float2(coord.x + g_resolution.x / 1.0f, coord.y + g_resolution.y / 1.0f)).xyz;
     return float3(pos.x, pos.y, pos.z);
 }
 
 float3 readColor(in float2 coord)  
 {  
-    return tex2D(colorSamp, float2(coord.x + g_resolution.x / 2.0f, coord.y + g_resolution.y / 2.0f)).rgb;
+    return tex2D(colorSamp, float2(coord.x + g_resolution.x / 1.0f, coord.y + g_resolution.y / 1.0f)).rgb;
 } 
 
 float3 readPos(in float2 coord)
@@ -70,7 +70,7 @@ float3 readPos(in float2 coord)
 
 float3 readNormal(in float2 coord)
 {
-    float3 normal = tex2D(NormalSamp, float2(coord.x + g_resolution.x / 2.0f, coord.y + g_resolution.y / 2.0f)).rgb;
+    float3 normal = tex2D(NormalSamp, float2(coord.x + g_resolution.x / 1.0f, coord.y + g_resolution.y / 1.0f)).rgb;
     return normal;
 }
 
@@ -140,9 +140,9 @@ float3 interleaved3d(float2 coord)
 float3 readNoise(in float2 coord)  
 {  
 	/*float tap1 = tex2D(noiseSamp, float2(fmod(coord.x / g_resolution.x, 512.0f) / 512.0f, fmod(coord.y / g_resolution.y, 512.0f) / 512.0f)).r;
-    float tap2 = tex2D(noiseSamp, float2(fmod(coord.x / g_resolution.x, 512.0f) / 512.0f, fmod((1.0f - coord.y) / g_resolution.y, 512.0f) / 512.0f)).r;
-    float tap3 = tex2D(noiseSamp, float2(fmod((1.0f - coord.x) / g_resolution.x, 512.0f) / 512.0f, fmod(coord.y / g_resolution.y, 512.0f) / 512.0f)).r;
-    float tap4 = tex2D(noiseSamp, float2(fmod((1.0f - coord.x) / g_resolution.x, 512.0f) / 512.0f, fmod((1.0f - coord.y) / g_resolution.y, 512.0f) / 512.0f)).r;
+    float tap2 = tex2D(noiseSamp, float2(fmod(coord.x / g_resolution.x, 256.0f) / 256.0f, fmod((1.0f - coord.y) / g_resolution.y, 256.0f) / 256.0f)).r;
+    float tap3 = tex2D(noiseSamp, float2(fmod((1.0f - coord.x) / g_resolution.x, 256.0f) / 256.0f, fmod(coord.y / g_resolution.y, 256.0f) / 256.0f)).r;
+    float tap4 = tex2D(noiseSamp, float2(fmod((1.0f - coord.x) / g_resolution.x, 256.0f) / 256.0f, fmod((1.0f - coord.y) / g_resolution.y, 256.0f) / 256.0f)).r;
 	//float3 noise = tex2D(noiseSamp, float2(fmod(coord.x / g_resolution.x, 16.0f) / 16.0f, fmod(coord.y / g_resolution.y, 16.0f) / 16.0f)).rgb;
     float3 noise1 = float3(tap1, tap2, tap3);
     float3 noise2 = float3(tap4, tap2, tap2);
@@ -252,7 +252,7 @@ float4 main( VS_OUTPUT IN ) : COLOR0
   
     const float radius = g_Radius; //0.002;
 	
-    const int samples = min(g_samples, 32);
+    const int samples = min(g_samples, 4);
     
     float2 uv = float2(IN.texCoord.x,IN.texCoord.y);
     
@@ -264,7 +264,7 @@ float4 main( VS_OUTPUT IN ) : COLOR0
 
 	float radius_depth = radius;
     float result = 1.0;
-	[unroll(8)]
+	[unroll(1)]
     for (int i = 0; i < samples; i++) 
 	{
         float3 curr_sphere = spherical_kernel(IN.texCoord, i, samples);

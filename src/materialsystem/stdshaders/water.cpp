@@ -21,7 +21,7 @@
 #include "flowmapped_water_vs30.inc"
 
 #ifndef _X360
-static ConVar r_waterforceexpensive( "r_waterforceexpensive", "0", FCVAR_ARCHIVE );
+static ConVar r_waterforceexpensive( "r_waterforceexpensive", "1", FCVAR_ARCHIVE );
 #endif
 
 DEFINE_FALLBACK_SHADER( SDK_Water, SDK_Water_DX9_HDR )

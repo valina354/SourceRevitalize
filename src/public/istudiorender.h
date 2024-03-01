@@ -21,6 +21,7 @@
 #include "appframework/IAppSystem.h"
 #include "datacache/imdlcache.h"
 #include "studio.h"
+#include "materialsystem/imaterialvar.h"
 
 
 //-----------------------------------------------------------------------------
@@ -377,6 +378,10 @@ public:
 	// draw an array of models with the same state
 	virtual void DrawModelArray( const DrawModelInfo_t &drawInfo, int arrayCount, model_array_instance_t *pInstanceData, int instanceStride, int flags = STUDIORENDER_DRAW_ENTIRE_MODEL ) = 0;
 };
+
+
+
+
 
 extern IStudioRender *g_pStudioRender;
 
