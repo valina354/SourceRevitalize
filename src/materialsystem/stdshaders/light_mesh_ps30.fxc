@@ -78,7 +78,7 @@ float4 main( PS_INPUT i ) : COLOR
     float dist = sqrt(dot(ldir, ldir));
     float dist_falloff = (attnInfo.w / (attnInfo.x * dist * dist + attnInfo.y * dist + attnInfo.z + 1));
     float spot_falloff = clamp((spot_dot - lightDir_OuterCos.w) / (lightColor_InnerCos.w - lightDir_OuterCos.w), 0.0, 1.0);
-  /*  if (spot_dot > lightDir_OuterCos.w)
+    if (spot_dot > lightDir_OuterCos.w)
     {
         //spot_falloff = 1.0f;
         if (spot_dot < lightColor_InnerCos.w)
@@ -86,7 +86,7 @@ float4 main( PS_INPUT i ) : COLOR
             spot_falloff = Lerp5(1, 0, lightColor_InnerCos.w, lightDir_OuterCos.w, spot_dot);
         }
     }
-    */
+    
     float3 lighting = DoPBRLight(worldPos, normals, albedo, lightOrigin, lightColor_InnerCos.xyz, g_EyePos, dist_falloff * spot_falloff, metallness, roughness);
     
     return float4(lighting.xyz, 1.0f);
