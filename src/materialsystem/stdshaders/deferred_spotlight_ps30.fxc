@@ -6,7 +6,7 @@
 #include "common_pbr.h"
 #include "common_deferred.h"
 
-#define MAX_LIGHTS_SPOT 25
+#define MAX_LIGHTS_SPOT 15
 
 sampler FBSampler		    : register( s0 );
 sampler AlbedoSampler		: register( s1 );

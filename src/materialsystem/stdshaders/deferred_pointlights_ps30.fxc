@@ -6,7 +6,7 @@
 #include "common_pbr.h"
 #include "common_deferred.h"
 
-#define MAX_LIGHTS_SIMPLE 25
+#define MAX_LIGHTS_SIMPLE 15
 
 sampler AlbedoSampler		: register( s1 );
 sampler ViewPosSampler		: register( s2 );
