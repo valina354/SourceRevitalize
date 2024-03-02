@@ -75,15 +75,15 @@ float4 main( VS_OUTPUT IN ) : COLOR0
     float blurSize = g_blurSize * roughness;
 
    float3 sum = 0;
-   sum += tex2Ddepth(sceneSampler, float3(IN.TexCoord0.x, blurSize*4, IN.TexCoord0.y), IN.TexCoord0) * 0.0162162162;
-   sum += tex2Ddepth(sceneSampler, float3(IN.TexCoord0.x, blurSize*3, IN.TexCoord0.y), IN.TexCoord0) * 0.0540540541;
-   sum += tex2Ddepth(sceneSampler, float3(IN.TexCoord0.x, blurSize*2, IN.TexCoord0.y), IN.TexCoord0) * 0.1216216216;
-   sum += tex2Ddepth(sceneSampler, float3(IN.TexCoord0.x, blurSize*1, IN.TexCoord0.y), IN.TexCoord0) * 0.1945945946;
+   sum += tex2Ddepth(sceneSampler, float3(IN.TexCoord0.x, blurSize*4, IN.TexCoord0.y), IN.TexCoord0) * 0.0162;
+   sum += tex2Ddepth(sceneSampler, float3(IN.TexCoord0.x, blurSize*3, IN.TexCoord0.y), IN.TexCoord0) * 0.0540;
+   sum += tex2Ddepth(sceneSampler, float3(IN.TexCoord0.x, blurSize*2, IN.TexCoord0.y), IN.TexCoord0) * 0.121;
+   sum += tex2Ddepth(sceneSampler, float3(IN.TexCoord0.x, blurSize*1, IN.TexCoord0.y), IN.TexCoord0) * 0.194;
    sum += tex2Ddepth(sceneSampler, float3(IN.TexCoord0.x, 0, IN.TexCoord0.y), IN.TexCoord0) * 0.2270270270;
-   sum += tex2Ddepth(sceneSampler, float3(IN.TexCoord0.x, blurSize*-1, IN.TexCoord0.y), IN.TexCoord0) * 0.1945945946;
-   sum += tex2Ddepth(sceneSampler, float3(IN.TexCoord0.x, blurSize*-2, IN.TexCoord0.y), IN.TexCoord0) * 0.1216216216;
-   sum += tex2Ddepth(sceneSampler, float3(IN.TexCoord0.x, blurSize*-3, IN.TexCoord0.y), IN.TexCoord0) * 0.0540540541;
-   sum += tex2Ddepth(sceneSampler, float3(IN.TexCoord0.x, blurSize*-4, IN.TexCoord0.y), IN.TexCoord0) * 0.0162162162;
+   sum += tex2Ddepth(sceneSampler, float3(IN.TexCoord0.x, blurSize*-1, IN.TexCoord0.y), IN.TexCoord0) * 0.194;
+   sum += tex2Ddepth(sceneSampler, float3(IN.TexCoord0.x, blurSize*-2, IN.TexCoord0.y), IN.TexCoord0) * 0.121;
+   sum += tex2Ddepth(sceneSampler, float3(IN.TexCoord0.x, blurSize*-3, IN.TexCoord0.y), IN.TexCoord0) * 0.0540;
+   sum += tex2Ddepth(sceneSampler, float3(IN.TexCoord0.x, blurSize*-4, IN.TexCoord0.y), IN.TexCoord0) * 0.0162;
    
    return float4(sum, 1.0f) ;
 }
