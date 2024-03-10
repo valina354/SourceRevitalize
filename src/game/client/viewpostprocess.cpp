@@ -2652,41 +2652,46 @@ void DoEnginePostProcessing( int x, int y, int w, int h, bool bFlashlightIsOn, b
 	pRenderContext->PopVertexShaderGPRAllocation();
 #endif
 
+	extern ConVar r_post_ssao;
+
 	if ( CEstrangedSystemCaps::HasCaps( CAPS_ESTRANGED_DEPTHPASS ) && CEstrangedSystemCaps::HasCaps( CAPS_SHADER_POSTPROCESS ) )
 	{
 		if ( ae_dof.GetBool() )
 		{
-			static IMaterial *ae_DOF_X_Mat = materials->FindMaterial( "shaders/dof_x", TEXTURE_GROUP_OTHER );
-			if ( ae_DOF_X_Mat )
+			if ( r_post_ssao.GetBool() )
 			{
-				UpdateScreenEffectTexture();
-				pRenderContext->DrawScreenSpaceRectangle( ae_DOF_X_Mat, 0, 0, w, h, 0, 0, w - 1, h - 1, w, h );
+				static IMaterial *ae_DOF_X_Mat = materials->FindMaterial( "shaders/dof_x", TEXTURE_GROUP_OTHER );
+				if ( ae_DOF_X_Mat )
+				{
+					UpdateScreenEffectTexture();
+					pRenderContext->DrawScreenSpaceRectangle( ae_DOF_X_Mat, 0, 0, w, h, 0, 0, w - 1, h - 1, w, h );
+				}
 			}
 		}
-	}
-	if ( CEstrangedSystemCaps::HasCaps( CAPS_SHADER_POSTPROCESS ) )
-	{
-		if ( r_post_lensflare.GetBool() )
+		if ( CEstrangedSystemCaps::HasCaps( CAPS_SHADER_POSTPROCESS ) )
 		{
-			static IMaterial *lensflareMat = materials->FindMaterial( "shaders/lensflare", TEXTURE_GROUP_OTHER );
-			if ( lensflareMat )
+			if ( r_post_lensflare.GetBool() )
 			{
-				UpdateScreenEffectTexture();
-				pRenderContext->DrawScreenSpaceRectangle( lensflareMat, 0, 0, w, h, 0, 0, w - 1, h - 1, w, h );
+				static IMaterial *lensflareMat = materials->FindMaterial( "shaders/lensflare", TEXTURE_GROUP_OTHER );
+				if ( lensflareMat )
+				{
+					UpdateScreenEffectTexture();
+					pRenderContext->DrawScreenSpaceRectangle( lensflareMat, 0, 0, w, h, 0, 0, w - 1, h - 1, w, h );
+				}
 			}
-		}
 
-		if ( r_post_grain.GetBool() && r_post_grain_intensity.GetFloat() > 0 )
-		{
-			static IMaterial *grainMat = materials->FindMaterial( "shaders/filmgrain", TEXTURE_GROUP_OTHER );
-			IMaterialVar *pGrainAmountVar = grainMat->FindVar( "$noiseamount", NULL );
-			pGrainAmountVar->SetFloatValue( r_post_grain_intensity.GetFloat() );
-			IMaterialVar *pGrainFalloffVar = grainMat->FindVar( "$noisefalloff", NULL );
-			pGrainFalloffVar->SetFloatValue( r_post_grain_falloff.GetFloat() );
-			if ( grainMat )
+			if ( r_post_grain.GetBool() && r_post_grain_intensity.GetFloat() > 0 )
 			{
-				UpdateScreenEffectTexture();
-				pRenderContext->DrawScreenSpaceRectangle( grainMat, 0, 0, w, h, 0, 0, w - 1, h - 1, w, h );
+				static IMaterial *grainMat = materials->FindMaterial( "shaders/filmgrain", TEXTURE_GROUP_OTHER );
+				IMaterialVar *pGrainAmountVar = grainMat->FindVar( "$noiseamount", NULL );
+				pGrainAmountVar->SetFloatValue( r_post_grain_intensity.GetFloat() );
+				IMaterialVar *pGrainFalloffVar = grainMat->FindVar( "$noisefalloff", NULL );
+				pGrainFalloffVar->SetFloatValue( r_post_grain_falloff.GetFloat() );
+				if ( grainMat )
+				{
+					UpdateScreenEffectTexture();
+					pRenderContext->DrawScreenSpaceRectangle( grainMat, 0, 0, w, h, 0, 0, w - 1, h - 1, w, h );
+				}
 			}
 		}
 	}
