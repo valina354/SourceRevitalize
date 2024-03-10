@@ -37,6 +37,3 @@ VS_OUTPUT main( const VS_INPUT v )
 
 	return o;
 }
-
-
-

@@ -6437,12 +6437,12 @@ void CDepthView::DrawInternal(view_id_t iSkyBoxViewID)
 
 
 //-----------------------------------------------------------------------------
-// 
+//
 //-----------------------------------------------------------------------------
-bool CVolumetricsView::Setup(const CViewSetup& view, ITexture* pDepthTexture, ITexture* pRenderTarget)
+bool CVolumetricsView::Setup( const CViewSetup &view, ITexture *pDepthTexture, ITexture *pRenderTarget )
 {
-	BaseClass::Setup(view);
-	
+	BaseClass::Setup( view );
+
 	m_ClearFlags = VIEW_CLEAR_COLOR | VIEW_CLEAR_DEPTH | VIEW_CLEAR_STENCIL;
 
 	m_DrawFlags = DF_RENDER_UNDERWATER | DF_RENDER_ABOVEWATER | DF_RENDER_WATER;
@@ -6451,63 +6451,63 @@ bool CVolumetricsView::Setup(const CViewSetup& view, ITexture* pDepthTexture, IT
 }
 
 //-----------------------------------------------------------------------------
-// 
+//
 //-----------------------------------------------------------------------------
 void CVolumetricsView::Draw()
 {
-	VPROF_BUDGET("CViewRender::Draw3dSkyboxworld", "3D Skybox");
+	VPROF_BUDGET( "CViewRender::Draw3dSkyboxworld", "3D Skybox" );
 
-	DrawInternal(VIEW_VOLUMETRICS);
+	DrawInternal( VIEW_VOLUMETRICS );
 }
 
 //-----------------------------------------------------------------------------
-// 
+//
 //-----------------------------------------------------------------------------
-void CVolumetricsView::DrawInternal(view_id_t iSkyBoxViewID)
+void CVolumetricsView::DrawInternal( view_id_t iSkyBoxViewID )
 {
-	ITexture* ColorBufferTexture = materials->FindTexture("_rt_VolumetricsBuffer", TEXTURE_GROUP_RENDER_TARGET);
+	ITexture *ColorBufferTexture = materials->FindTexture( "_rt_VolumetricsBuffer", TEXTURE_GROUP_RENDER_TARGET );
 
-	render->Push3DView((*this), m_ClearFlags, ColorBufferTexture, GetFrustum(), NULL);
+	render->Push3DView( ( *this ), m_ClearFlags, ColorBufferTexture, GetFrustum(), NULL );
 
 	view_id_t iSavedID = CurrentViewID();
 	// Store off view origin and angles
-	SetupCurrentView(origin, angles, iSkyBoxViewID);
+	SetupCurrentView( origin, angles, iSkyBoxViewID );
 
-	CMatRenderContextPtr pRenderContext(materials);
-	pRenderContext->Viewport(0, 0, ColorBufferTexture->GetActualWidth(), ColorBufferTexture->GetActualHeight());
+	CMatRenderContextPtr pRenderContext( materials );
+	pRenderContext->Viewport( 0, 0, ColorBufferTexture->GetActualWidth(), ColorBufferTexture->GetActualHeight() );
 	pRenderContext.SafeRelease();
 
 	render->BeginUpdateLightmaps();
-	BuildWorldRenderLists(true, true, -1);
-	BuildRenderableRenderLists(iSkyBoxViewID);
+	BuildWorldRenderLists( true, true, -1 );
+	BuildRenderableRenderLists( iSkyBoxViewID );
 	render->EndUpdateLightmaps();
 
 	m_DrawFlags |= DF_SSAO_DEPTH_PASS;
-	DrawWorld(0.0f);
+	DrawWorld( 0.0f );
 
 	// Draw opaque and translucent renderables with appropriate override materials
 	// OVERRIDE_SSAO_DEPTH_WRITE is OK with a NULL material pointer
-	modelrender->ForcedMaterialOverride(nullptr, OVERRIDE_DEPTH_WRITE);
+	modelrender->ForcedMaterialOverride( nullptr, OVERRIDE_DEPTH_WRITE );
 
 	// Iterate over all leaves and render objects in those leaves
-	DrawOpaqueRenderables(DEPTH_MODE_NORMAL);
+	DrawOpaqueRenderables( DEPTH_MODE_NORMAL );
 
-	m_pMainView->DrawViewModels((*this), true);
+	m_pMainView->DrawViewModels( ( *this ), true );
 
-	modelrender->ForcedMaterialOverride(nullptr);
+	modelrender->ForcedMaterialOverride( nullptr );
 
-	pRenderContext.GetFrom(materials);
-	pRenderContext->ClearBuffers(true, false);
+	pRenderContext.GetFrom( materials );
+	pRenderContext->ClearBuffers( true, false );
 	pRenderContext.SafeRelease();
 
-	GetLightingManager()->RenderVolumetrics((*this));
+	GetLightingManager()->RenderVolumetrics( ( *this ) );
 
-	render->PopView(GetFrustum());
+	render->PopView( GetFrustum() );
 
-	SetupCurrentView(origin, angles, iSavedID);
+	SetupCurrentView( origin, angles, iSavedID );
 
 #if defined( _X360 )
-	pRenderContext.GetFrom(materials);
+	pRenderContext.GetFrom( materials );
 	pRenderContext->PopVertexShaderGPRAllocation();
 #endif
 }

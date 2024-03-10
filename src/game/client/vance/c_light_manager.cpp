@@ -293,24 +293,24 @@ void CLightingManager::LevelInitPreEntity()
 	}
 }
 
-void CLightingManager::RenderVolumetrics(const CViewSetup &view)
+void CLightingManager::RenderVolumetrics( const CViewSetup &view )
 {
-	CMatRenderContextPtr pRenderContext(materials);
-	pRenderContext->SetFlashlightMode(true);
+	CMatRenderContextPtr pRenderContext( materials );
+	pRenderContext->SetFlashlightMode( true );
 
-	FOR_EACH_VEC_FAST(volume_light_t*, m_hVolumetricLights, l)
+	FOR_EACH_VEC_FAST( volume_light_t *, m_hVolumetricLights, l )
 	{
-		if (m_meshViewVolumetrics == NULL)
+		if ( m_meshViewVolumetrics == NULL )
 		{
 			RebuildVolumetricMesh();
 		}
 
 		// skip rendering this volumetric light if handle is invalid
 		// it means that light is not even in our view or we cant see it anyway
-		if (*l->handle == CLIENTSHADOW_INVALID_HANDLE)
+		if ( *l->handle == CLIENTSHADOW_INVALID_HANDLE )
 			continue;
-		
-		UpdateScreenEffectTexture(0, view.x, view.y, view.width, view.height);
+
+		UpdateScreenEffectTexture( 0, view.x, view.y, view.width, view.height );
 
 		FlashlightState_t state = *l->state;
 		state.m_Color[0] *= l->intensity;
@@ -318,54 +318,51 @@ void CLightingManager::RenderVolumetrics(const CViewSetup &view)
 		state.m_Color[2] *= l->intensity;
 		state.m_Color[3] *= l->intensity;
 
-		pRenderContext->SetFlashlightStateEx(state, l->spotWorldToTex, l->depth);
+		pRenderContext->SetFlashlightStateEx( state, l->spotWorldToTex, l->depth );
 
 		//var = m_matVolumetricsMaterial->FindVar("$iscsm", NULL);
 		//var->SetIntValue(1);
-		ShadowHandle_t shadowHandle = g_pClientShadowMgr->GetShadowHandle(*l->handle);
-		const Frustum_t& frustum = shadowmgr->GetFlashlightFrustum(shadowHandle);
+		ShadowHandle_t shadowHandle = g_pClientShadowMgr->GetShadowHandle( *l->handle );
+		const Frustum_t &frustum = shadowmgr->GetFlashlightFrustum( shadowHandle );
 
-		for (int i = 0; i < 6; i++)
+		for ( int i = 0; i < 6; i++ )
 		{
 			Vector4D plane;
-			VectorMultiply(frustum.GetPlane(i)->normal, 1, plane.AsVector3D());
-			plane.w = frustum.GetPlane(i)->dist + 0.1f;
-			pRenderContext->PushCustomClipPlane(plane.Base());
+			VectorMultiply( frustum.GetPlane( i )->normal, 1, plane.AsVector3D() );
+			plane.w = frustum.GetPlane( i )->dist + 0.1f;
+			pRenderContext->PushCustomClipPlane( plane.Base() );
 		}
-		
 
 		matrix3x4_t viewTransform;
-		AngleMatrix(view.angles, view.origin, viewTransform);
+		AngleMatrix( view.angles, view.origin, viewTransform );
 
-		pRenderContext->MatrixMode(MATERIAL_MODEL);
+		pRenderContext->MatrixMode( MATERIAL_MODEL );
 		pRenderContext->PushMatrix();
-		pRenderContext->LoadMatrix(viewTransform);
+		pRenderContext->LoadMatrix( viewTransform );
 
-		pRenderContext->Bind(m_matVolumetricsMaterial);
+		pRenderContext->Bind( m_matVolumetricsMaterial );
 		m_meshViewVolumetrics->Draw();
 
-		pRenderContext->MatrixMode(MATERIAL_MODEL);
-		pRenderContext->PopMatrix();		
-		
-		for (int i = 0; i < 6; i++)
+		pRenderContext->MatrixMode( MATERIAL_MODEL );
+		pRenderContext->PopMatrix();
+
+		for ( int i = 0; i < 6; i++ )
 		{
 			pRenderContext->PopCustomClipPlane();
 		}
-
 	}
 	FOR_EACH_VEC_FAST_END;
 
-	pRenderContext->SetFlashlightMode(false);
+	pRenderContext->SetFlashlightMode( false );
 	return;
 }
 
-
 void CLightingManager::ClearVolumetricsMesh()
 {
-	if (m_meshViewVolumetrics != NULL)
+	if ( m_meshViewVolumetrics != NULL )
 	{
-		CMatRenderContextPtr pRenderContext(materials);
-		pRenderContext->DestroyStaticMesh(m_meshViewVolumetrics);
+		CMatRenderContextPtr pRenderContext( materials );
+		pRenderContext->DestroyStaticMesh( m_meshViewVolumetrics );
 		m_meshViewVolumetrics = NULL;
 	}
 }
@@ -381,47 +378,47 @@ void CLightingManager::RebuildVolumetricMesh()
 	setup.zFar = r_volumetrics_distance.GetFloat();
 
 	VMatrix world2View, view2Proj, world2Proj, world2Pixels;
-	render->GetMatricesForView(setup, &world2View, &view2Proj, &world2Proj, &world2Pixels);
+	render->GetMatricesForView( setup, &world2View, &view2Proj, &world2Proj, &world2Pixels );
 	VMatrix proj2world;
-	MatrixInverseGeneral(world2Proj, proj2world);
+	MatrixInverseGeneral( world2Proj, proj2world );
 
-	const Vector origin(vec3_origin);
-	QAngle angles(vec3_angle);
+	const Vector origin( vec3_origin );
+	QAngle angles( vec3_angle );
 	Vector fwd, right, up;
-	AngleVectors(angles, &fwd, &right, &up);
+	AngleVectors( angles, &fwd, &right, &up );
 
 	Vector nearPlane[4];
 	Vector farPlane[4];
-	Vector3DMultiplyPositionProjective(proj2world, Vector(-1, -1, 1), farPlane[0]);
-	Vector3DMultiplyPositionProjective(proj2world, Vector(1, -1, 1), farPlane[1]);
-	Vector3DMultiplyPositionProjective(proj2world, Vector(1, 1, 1), farPlane[2]);
-	Vector3DMultiplyPositionProjective(proj2world, Vector(-1, 1, 1), farPlane[3]);
+	Vector3DMultiplyPositionProjective( proj2world, Vector( -1, -1, 1 ), farPlane[0] );
+	Vector3DMultiplyPositionProjective( proj2world, Vector( 1, -1, 1 ), farPlane[1] );
+	Vector3DMultiplyPositionProjective( proj2world, Vector( 1, 1, 1 ), farPlane[2] );
+	Vector3DMultiplyPositionProjective( proj2world, Vector( -1, 1, 1 ), farPlane[3] );
 
-	Vector3DMultiplyPositionProjective(proj2world, Vector(-1, -1, 0), nearPlane[0]);
-	Vector3DMultiplyPositionProjective(proj2world, Vector(1, -1, 0), nearPlane[1]);
-	Vector3DMultiplyPositionProjective(proj2world, Vector(1, 1, 0), nearPlane[2]);
-	Vector3DMultiplyPositionProjective(proj2world, Vector(-1, 1, 0), nearPlane[3]);
+	Vector3DMultiplyPositionProjective( proj2world, Vector( -1, -1, 0 ), nearPlane[0] );
+	Vector3DMultiplyPositionProjective( proj2world, Vector( 1, -1, 0 ), nearPlane[1] );
+	Vector3DMultiplyPositionProjective( proj2world, Vector( 1, 1, 0 ), nearPlane[2] );
+	Vector3DMultiplyPositionProjective( proj2world, Vector( -1, 1, 0 ), nearPlane[3] );
 
 	const Vector vecDirections[3] = {
-		(farPlane[0] - vec3_origin),
-		(farPlane[1] - farPlane[0]),
-		(farPlane[3] - farPlane[0]),
+		( farPlane[0] - vec3_origin ),
+		( farPlane[1] - farPlane[0] ),
+		( farPlane[3] - farPlane[0] ),
 	};
 
-	const VertexFormat_t vertexFormat = VERTEX_POSITION | VERTEX_TEXCOORD_SIZE(0, 2);
-	CMatRenderContextPtr pRenderContext(materials);
-	m_meshViewVolumetrics = pRenderContext->CreateStaticMesh(vertexFormat, TEXTURE_GROUP_OTHER);
+	const VertexFormat_t vertexFormat = VERTEX_POSITION | VERTEX_TEXCOORD_SIZE( 0, 2 );
+	CMatRenderContextPtr pRenderContext( materials );
+	m_meshViewVolumetrics = pRenderContext->CreateStaticMesh( vertexFormat, TEXTURE_GROUP_OTHER );
 
 	const int iCvarSubDiv = r_volumetrics_subdiv.GetInt();
-	int iCurrentVolumetricsSubDiv = (iCvarSubDiv > 2) ? iCvarSubDiv : 3;
+	int iCurrentVolumetricsSubDiv = ( iCvarSubDiv > 2 ) ? iCvarSubDiv : 3;
 
 	CMeshBuilder meshBuilder;
-	meshBuilder.Begin(m_meshViewVolumetrics, MATERIAL_TRIANGLES, iCurrentVolumetricsSubDiv * 6 - 4);
+	meshBuilder.Begin( m_meshViewVolumetrics, MATERIAL_TRIANGLES, iCurrentVolumetricsSubDiv * 6 - 4 );
 
-	for (int x = 1; x < iCurrentVolumetricsSubDiv * 2; x++)
+	for ( int x = 1; x < iCurrentVolumetricsSubDiv * 2; x++ )
 	{
 		// never 0.0 or 1.0
-		float flFracX = float(x) / (iCurrentVolumetricsSubDiv * 2);
+		float flFracX = float( x ) / ( iCurrentVolumetricsSubDiv * 2 );
 		flFracX = powf( flFracX, 3.0f );
 		//flFracX = powf(flFracX, m_flVolumetricsQualityBias);
 
@@ -430,28 +427,28 @@ void CLightingManager::RebuildVolumetricMesh()
 		Vector v11 = v10 + vecDirections[2] * flFracX;
 		Vector v01 = v00 + vecDirections[2] * flFracX;
 
-		meshBuilder.Position3f(XYZ(v00));
-		meshBuilder.TexCoord2f(0, 0.0f, 0.0f);
+		meshBuilder.Position3f( XYZ( v00 ) );
+		meshBuilder.TexCoord2f( 0, 0.0f, 0.0f );
 		meshBuilder.AdvanceVertex();
 
-		meshBuilder.Position3f(XYZ(v10));
-		meshBuilder.TexCoord2f(0, 0.0f, 0.0f);
+		meshBuilder.Position3f( XYZ( v10 ) );
+		meshBuilder.TexCoord2f( 0, 0.0f, 0.0f );
 		meshBuilder.AdvanceVertex();
 
-		meshBuilder.Position3f(XYZ(v11));
-		meshBuilder.TexCoord2f(0, 0.0f, 0.0f);
+		meshBuilder.Position3f( XYZ( v11 ) );
+		meshBuilder.TexCoord2f( 0, 0.0f, 0.0f );
 		meshBuilder.AdvanceVertex();
 
-		meshBuilder.Position3f(XYZ(v00));
-		meshBuilder.TexCoord2f(0, 0.0f, 0.0f);
+		meshBuilder.Position3f( XYZ( v00 ) );
+		meshBuilder.TexCoord2f( 0, 0.0f, 0.0f );
 		meshBuilder.AdvanceVertex();
 
-		meshBuilder.Position3f(XYZ(v11));
-		meshBuilder.TexCoord2f(0, 0.0f, 0.0f);
+		meshBuilder.Position3f( XYZ( v11 ) );
+		meshBuilder.TexCoord2f( 0, 0.0f, 0.0f );
 		meshBuilder.AdvanceVertex();
 
-		meshBuilder.Position3f(XYZ(v01));
-		meshBuilder.TexCoord2f(0, 0.0f, 0.0f);
+		meshBuilder.Position3f( XYZ( v01 ) );
+		meshBuilder.TexCoord2f( 0, 0.0f, 0.0f );
 		meshBuilder.AdvanceVertex();
 	}
 

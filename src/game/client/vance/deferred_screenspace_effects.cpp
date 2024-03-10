@@ -506,7 +506,7 @@ void CSSR::Init(void)
 	PrecacheMaterial("shaders/SSR");
 	PrecacheMaterial("shaders/ssr_add");
 
-	m_SSR.InitRenderTarget(ScreenWidth() / 2, ScreenHeight() / 2, RT_SIZE_DEFAULT, IMAGE_FORMAT_RGBA8888, MATERIAL_RT_DEPTH_NONE, false, "_rt_SSR");
+	m_SSR.InitRenderTarget( ScreenWidth(), ScreenHeight(), RT_SIZE_DEFAULT, IMAGE_FORMAT_RGBA8888, MATERIAL_RT_DEPTH_NONE, false, "_rt_SSR" );
 	m_SSRX.InitRenderTarget(ScreenWidth(), ScreenHeight(), RT_SIZE_DEFAULT, IMAGE_FORMAT_RGBA8888, MATERIAL_RT_DEPTH_NONE, false, "_rt_SSRX");
 	m_SSRY.InitRenderTarget(ScreenWidth(), ScreenHeight(), RT_SIZE_DEFAULT, IMAGE_FORMAT_RGBA8888, MATERIAL_RT_DEPTH_NONE, false, "_rt_SSRY");
 
