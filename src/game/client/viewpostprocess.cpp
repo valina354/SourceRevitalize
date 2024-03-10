@@ -2223,12 +2223,12 @@ static ConVar mat_postprocess_x( "mat_postprocess_x", "4" );
 static ConVar mat_postprocess_y( "mat_postprocess_y", "1" );
 
 static ConVar ae_dof( "ae_dof", "0", FCVAR_ARCHIVE );
-static ConVar ae_lensflare( "ae_lensflare", "1", FCVAR_ARCHIVE );
+static ConVar r_post_lensflare( "r_post_lensflare", "1", FCVAR_ARCHIVE );
 
-static ConVar ae_grain( "ae_grain", "1", FCVAR_ARCHIVE );
+static ConVar r_post_grain( "r_post_grain", "1", FCVAR_ARCHIVE );
 
-static ConVar ae_grain_intensity( "ae_grain_intensity", "2.0", FCVAR_ARCHIVE );
-static ConVar ae_grain_falloff( "ae_grain_falloff", "40.0", FCVAR_ARCHIVE );
+static ConVar r_post_grain_intensity( "r_post_grain_intensity", "0.2", FCVAR_ARCHIVE );
+static ConVar r_post_grain_falloff( "r_post_grain_falloff", "0.1", FCVAR_ARCHIVE );
 
 void DoEnginePostProcessing( int x, int y, int w, int h, bool bFlashlightIsOn, bool bPostVGui )
 {
@@ -2654,8 +2654,7 @@ void DoEnginePostProcessing( int x, int y, int w, int h, bool bFlashlightIsOn, b
 
 	if ( CEstrangedSystemCaps::HasCaps( CAPS_ESTRANGED_DEPTHPASS ) && CEstrangedSystemCaps::HasCaps( CAPS_SHADER_POSTPROCESS ) )
 	{
-		static ConVar ae_dof_post( "ae_dof_post", "0" );
-		if ( ae_dof_post.GetBool() )
+		if ( ae_dof.GetBool() )
 		{
 			static IMaterial *ae_DOF_X_Mat = materials->FindMaterial( "shaders/dof_x", TEXTURE_GROUP_OTHER );
 			if ( ae_DOF_X_Mat )
@@ -2667,7 +2666,7 @@ void DoEnginePostProcessing( int x, int y, int w, int h, bool bFlashlightIsOn, b
 	}
 	if ( CEstrangedSystemCaps::HasCaps( CAPS_SHADER_POSTPROCESS ) )
 	{
-		if ( ae_lensflare.GetBool() )
+		if ( r_post_lensflare.GetBool() )
 		{
 			static IMaterial *lensflareMat = materials->FindMaterial( "shaders/lensflare", TEXTURE_GROUP_OTHER );
 			if ( lensflareMat )
@@ -2677,13 +2676,13 @@ void DoEnginePostProcessing( int x, int y, int w, int h, bool bFlashlightIsOn, b
 			}
 		}
 
-		if ( ae_grain.GetBool() && ae_grain_intensity.GetFloat() > 0 )
+		if ( r_post_grain.GetBool() && r_post_grain_intensity.GetFloat() > 0 )
 		{
 			static IMaterial *grainMat = materials->FindMaterial( "shaders/filmgrain", TEXTURE_GROUP_OTHER );
 			IMaterialVar *pGrainAmountVar = grainMat->FindVar( "$noiseamount", NULL );
-			pGrainAmountVar->SetFloatValue( ae_grain_intensity.GetFloat() );
+			pGrainAmountVar->SetFloatValue( r_post_grain_intensity.GetFloat() );
 			IMaterialVar *pGrainFalloffVar = grainMat->FindVar( "$noisefalloff", NULL );
-			pGrainFalloffVar->SetFloatValue( ae_grain_falloff.GetFloat() );
+			pGrainFalloffVar->SetFloatValue( r_post_grain_falloff.GetFloat() );
 			if ( grainMat )
 			{
 				UpdateScreenEffectTexture();
