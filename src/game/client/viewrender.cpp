@@ -2399,7 +2399,7 @@ void CViewRender::RenderView( const CViewSetup &viewIn, int nClearFlags, int wha
 		// Image-space motion blur
 		if ( !building_cubemaps.GetBool() && view.m_bDoBloomAndToneMapping ) // We probably should use a different view. variable here
 		{
-			if ( ( mat_motion_blur_enabled.GetInt() ) && ( g_pMaterialSystemHardwareConfig->GetDXSupportLevel() >= 120 ) )
+			if ( ( mat_motion_blur_enabled.GetInt() ) && ( g_pMaterialSystemHardwareConfig->GetDXSupportLevel() >= 90 ) )
 			{
 				pRenderContext.GetFrom( materials );
 				{
