@@ -115,6 +115,12 @@ nightvision_ps2x.fxc
 //dof
 ae_depthoffield_ps30.fxc
 
+//lensflare
+ae_lensflare_ps2x.fxc
+
+//film grain
+ae_filmgrain_ps20.fxc
+
 
 SDK_screenspaceeffect_vs20.fxc
 

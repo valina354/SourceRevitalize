@@ -52,6 +52,8 @@ $Project "Shaders (VANCE)"
 			$File	"nightvision.cpp"
 			$File	"object_motion_blur_dx9.cpp"
 			$File	"ae_depthoffield.cpp"
+			$File	"ae_lensflareshader.cpp"
+			$File	"ae_filmgrainshader.cpp"
 		}
 		
 		$Folder "PBR"

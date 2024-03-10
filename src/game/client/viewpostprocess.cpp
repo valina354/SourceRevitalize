@@ -2223,6 +2223,12 @@ static ConVar mat_postprocess_x( "mat_postprocess_x", "4" );
 static ConVar mat_postprocess_y( "mat_postprocess_y", "1" );
 
 static ConVar ae_dof( "ae_dof", "0", FCVAR_ARCHIVE );
+static ConVar ae_lensflare( "ae_lensflare", "1", FCVAR_ARCHIVE );
+
+static ConVar ae_grain( "ae_grain", "1", FCVAR_ARCHIVE );
+
+static ConVar ae_grain_intensity( "ae_grain_intensity", "2.0", FCVAR_ARCHIVE );
+static ConVar ae_grain_falloff( "ae_grain_falloff", "40.0", FCVAR_ARCHIVE );
 
 void DoEnginePostProcessing( int x, int y, int w, int h, bool bFlashlightIsOn, bool bPostVGui )
 {
@@ -2232,14 +2238,14 @@ void DoEnginePostProcessing( int x, int y, int w, int h, bool bFlashlightIsOn, b
 
 	if ( g_bDumpRenderTargets )
 	{
-		g_bDumpRenderTargets = false;   // Turn off from previous frame
+		g_bDumpRenderTargets = false; // Turn off from previous frame
 	}
 
 	if ( mat_dump_rts.GetBool() )
 	{
-		g_bDumpRenderTargets = true;    // Dump intermediate render targets this frame
-		s_nRTIndex = 0;                 // Used for numbering the TGA files for easy browsing
-		mat_dump_rts.SetValue( 0 );     // We only want to capture one frame, on rising edge of this convar
+		g_bDumpRenderTargets = true; // Dump intermediate render targets this frame
+		s_nRTIndex = 0;				 // Used for numbering the TGA files for easy browsing
+		mat_dump_rts.SetValue( 0 );	 // We only want to capture one frame, on rising edge of this convar
 
 		DumpTGAofRenderTarget( w, h, "BackBuffer" );
 	}
@@ -2275,11 +2281,10 @@ void DoEnginePostProcessing( int x, int y, int w, int h, bool bFlashlightIsOn, b
 		DrawBloomDebugBoxes( pRenderContext );
 	}
 
-	switch( hdrType )
-	{   
+	switch ( hdrType )
+	{
 		case HDR_TYPE_NONE:
-		case HDR_TYPE_INTEGER:
-		{
+		case HDR_TYPE_INTEGER: {
 			s_bScreenEffectTextureIsUpdated = false;
 
 			if ( hdrType != HDR_TYPE_NONE )
@@ -2312,7 +2317,7 @@ void DoEnginePostProcessing( int x, int y, int w, int h, bool bFlashlightIsOn, b
 			// Same trick for setting up the vgui aa strength
 			if ( mat_software_aa_strength_vgui.GetFloat() == -1.0f )
 			{
-				if ( IsX360() && (g_pMaterialSystem->GetCurrentConfigForVideoCard().m_VideoMode.m_Height == 720) )
+				if ( IsX360() && ( g_pMaterialSystem->GetCurrentConfigForVideoCard().m_VideoMode.m_Height == 720 ) )
 				{
 					mat_software_aa_strength_vgui.SetValue( 2.0f );
 				}
@@ -2335,14 +2340,12 @@ void DoEnginePostProcessing( int x, int y, int w, int h, bool bFlashlightIsOn, b
 			}
 
 			// bloom, software-AA and colour-correction (applied in 1 pass, after generation of the bloom texture)
-			bool  bPerformSoftwareAA	= IsX360() && ( engine->GetDXSupportLevel() >= 90 ) && ( flAAStrength != 0.0f );
-			bool  bPerformBloom			= /*!bPostVGui && ( flBloomScale > 0.0f ) && ( engine->GetDXSupportLevel() >= 90 )*/ false; // we use custom bloom now
-			bool  bPerformColCorrect	= !bPostVGui && 
-										  ( g_pMaterialSystemHardwareConfig->GetDXSupportLevel() >= 90) &&
-										  ( g_pMaterialSystemHardwareConfig->GetHDRType() != HDR_TYPE_FLOAT ) &&
-										  g_pColorCorrectionMgr->HasNonZeroColorCorrectionWeights() &&
-										  mat_colorcorrection.GetInt();
-			bool  bSplitScreenHDR		= mat_show_ab_hdr.GetInt();
+			bool bPerformSoftwareAA = IsX360() && ( engine->GetDXSupportLevel() >= 90 ) && ( flAAStrength != 0.0f );
+			bool bPerformBloom = /*!bPostVGui && ( flBloomScale > 0.0f ) && ( engine->GetDXSupportLevel() >= 90 )*/ false; // we use custom bloom now
+			bool bPerformColCorrect = !bPostVGui && ( g_pMaterialSystemHardwareConfig->GetDXSupportLevel() >= 90 ) &&
+				( g_pMaterialSystemHardwareConfig->GetHDRType() != HDR_TYPE_FLOAT ) && g_pColorCorrectionMgr->HasNonZeroColorCorrectionWeights() &&
+				mat_colorcorrection.GetInt();
+			bool bSplitScreenHDR = mat_show_ab_hdr.GetInt();
 			pRenderContext->EnableColorCorrection( bPerformColCorrect );
 			if ( bPerformBloom || bPerformSoftwareAA || bPerformColCorrect )
 			{
@@ -2371,42 +2374,40 @@ void DoEnginePostProcessing( int x, int y, int w, int h, bool bFlashlightIsOn, b
 				// colour correction, all in one pass (improves performance, reduces quantization errors)
 				//
 				// First, set up texel coords (in the bloom and fb textures) at the centres of the outer pixel of the viewport:
-				Vector4D fullViewportPostSrcCorners(	0.0f,	-0.5f,	nSrcWidth/4-1,	nSrcHeight/4-1 );
-				Vector4D fullViewportPostDestCorners(	0.0f,	 0.0f,	nSrcWidth - 1,	nSrcHeight - 1 );
-				Rect_t   fullViewportPostDestRect = {	x,		 y,		w,				h };
-				Vector2D destTexSize(									nSrcWidth,		nSrcHeight );
+				Vector4D fullViewportPostSrcCorners( 0.0f, -0.5f, nSrcWidth / 4 - 1, nSrcHeight / 4 - 1 );
+				Vector4D fullViewportPostDestCorners( 0.0f, 0.0f, nSrcWidth - 1, nSrcHeight - 1 );
+				Rect_t fullViewportPostDestRect = { x, y, w, h };
+				Vector2D destTexSize( nSrcWidth, nSrcHeight );
 
 				// When the viewport is not fullscreen, the UV-space size of a pixel changes
 				// (due to a stretchrect blit being used in UpdateScreenEffectTexture()), so
 				// we need to adjust the corner-pixel UVs sent to our drawrect call:
-				Vector2D uvScale(	( nSrcWidth  - ( nSrcWidth  / (float)w ) ) / ( nSrcWidth  - 1 ),
-									( nSrcHeight - ( nSrcHeight / (float)h ) ) / ( nSrcHeight - 1 ) );
-				CenterScaleQuadUVs( fullViewportPostSrcCorners,  uvScale );
+				Vector2D uvScale( ( nSrcWidth - ( nSrcWidth / (float)w ) ) / ( nSrcWidth - 1 ), ( nSrcHeight - ( nSrcHeight / (float)h ) ) / ( nSrcHeight - 1 ) );
+				CenterScaleQuadUVs( fullViewportPostSrcCorners, uvScale );
 				CenterScaleQuadUVs( fullViewportPostDestCorners, uvScale );
 
-				Rect_t   partialViewportPostDestRect   = fullViewportPostDestRect;
+				Rect_t partialViewportPostDestRect = fullViewportPostDestRect;
 				Vector4D partialViewportPostSrcCorners = fullViewportPostSrcCorners;
 				if ( debug_postproc.GetInt() == 2 )
 				{
 					// Restrict the post effects to the centre quarter of the screen
 					// (we only use a portion of the bloom texture, so this *does* affect bloom texture UVs)
-					partialViewportPostDestRect.x		+= 0.25f*fullViewportPostDestRect.width;
-					partialViewportPostDestRect.y		+= 0.25f*fullViewportPostDestRect.height;
-					partialViewportPostDestRect.width	-= 0.50f*fullViewportPostDestRect.width;
-					partialViewportPostDestRect.height	-= 0.50f*fullViewportPostDestRect.height;
+					partialViewportPostDestRect.x += 0.25f * fullViewportPostDestRect.width;
+					partialViewportPostDestRect.y += 0.25f * fullViewportPostDestRect.height;
+					partialViewportPostDestRect.width -= 0.50f * fullViewportPostDestRect.width;
+					partialViewportPostDestRect.height -= 0.50f * fullViewportPostDestRect.height;
 
 					// This math interprets texel coords as being at corner pixel centers (*not* at corner vertices):
-					Vector2D uvScale(	1.0f - ( (w / 2) / (float)(w - 1) ),
-										1.0f - ( (h / 2) / (float)(h - 1) ) );
+					Vector2D uvScale( 1.0f - ( ( w / 2 ) / (float)( w - 1 ) ), 1.0f - ( ( h / 2 ) / (float)( h - 1 ) ) );
 					CenterScaleQuadUVs( partialViewportPostSrcCorners, uvScale );
 				}
 
-				// Temporary hack... Color correction was crashing on the first frame 
+				// Temporary hack... Color correction was crashing on the first frame
 				// when run outside the debugger for some mods (DoD). This forces it to skip
 				// a frame, ensuring we don't get the weird texture crash we otherwise would.
 				// FIXME: This will be removed when the true cause is found [added: Main CL 144694]
 				static bool bFirstFrame = !IsX360();
-				if( !bFirstFrame || !bPerformColCorrect )
+				if ( !bFirstFrame || !bPerformColCorrect )
 				{
 					bool bFBUpdated = false;
 
@@ -2416,22 +2417,24 @@ void DoEnginePostProcessing( int x, int y, int w, int h, bool bFlashlightIsOn, b
 
 						IMaterial *post_mat = CEnginePostMaterialProxy::SetupEnginePostMaterial( fullViewportPostSrcCorners, fullViewportPostDestCorners, destTexSize, bPerformSoftwareAA, bPerformBloom, bPerformColCorrect, flAAStrength );
 
-						if (bSplitScreenHDR)
+						if ( bSplitScreenHDR )
 						{
-							pRenderContext->SetScissorRect( partialViewportPostDestRect.width / 2, 0, partialViewportPostDestRect.width, partialViewportPostDestRect.height, true );
+							pRenderContext->SetScissorRect( partialViewportPostDestRect.width / 2, 0,
+															partialViewportPostDestRect.width,
+															partialViewportPostDestRect.height, true );
 						}
 
-						pRenderContext->DrawScreenSpaceRectangle(post_mat,
-                                                                 // TomF - offset already done by the viewport.
-																 0,0, //partialViewportPostDestRect.x,				partialViewportPostDestRect.y, 
-																 partialViewportPostDestRect.width,			partialViewportPostDestRect.height, 
-																 partialViewportPostSrcCorners.x,			partialViewportPostSrcCorners.y, 
-																 partialViewportPostSrcCorners.z,			partialViewportPostSrcCorners.w, 
-																 dest_rt1->GetActualWidth(),dest_rt1->GetActualHeight(),
-																 GetClientWorldEntity()->GetClientRenderable(),
-																 mat_postprocess_x.GetInt(), mat_postprocess_y.GetInt() );
+						pRenderContext->DrawScreenSpaceRectangle(
+							post_mat,
+							// TomF - offset already done by the viewport.
+							0, 0, //partialViewportPostDestRect.x,				partialViewportPostDestRect.y,
+							partialViewportPostDestRect.width, partialViewportPostDestRect.height,
+							partialViewportPostSrcCorners.x, partialViewportPostSrcCorners.y,
+							partialViewportPostSrcCorners.z, partialViewportPostSrcCorners.w, dest_rt1->GetActualWidth(),
+							dest_rt1->GetActualHeight(), GetClientWorldEntity()->GetClientRenderable(),
+							mat_postprocess_x.GetInt(), mat_postprocess_y.GetInt() );
 
-						if (bSplitScreenHDR)
+						if ( bSplitScreenHDR )
 						{
 							pRenderContext->SetScissorRect( -1, -1, -1, -1, false );
 						}
@@ -2444,21 +2447,23 @@ void DoEnginePostProcessing( int x, int y, int w, int h, bool bFlashlightIsOn, b
 						{
 							IMaterial *aa_mat = CEnginePostMaterialProxy::SetupEnginePostMaterial( fullViewportPostSrcCorners, fullViewportPostDestCorners, destTexSize, bPerformSoftwareAA, false, false, flAAStrength );
 
-							if (bSplitScreenHDR)
+							if ( bSplitScreenHDR )
 							{
-								pRenderContext->SetScissorRect( partialViewportPostDestRect.width / 2, 0, partialViewportPostDestRect.width, partialViewportPostDestRect.height, true );
+								pRenderContext->SetScissorRect( partialViewportPostDestRect.width / 2, 0,
+																partialViewportPostDestRect.width,
+																partialViewportPostDestRect.height, true );
 							}
 
-							pRenderContext->DrawScreenSpaceRectangle(aa_mat,
-                                                                     // TODO: check if offsets should be 0,0 here, as with the combined-pass case
-																	 partialViewportPostDestRect.x,				partialViewportPostDestRect.y, 
-																	 partialViewportPostDestRect.width,			partialViewportPostDestRect.height, 
-																	 partialViewportPostSrcCorners.x,			partialViewportPostSrcCorners.y, 
-																	 partialViewportPostSrcCorners.z,			partialViewportPostSrcCorners.w, 
-																	 dest_rt1->GetActualWidth(),dest_rt1->GetActualHeight(),
-																	 GetClientWorldEntity()->GetClientRenderable());
+							pRenderContext->DrawScreenSpaceRectangle(
+								aa_mat,
+								// TODO: check if offsets should be 0,0 here, as with the combined-pass case
+								partialViewportPostDestRect.x, partialViewportPostDestRect.y,
+								partialViewportPostDestRect.width, partialViewportPostDestRect.height,
+								partialViewportPostSrcCorners.x, partialViewportPostSrcCorners.y,
+								partialViewportPostSrcCorners.z, partialViewportPostSrcCorners.w, dest_rt1->GetActualWidth(),
+								dest_rt1->GetActualHeight(), GetClientWorldEntity()->GetClientRenderable() );
 
-							if (bSplitScreenHDR)
+							if ( bSplitScreenHDR )
 							{
 								pRenderContext->SetScissorRect( -1, -1, -1, -1, false );
 							}
@@ -2469,21 +2474,23 @@ void DoEnginePostProcessing( int x, int y, int w, int h, bool bFlashlightIsOn, b
 						{
 							IMaterial *bloom_mat = CEnginePostMaterialProxy::SetupEnginePostMaterial( fullViewportPostSrcCorners, fullViewportPostDestCorners, destTexSize, false, bPerformBloom, false, flAAStrength );
 
-							if (bSplitScreenHDR)
+							if ( bSplitScreenHDR )
 							{
-								pRenderContext->SetScissorRect( partialViewportPostDestRect.width / 2, 0, partialViewportPostDestRect.width, partialViewportPostDestRect.height, true );
+								pRenderContext->SetScissorRect( partialViewportPostDestRect.width / 2, 0,
+																partialViewportPostDestRect.width,
+																partialViewportPostDestRect.height, true );
 							}
 
-							pRenderContext->DrawScreenSpaceRectangle(bloom_mat,
-                                                                     // TODO: check if offsets should be 0,0 here, as with the combined-pass case
-																	 partialViewportPostDestRect.x,				partialViewportPostDestRect.y, 
-																	 partialViewportPostDestRect.width,			partialViewportPostDestRect.height, 
-																	 partialViewportPostSrcCorners.x,			partialViewportPostSrcCorners.y, 
-																	 partialViewportPostSrcCorners.z,			partialViewportPostSrcCorners.w, 
-																	 dest_rt1->GetActualWidth(),dest_rt1->GetActualHeight(),
-																	 GetClientWorldEntity()->GetClientRenderable());
+							pRenderContext->DrawScreenSpaceRectangle(
+								bloom_mat,
+								// TODO: check if offsets should be 0,0 here, as with the combined-pass case
+								partialViewportPostDestRect.x, partialViewportPostDestRect.y,
+								partialViewportPostDestRect.width, partialViewportPostDestRect.height,
+								partialViewportPostSrcCorners.x, partialViewportPostSrcCorners.y,
+								partialViewportPostSrcCorners.z, partialViewportPostSrcCorners.w, dest_rt1->GetActualWidth(),
+								dest_rt1->GetActualHeight(), GetClientWorldEntity()->GetClientRenderable() );
 
-							if (bSplitScreenHDR)
+							if ( bSplitScreenHDR )
 							{
 								pRenderContext->SetScissorRect( -1, -1, -1, -1, false );
 							}
@@ -2500,25 +2507,27 @@ void DoEnginePostProcessing( int x, int y, int w, int h, bool bFlashlightIsOn, b
 
 							IMaterial *colcorrect_mat = CEnginePostMaterialProxy::SetupEnginePostMaterial( fullViewportPostSrcCorners, fullViewportPostDestCorners, destTexSize, false, false, bPerformColCorrect, flAAStrength );
 
-							if (bSplitScreenHDR)
+							if ( bSplitScreenHDR )
 							{
-								pRenderContext->SetScissorRect( partialViewportPostDestRect.width / 2, 0, partialViewportPostDestRect.width, partialViewportPostDestRect.height, true );
+								pRenderContext->SetScissorRect( partialViewportPostDestRect.width / 2, 0,
+																partialViewportPostDestRect.width,
+																partialViewportPostDestRect.height, true );
 							}
 
-							pRenderContext->DrawScreenSpaceRectangle(colcorrect_mat,
-                                                                     // TODO: check if offsets should be 0,0 here, as with the combined-pass case
-																	 partialViewportPostDestRect.x,				partialViewportPostDestRect.y, 
-																	 partialViewportPostDestRect.width,			partialViewportPostDestRect.height, 
-																	 partialViewportPostSrcCorners.x,			partialViewportPostSrcCorners.y, 
-																	 partialViewportPostSrcCorners.z,			partialViewportPostSrcCorners.w, 
-																	 dest_rt1->GetActualWidth(),dest_rt1->GetActualHeight(),
-																	 GetClientWorldEntity()->GetClientRenderable());
+							pRenderContext->DrawScreenSpaceRectangle(
+								colcorrect_mat,
+								// TODO: check if offsets should be 0,0 here, as with the combined-pass case
+								partialViewportPostDestRect.x, partialViewportPostDestRect.y,
+								partialViewportPostDestRect.width, partialViewportPostDestRect.height,
+								partialViewportPostSrcCorners.x, partialViewportPostSrcCorners.y,
+								partialViewportPostSrcCorners.z, partialViewportPostSrcCorners.w, dest_rt1->GetActualWidth(),
+								dest_rt1->GetActualHeight(), GetClientWorldEntity()->GetClientRenderable() );
 
-							if (bSplitScreenHDR)
+							if ( bSplitScreenHDR )
 							{
 								pRenderContext->SetScissorRect( -1, -1, -1, -1, false );
 							}
-							bFBUpdated  = true;
+							bFBUpdated = true;
 						}
 					}
 
@@ -2533,22 +2542,20 @@ void DoEnginePostProcessing( int x, int y, int w, int h, bool bFlashlightIsOn, b
 						}
 
 						DrawPyroVignette(
-                            // TODO: check if offsets should be 0,0 here, as with the combined-pass case
-                            partialViewportPostDestRect.x,				partialViewportPostDestRect.y, 
-							partialViewportPostDestRect.width,			partialViewportPostDestRect.height, 
-							partialViewportPostSrcCorners.x,			partialViewportPostSrcCorners.y, 
-							partialViewportPostSrcCorners.z,			partialViewportPostSrcCorners.w, 
-							GetClientWorldEntity()->GetClientRenderable() );
+							// TODO: check if offsets should be 0,0 here, as with the combined-pass case
+							partialViewportPostDestRect.x, partialViewportPostDestRect.y, partialViewportPostDestRect.width,
+							partialViewportPostDestRect.height, partialViewportPostSrcCorners.x,
+							partialViewportPostSrcCorners.y, partialViewportPostSrcCorners.z,
+							partialViewportPostSrcCorners.w, GetClientWorldEntity()->GetClientRenderable() );
 
-						IMaterial *pPyroVisionPostMaterial = materials->FindMaterial( "dev/pyro_post", TEXTURE_GROUP_OTHER, true);
+						IMaterial *pPyroVisionPostMaterial = materials->FindMaterial( "dev/pyro_post", TEXTURE_GROUP_OTHER, true );
 						DrawPyroPost( pPyroVisionPostMaterial,
-                            // TODO: check if offsets should be 0,0 here, as with the combined-pass case
-							partialViewportPostDestRect.x,				partialViewportPostDestRect.y, 
-							partialViewportPostDestRect.width,			partialViewportPostDestRect.height, 
-							partialViewportPostSrcCorners.x,			partialViewportPostSrcCorners.y, 
-							partialViewportPostSrcCorners.z,			partialViewportPostSrcCorners.w, 
-							dest_rt1->GetActualWidth(),dest_rt1->GetActualHeight(),
-							GetClientWorldEntity()->GetClientRenderable() );
+									  // TODO: check if offsets should be 0,0 here, as with the combined-pass case
+									  partialViewportPostDestRect.x, partialViewportPostDestRect.y,
+									  partialViewportPostDestRect.width, partialViewportPostDestRect.height,
+									  partialViewportPostSrcCorners.x, partialViewportPostSrcCorners.y,
+									  partialViewportPostSrcCorners.z, partialViewportPostSrcCorners.w, dest_rt1->GetActualWidth(),
+									  dest_rt1->GetActualHeight(), GetClientWorldEntity()->GetClientRenderable() );
 					}
 
 					if ( g_bDumpRenderTargets )
@@ -2566,19 +2573,17 @@ void DoEnginePostProcessing( int x, int y, int w, int h, bool bFlashlightIsOn, b
 		}
 		break;
 
-		case HDR_TYPE_FLOAT:
-		{
-			int dest_width,dest_height;
+		case HDR_TYPE_FLOAT: {
+			int dest_width, dest_height;
 			pRenderContext->GetRenderTargetDimensions( dest_width, dest_height );
-			if (mat_dynamic_tonemapping.GetInt() || mat_show_histogram.GetInt())
+			if ( mat_dynamic_tonemapping.GetInt() || mat_show_histogram.GetInt() )
 			{
 				g_HDR_HistogramSystem.Update();
 				//				Warning("avg_lum=%f\n",g_HDR_HistogramSystem.GetTargetTonemapScalar());
 				if ( mat_dynamic_tonemapping.GetInt() )
 				{
 					float avg_lum = MAX( 0.0001, g_HDR_HistogramSystem.GetTargetTonemapScalar() );
-					float scalevalue = MAX( flAutoExposureMin,
-										 MIN( flAutoExposureMax, 0.18 / avg_lum ));
+					float scalevalue = MAX( flAutoExposureMin, MIN( flAutoExposureMax, 0.18 / avg_lum ) );
 					pRenderContext->SetGoalToneMappingScale( scalevalue );
 					mat_hdr_tonemapscale.SetValue( scalevalue );
 				}
@@ -2586,17 +2591,17 @@ void DoEnginePostProcessing( int x, int y, int w, int h, bool bFlashlightIsOn, b
 			else
 			{
 				float scalevalue = 1.0f;
-				pRenderContext->SetGoalToneMappingScale(scalevalue);
-				mat_hdr_tonemapscale.SetValue(scalevalue);
+				pRenderContext->SetGoalToneMappingScale( scalevalue );
+				mat_hdr_tonemapscale.SetValue( scalevalue );
 			}
-			
+
 			IMaterial *pBloomMaterial;
 			pBloomMaterial = materials->FindMaterial( "dev/floattoscreen_combine", "" );
 			IMaterialVar *pBloomAmountVar = pBloomMaterial->FindVar( "$bloomamount", NULL );
 			pBloomAmountVar->SetFloatValue( flBloomScale );
-			
-			PostProcessingPass* selectedHDR;
-			
+
+			PostProcessingPass *selectedHDR;
+
 			if ( flBloomScale > 0.0 )
 			{
 				selectedHDR = HDRFinal_Float;
@@ -2605,46 +2610,43 @@ void DoEnginePostProcessing( int x, int y, int w, int h, bool bFlashlightIsOn, b
 			{
 				selectedHDR = HDRFinal_Float_NoBloom;
 			}
-			
-			if (mat_show_ab_hdr.GetInt())
+
+			if ( mat_show_ab_hdr.GetInt() )
 			{
 				ClipBox splitScreenClip;
-				
+
 				splitScreenClip.m_minx = splitScreenClip.m_miny = 0;
 
 				// Left half
 				splitScreenClip.m_maxx = dest_width / 2;
 				splitScreenClip.m_maxy = dest_height - 1;
-				
-				ApplyPostProcessingPasses(HDRSimulate_NonHDR, &splitScreenClip);
-				
+
+				ApplyPostProcessingPasses( HDRSimulate_NonHDR, &splitScreenClip );
+
 				// Right half
 				splitScreenClip.m_minx = splitScreenClip.m_maxx;
 				splitScreenClip.m_maxx = dest_width - 1;
-				
-				ApplyPostProcessingPasses(selectedHDR, &splitScreenClip);
-				
+
+				ApplyPostProcessingPasses( selectedHDR, &splitScreenClip );
 			}
 			else
 			{
-				ApplyPostProcessingPasses(selectedHDR);
+				ApplyPostProcessingPasses( selectedHDR );
 			}
 
-			pRenderContext->SetRenderTarget(NULL);
-			if ( mat_show_histogram.GetInt() && (engine->GetDXSupportLevel()>=90))
+			pRenderContext->SetRenderTarget( NULL );
+			if ( mat_show_histogram.GetInt() && ( engine->GetDXSupportLevel() >= 90 ) )
 				g_HDR_HistogramSystem.DisplayHistogram();
 			if ( mat_dynamic_tonemapping.GetInt() )
 			{
 				float avg_lum = MAX( 0.0001, g_HDR_HistogramSystem.GetTargetTonemapScalar() );
-				float scalevalue = MAX( flAutoExposureMin,
-									 MIN( flAutoExposureMax, 0.023 / avg_lum ));
+				float scalevalue = MAX( flAutoExposureMin, MIN( flAutoExposureMax, 0.023 / avg_lum ) );
 				SetToneMapScale( pRenderContext, scalevalue, flAutoExposureMin, flAutoExposureMax );
 			}
 			pRenderContext->SetRenderTarget( NULL );
 			break;
 		}
 	}
-
 
 #if defined( _X360 )
 	pRenderContext->PopVertexShaderGPRAllocation();
@@ -2660,6 +2662,32 @@ void DoEnginePostProcessing( int x, int y, int w, int h, bool bFlashlightIsOn, b
 			{
 				UpdateScreenEffectTexture();
 				pRenderContext->DrawScreenSpaceRectangle( ae_DOF_X_Mat, 0, 0, w, h, 0, 0, w - 1, h - 1, w, h );
+			}
+		}
+	}
+	if ( CEstrangedSystemCaps::HasCaps( CAPS_SHADER_POSTPROCESS ) )
+	{
+		if ( ae_lensflare.GetBool() )
+		{
+			static IMaterial *lensflareMat = materials->FindMaterial( "shaders/lensflare", TEXTURE_GROUP_OTHER );
+			if ( lensflareMat )
+			{
+				UpdateScreenEffectTexture();
+				pRenderContext->DrawScreenSpaceRectangle( lensflareMat, 0, 0, w, h, 0, 0, w - 1, h - 1, w, h );
+			}
+		}
+
+		if ( ae_grain.GetBool() && ae_grain_intensity.GetFloat() > 0 )
+		{
+			static IMaterial *grainMat = materials->FindMaterial( "shaders/filmgrain", TEXTURE_GROUP_OTHER );
+			IMaterialVar *pGrainAmountVar = grainMat->FindVar( "$noiseamount", NULL );
+			pGrainAmountVar->SetFloatValue( ae_grain_intensity.GetFloat() );
+			IMaterialVar *pGrainFalloffVar = grainMat->FindVar( "$noisefalloff", NULL );
+			pGrainFalloffVar->SetFloatValue( ae_grain_falloff.GetFloat() );
+			if ( grainMat )
+			{
+				UpdateScreenEffectTexture();
+				pRenderContext->DrawScreenSpaceRectangle( grainMat, 0, 0, w, h, 0, 0, w - 1, h - 1, w, h );
 			}
 		}
 	}

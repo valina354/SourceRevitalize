@@ -434,7 +434,7 @@ void CViewRender::Shutdown( void )
 {
 	g_pScreenSpaceEffects->ShutdownScreenSpaceEffects();
 
-	g_pScreenSpaceEffects->EnableScreenSpaceEffect("vance_unsharp");
+	g_pScreenSpaceEffects->DisableScreenSpaceEffect( "vance_unsharp" );
 	g_pScreenSpaceEffects->DisableScreenSpaceEffect("vance_fxaa");
 	g_pScreenSpaceEffects->DisableScreenSpaceEffect("vance_waterfx");
 	g_pScreenSpaceEffects->DisableScreenSpaceEffect("vance_bloom");

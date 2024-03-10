@@ -880,10 +880,13 @@ CLIENTEFFECT_REGISTER_BEGIN( PrecachePostProcessingEffects )
 	CLIENTEFFECT_MATERIAL( "shaders/bokeh" )
 	CLIENTEFFECT_MATERIAL( "shaders/nightvision" )
 	CLIENTEFFECT_MATERIAL( "shaders/videofeed" )
-	CLIENTEFFECT_MATERIAL( "shaders/filmgrain" )
 
 	CLIENTEFFECT_MATERIAL( "shaders/screen_blurx" )
 	CLIENTEFFECT_MATERIAL( "shaders/screen_blury" )
+
+	CLIENTEFFECT_MATERIAL( "shaders/lensflare" )
+	CLIENTEFFECT_MATERIAL( "shaders/dof_x" )
+	CLIENTEFFECT_MATERIAL( "shaders/filmgrain" )
 
 CLIENTEFFECT_REGISTER_END_CONDITIONAL( engine->GetDXSupportLevel() >= 90 )
 
@@ -2816,22 +2819,7 @@ void CViewRender::PerformVideoFeed( int x, int y, int width, int height )
 	DrawScreenEffectMaterial( pVideoFeed, x, y, width, height );
 }
 
-ConVar r_post_filmgrain( "r_post_filmgrain", "0", FCVAR_ARCHIVE );
 
-void CViewRender::PerformFilmGrain( int x, int y, int width, int height )
-{
-	if ( !r_post_filmgrain.GetBool() )
-		return;
-
-	IMaterialVar *var;
-
-	IMaterial *pFilmGrain = materials->FindMaterial( "shaders/filmgrain", TEXTURE_GROUP_PIXEL_SHADERS, true );
-
-	var = pFilmGrain->FindVar( "$MUTABLE_01", NULL );
-	//var->SetFloatValue( r_post_bokeh_blur_amount.GetFloat() );
-
-	DrawScreenEffectMaterial( pFilmGrain, x, y, width, height );
-}
 
 
 ConVar r_post_reload_blur( "r_post_reload_blur", "1", FCVAR_ARCHIVE );
@@ -2888,7 +2876,6 @@ void CViewRender::PerformPreViewmodelPostProcessEffects( int x, int y, int width
 {
 	PerformBokeh( x, y, width, height );
 	PerformVideoFeed( x, y, width, height );
-	PerformFilmGrain( x, y, width, height );
 	PerformNightVision( x, y, width, height );
 	PerformReloadBlur( x, y, width, height );
 }
