@@ -1,0 +1,22 @@
+// Pixel Shader
+float4 main(float2 texCoord : TEXCOORD0, uniform sampler2D TextureSampler : register(s0)) : SV_TARGET {
+    // Sample the scene texture
+    float4 color = tex2D(TextureSampler, texCoord);
+
+    // Simple screen-space global illumination calculation
+    // You may need more sophisticated methods for better results
+    float3 ssgi = float3(0.0, 0.0, 0.0);
+    for (int x = -1; x <= 1; x++) {
+        for (int y = -1; y <= 1; y++) {
+            float4 neighborColor = tex2D(TextureSampler, texCoord + float2(x, y) * 0.5);
+            ssgi += neighborColor.rgb - color.rgb;
+        }
+    }
+    ssgi /= 9.0; // Normalize by the number of samples
+
+    // Combine with original color
+    float3 finalColor = color.rgb + ssgi * 0.5; // Adjust the strength as needed
+
+    // Output the final color
+    return float4(finalColor, 1.0);
+}

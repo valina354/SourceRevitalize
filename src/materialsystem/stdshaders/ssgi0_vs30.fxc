@@ -1,0 +1,17 @@
+// Define 'mul' function manually for matrix-vector multiplication
+float4 mul(float4 v, float4x4 m) {
+    return float4(
+        dot(v, m[0]),
+        dot(v, m[1]),
+        dot(v, m[2]),
+        dot(v, m[3])
+    );
+}
+
+// Vertex Shader
+float4x4 worldViewProj; // Declare worldViewProj matrix
+
+float4 main(float4 inPos : POSITION) : SV_POSITION {
+    // Simply pass through the position
+    return mul(inPos, worldViewProj); // Use worldViewProj matrix
+}

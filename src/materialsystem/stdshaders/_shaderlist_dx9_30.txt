@@ -64,6 +64,10 @@ ssr_ps30.fxc
 //lightmappedPBR_ps30.fxc
 //lightmappedPBR_vs30.fxc
 
+//ssgi
+ssgi0_vs30.fxc
+ssgi0_ps30.fxc
+
 //water
 SDK_water_ps2x.fxc
 SDK_Water_vs20.fxc

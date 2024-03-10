@@ -406,7 +406,7 @@ void CBloom::Shutdown(void)
 }
 
 ConVar r_post_bloom("r_post_bloom", "1", FCVAR_ARCHIVE);
-ConVar r_post_bloom_amount("r_post_bloom_amount", "1", FCVAR_ARCHIVE);
+ConVar r_post_bloom_amount("r_post_bloom_amount", "0.2", FCVAR_ARCHIVE);
 ConVar r_post_bloom_gaussianamount("r_post_bloom_gaussianamount", "1", FCVAR_ARCHIVE);
 ConVar r_post_bloom_exposure("r_post_bloom_exposure", "1", FCVAR_ARCHIVE);
 void CBloom::Render(int x, int y, int w, int h)
@@ -651,6 +651,69 @@ void CVignettingEffect::Render( int x, int y, int w, int h )
 		if ( r_post_vignettingeffect_debug.GetBool() )
 			DevMsg( "Vignetting Amount: %.2f\n", fVignettingAmount );
 	}
+}
+
+//------------------------------------------------------------------------------
+// Screen Space Global Illumination
+//------------------------------------------------------------------------------
+class CSSGIEffect : public IScreenSpaceEffect
+{
+public:
+	CSSGIEffect(){};
+	~CSSGIEffect(){};
+
+	void Init();
+	void Shutdown();
+
+	void SetParameters( KeyValues *params ){};
+
+	void Render( int x, int y, int w, int h );
+
+	void Enable( bool bEnable )
+	{
+		m_bEnable = bEnable;
+	}
+	bool IsEnabled()
+	{
+		return m_bEnable;
+	}
+
+private:
+	bool m_bEnable;
+
+
+	CMaterialReference m_SSGIMat;
+};
+
+ADD_SCREENSPACE_EFFECT( CSSGIEffect, vance_ssgi );
+
+ConVar r_post_ssgieffect( "r_post_ssgieffect", "1", FCVAR_ARCHIVE );
+
+//------------------------------------------------------------------------------
+// CSSGIEffect init
+//------------------------------------------------------------------------------
+void CSSGIEffect::Init()
+{
+	m_SSGIMat.Init( materials->FindMaterial( "shaders/ssgi0", TEXTURE_GROUP_PIXEL_SHADERS, true ) );
+}
+
+//------------------------------------------------------------------------------
+// CVignettingEffect shutdown
+//------------------------------------------------------------------------------
+void CSSGIEffect::Shutdown()
+{
+	m_SSGIMat.Shutdown();
+}
+
+//------------------------------------------------------------------------------
+// CVignettingEffect render
+//------------------------------------------------------------------------------
+void CSSGIEffect::Render( int x, int y, int w, int h )
+{
+	if ( !r_post_vignettingeffect.GetBool() || ( IsEnabled() == false ) )
+		return;
+
+
 }
 
 class CColorCorrectionEffect : public IScreenSpaceEffect
