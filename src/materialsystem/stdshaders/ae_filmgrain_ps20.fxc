@@ -12,26 +12,29 @@ struct PS_INPUT
 	float2 texCoords : TEXCOORD0;
 };
 
-float4 main(PS_INPUT i) : COLOR
+float4 main(PS_INPUT i) : COLOR //out main function
 {
-    float4 tex = tex2D(s_buffer, i.texCoords);
+	float4 tex = tex2D(s_buffer,i.texCoords);
 
-    float rand = sin(n_time * 30.0f);
+	float rand = sin(n_time*30.0f);
 
-    half2 randCoords = i.texCoords + float2(n_time, rand);
+	half2 randCoords = 0.0f;
 
-    half4 noise = tex2D(s_noise, randCoords * 6.0f);
-    half noiseA = noise.a;
+	randCoords.x = i.texCoords.x+n_time;
+	randCoords.y = i.texCoords.y+rand;
 
-    noise = tex2D(s_noise, (i.texCoords + (n_time * 0.1)) * 20.0f);
-    noise.rgb *= noiseA;
+	half4 noise = tex2D(s_noise,randCoords*6.0f);
+	half noiseA = noise.a;
 
-    noise.rgb *= (1.0f - (tex.rgb * noisefalloff));
-    noise.rgb = saturate(noise.rgb);
+	noise = tex2D(s_noise,(i.texCoords+(n_time*0.1))*20.0f);
 
-    float4 color_out;
-    color_out.rgb = tex.rgb + noise.rgb * 0.2 * noiseamount;
-    color_out.a = tex.a;
+	noise.rgb *= noiseA;
 
-    return color_out;
+	noise.rgb *= (1.0f - (tex.rgb*noisefalloff));
+	noise.rgb = saturate(noise.rgb);
+
+	float4 color_out;
+	color_out.rgb = tex.rgb + (noise.rgb*0.2)*noiseamount;
+	color_out.a = tex.a;
+	return color_out;
 }

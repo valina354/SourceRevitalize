@@ -5,7 +5,7 @@ sampler dirtMap		: register( s1 );
 //sampler noiseMap		: register( s2 );
 sampler framebuffer		: register( s3 );
 
-static int samples = 5; // number of samples
+static int samples = 2; // number of samples
 static float flFlaresDispersal = 0.3; //dispersion between samples (spacing between samples)
 static float flHoopWidth = 0.45; // width of hoop/halo flare
 

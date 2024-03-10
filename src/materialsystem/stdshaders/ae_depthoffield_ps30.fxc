@@ -1,24 +1,25 @@
-// DYNAMIC: "DEBUG_VIS"			"0..1"
+// DYNAMIC: "DEBUG_VIS" "0..1"
 
 #include "common_ps_fxc.h"
 
-sampler s_buffer		: register( s0 );
-sampler s_depth		: register( s1 );
+sampler s_buffer : register(s0);
+sampler s_depth : register(s1);
 
 //x:GetEyeFocusDistance()
 //y:DoF Range
 //z:nWidth
 //w:nHeight
-float4 focusInfo	: register( c0 );
+float4 focusInfo : register(c0);
 
 //DoF Radius
-float2 bokehInfo	: register( c1 );
+float2 bokehInfo : register(c1);
 
 static const float maxblur = 1.25;
 
+// Define the Bokeh array
 static const float2 Bokeh[141] =
 {
-	1.797,    -0.352,  
+    1.797,    -0.352,  
 	1.857,    -0.197,  
 	1.880,    -0.032,  
 	1.870,     0.134,  
@@ -159,43 +160,52 @@ static const float2 Bokeh[141] =
 	-0.741,    -1.348,  
 	0.358,    -1.137,  
 	-1.219,    -0.209,  
-
 };
+
+// Function to dynamically generate Bokeh sample offsets
+float2 GetBokehOffset(float index, float radius, float blur) {
+    float2 fInverseViewportDimensions = float2(1.0 / focusInfo.z, 1.0 / focusInfo.w);
+    return Bokeh[index] * fInverseViewportDimensions * radius * blur;
+}
 
 struct PS_INPUT
 {
-	float2 texCoords : TEXCOORD0;
+    float2 texCoords : TEXCOORD0;
 };
 
 float4 main(PS_INPUT i) : COLOR
 {
-	float4 blur = 0.0;
-	float2 blurCoords = i.texCoords;
-	float radius = bokehInfo.x;
+    float4 blur = 0.0;
+    float2 blurCoords = i.texCoords;
+    float radius = bokehInfo.x;
 
-	float focus_distance = focusInfo.x;
-	float2 fInverseViewportDimensions = float2( 1.0 / focusInfo.z, 1.0 / focusInfo.w );
+    float focus_distance = focusInfo.x;
 
-	float depth = tex2D(s_depth, i.texCoords).r;
+    float depth = tex2D(s_depth, i.texCoords).r;
 
-	// Convert from linear depth to metres
-	float Dd = depth * (4000 - 7.0);
-	
-	float xd = abs(Dd - focus_distance);
-	float xdd = (Dd < focus_distance) ? (focus_distance - xd) : (focus_distance + xd);
-	float blend = bokehInfo.y * (xd / xdd);
+    // Convert from linear depth to meters
+    float Dd = depth * (4000 - 7.0);
 
-	float clampedBlur = clamp(blend,-maxblur,maxblur);
-	for(int i = 0; i < 141; i++)
-	{
-		blur += tex2D(s_buffer, blurCoords + Bokeh[i] * fInverseViewportDimensions * radius * clampedBlur );
-	}
+    float xd = abs(Dd - focus_distance);
+    float xdd = (Dd < focus_distance) ? (focus_distance - xd) : (focus_distance + xd);
+    float blend = bokehInfo.y * (xd / xdd);
 
-	blur /= 141;
+    float clampedBlur = clamp(blend, -maxblur, maxblur);
+    
+    // Reduce the number of Bokeh samples
+    const int numSamples = 64;
+    float4 accum = 0;
+    for (int i = 0; i < numSamples; ++i)
+    {
+        float2 offset = GetBokehOffset(i, radius, clampedBlur);
+        accum += tex2D(s_buffer, blurCoords + offset);
+    }
+
+    blur = accum / numSamples;
 
 #if DEBUG_VIS
-	blur.r += blend;
+    blur.r += blend;
 #endif
 
-	return blur;
+    return blur;
 }
