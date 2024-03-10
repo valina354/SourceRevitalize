@@ -14,7 +14,7 @@
 #define MOD_WATERMARK_STR "Source Revitalize"
 #define MOD_VERSION_MAJOR 0
 #define MOD_VERSION_MINOR 9
-#define MOD_VERSION_PATCH 6
+#define MOD_VERSION_PATCH 7
 
 #define TICK_INTERVAL			(gpGlobals->interval_per_tick)
 
