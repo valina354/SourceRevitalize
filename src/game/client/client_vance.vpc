@@ -38,6 +38,11 @@ $Project "Client (Vance)"
 		$File	"object_motion_blur_effect.cpp"
 		$File	"mapbase_rendertargets.cpp"
 		$File	"mapbase_rendertargets.h"
+		$File	"C_ShaderAPIGameSystem.cpp"
+		$File	"estranged_system_caps.cpp"
+		$File	"estranged_system_caps.h"
+		$File	"c_loggamestart.cpp"
+		$File	"IShaderAPIExtClient.cpp"
 		
 		$Folder "Shader Editor" 
 		{

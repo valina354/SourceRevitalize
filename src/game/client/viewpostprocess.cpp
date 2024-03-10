@@ -18,6 +18,7 @@
 #include "bitmap/tgawriter.h"
 #include "filesystem.h"
 #include "tier0/vprof.h"
+#include "estranged_system_caps.h"
 
 #include "proxyentity.h"
 
@@ -2221,6 +2222,8 @@ static ConVar r_queued_post_processing( "r_queued_post_processing", "0" );
 static ConVar mat_postprocess_x( "mat_postprocess_x", "4" );
 static ConVar mat_postprocess_y( "mat_postprocess_y", "1" );
 
+static ConVar ae_dof( "ae_dof", "0", FCVAR_ARCHIVE );
+
 void DoEnginePostProcessing( int x, int y, int w, int h, bool bFlashlightIsOn, bool bPostVGui )
 {
 	tmZone( TELEMETRY_LEVEL0, TMZF_NONE, "%s", __FUNCTION__ );
@@ -2646,6 +2649,20 @@ void DoEnginePostProcessing( int x, int y, int w, int h, bool bFlashlightIsOn, b
 #if defined( _X360 )
 	pRenderContext->PopVertexShaderGPRAllocation();
 #endif
+
+	if ( CEstrangedSystemCaps::HasCaps( CAPS_ESTRANGED_DEPTHPASS ) && CEstrangedSystemCaps::HasCaps( CAPS_SHADER_POSTPROCESS ) )
+	{
+		static ConVar ae_dof_post( "ae_dof_post", "0" );
+		if ( ae_dof_post.GetBool() )
+		{
+			static IMaterial *ae_DOF_X_Mat = materials->FindMaterial( "shaders/dof_x", TEXTURE_GROUP_OTHER );
+			if ( ae_DOF_X_Mat )
+			{
+				UpdateScreenEffectTexture();
+				pRenderContext->DrawScreenSpaceRectangle( ae_DOF_X_Mat, 0, 0, w, h, 0, 0, w - 1, h - 1, w, h );
+			}
+		}
+	}
 }
 
 // Motion Blur Material Proxy =========================================================================================
