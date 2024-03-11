@@ -364,6 +364,8 @@ static int64_t startTimestamp = time(0);
 static ConVar s_cl_load_hl1_content("cl_load_hl1_content", "0", FCVAR_ARCHIVE, "Mount the content from Half-Life: Source if possible");
 #endif
 
+ConVar IgnoreShaderModelError( "IgnoreShaderModelError", "0", 0, "Ignores shader model 3.0 requirment" );
+
 
 // Physics system
 bool g_bLevelInitialized;
@@ -1143,7 +1145,6 @@ int CHLClient::Init( CreateInterfaceFn appSystemFactory, CreateInterfaceFn physi
 	IGameSystem::Add( PerfVisualBenchmark() );
 	IGameSystem::Add( MumbleSystem() );
 
-	ConVar IgnoreShaderModelError( "IgnoreShaderModelError", "0", 0, "Ignores shader model 3.0 requirment" );
 
     // Don't want Source engine running on unsupported hardware
 	if ( g_pMaterialSystemHardwareConfig->GetDXSupportLevel() < 95 )
