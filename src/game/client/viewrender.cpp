@@ -6832,7 +6832,7 @@ void CUnderWaterView::Setup( const CViewSetup &view, bool bDrawSkybox, const Vis
 	CalcWaterEyeAdjustments( fogInfo, m_waterHeight, m_waterZAdjust, m_bSoftwareUserClipPlane );
 
 	IMaterial *pWaterMaterial = fogInfo.m_pFogVolumeMaterial;
-	if (engine->GetDXSupportLevel() >= 90 )					// screen voerlays underwater are a dx9 feature
+	if (engine->GetDXSupportLevel() >= 90 )					// screen overlays underwater are a dx9 feature
 	{
 		IMaterialVar *pScreenOverlayVar = pWaterMaterial->FindVar( "$underwateroverlay", NULL, false );
 		if ( pScreenOverlayVar && ( pScreenOverlayVar->IsDefined() ) )
