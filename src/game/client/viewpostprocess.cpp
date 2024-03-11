@@ -2227,7 +2227,7 @@ static ConVar r_post_lensflare( "r_post_lensflare", "1", FCVAR_ARCHIVE );
 
 static ConVar r_post_grain( "r_post_grain", "1", FCVAR_ARCHIVE );
 
-static ConVar r_post_grain_intensity( "r_post_grain_intensity", "0.2", FCVAR_ARCHIVE );
+static ConVar r_post_grain_intensity( "r_post_grain_intensity", "0.15", FCVAR_ARCHIVE );
 static ConVar r_post_grain_falloff( "r_post_grain_falloff", "0.1", FCVAR_ARCHIVE );
 
 void DoEnginePostProcessing( int x, int y, int w, int h, bool bFlashlightIsOn, bool bPostVGui )
