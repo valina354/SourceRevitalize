@@ -22,6 +22,8 @@ const float2 g_zPlanes : register(c24);
 #define g_flRayStepDiv g_params.z
 #define g_flRayMaxDist g_params.w
 
+
+
 float LinearizeDepth(float d, float f, float n)
 {
     return n * f / (f + d * (n - f));
@@ -112,6 +114,9 @@ float4 main(PS_INPUT i) : COLOR0
     float3 eyeDir = normalize(worldPos - g_EyeOrigin);
     float3 reflection = reflect(eyeDir, WorldNormals);
     float metallic = MRAO.x;
+	#ifdef DISABLE_SSR_ON_MODELS
+	float modelMask = MRAO.a;
+	#endif
     
     float roughness = 1.0f - MRAO.y;
     roughness *= roughness;
@@ -157,5 +162,9 @@ float4 main(PS_INPUT i) : COLOR0
 
     float3 frame = tex2D(FrameSampler, reflectionUV);
     
+	#ifdef DISABLE_SSR_ON_MODELS
+	return float4(frame * mask * (1.0f - MRAO.y) * fresnelMask * depthMask * UVmask * modelMask, 1.0f);
+	#else
     return float4(frame * mask * (1.0f - MRAO.y) * fresnelMask * depthMask * UVmask, 1.0f);
+	#endif
 }
