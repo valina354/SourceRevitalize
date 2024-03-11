@@ -1,5 +1,5 @@
-// STATIC: "CONVERT_TO_SRGB" "0..1" [ps20b][= g_pHardwareConfig->NeedsShaderSRGBConversion()] [PC]
-// STATIC: "CONVERT_TO_SRGB" "0..0" [= 0] [XBOX]
+// STATIC: "CONVERT_TO_SRGB" "0..1"    [ps20b][= g_pHardwareConfig->NeedsShaderSRGBConversion()] [PC]
+// STATIC: "CONVERT_TO_SRGB" "0..0"    [= 0] [XBOX]
 
 // DYNAMIC: "MODE" "0..3"
 // DYNAMIC: "AUTO_EXPOSURE" "0..1"
@@ -23,7 +23,7 @@ float3 toHDR(float3 color)
     float3 underExposure = color / m_flUnderExposure;
     float3 overExposure = color * m_flOverExposure;
 
-    float3 hdrImage = lerp(underExposure, overExposure, color);
+    float3 hdrImage = lerp(underExposure, overExposure, saturate(color));
     return hdrImage;
 }
 
@@ -32,33 +32,24 @@ float3 sRGBCorrect(float3 color)
     return pow(color, 1.0f / 2.2f);
 }
 
-float3 getExposure(float3 color, float avgLuminance, bool autoExposure)
+float3 getExposure(float3 color, float exposure)
 {
-    float targetLuminance = 0.18f; // Adjust this value as needed
-    float exposureAdjustment = targetLuminance / avgLuminance;
-
-    // Ensure no color overflow
-    float maxComponent = max(max(color.r, color.g), color.b);
-    float3 retColor = color * (1.0f / max(maxComponent, 1.0f)) * (autoExposure ? exposureAdjustment : 1.0f) * m_flExposure;
-
+    float3 retColor = color * exposure;
     return retColor;
-}
-
-float calculateLuminance(float3 color)
-{
-    return dot(color, float3(0.2126, 0.7152, 0.0722));
 }
 
 float3 Burgess(float3 input)
 {
     float3 x = max(0, input - 0.004);
-    float3 retColor = (x * (6.2 * x + .5)) / (x * (6.2 * x + 1.7) + 0.06);
+    float3 retColor = (x * (6.2 * x + 0.5)) / (x * (6.2 * x + 1.7) + 0.06);
+
     return retColor;
 }
 
 float3 Reinhard(float3 x)
 {
     float3 retColor = x / (x + 1);
+
     return pow(retColor, 1 / 2.2f);
 }
 
@@ -77,9 +68,21 @@ float4 main(PS_INPUT i) : COLOR
 {
     float3 fbSample = tex2D(FBSampler, i.texCoord).rgb;
 
-    float avgLuminance = calculateLuminance(fbSample);
+    float exposure = m_flExposure;
 
-    float3 retColor = getExposure(fbSample, avgLuminance, bool(AUTO_EXPOSURE));
+#if AUTO_EXPOSURE == 1
+    // Calculate scene brightness (luminance)
+    float luminance = dot(fbSample, float3(0.2126, 0.7152, 0.0722));
+
+    // Calculate desired exposure based on scene brightness
+    float targetExposure = 1.0 / luminance;
+
+    // Limit the maximum change in exposure
+    float maxChange = 0.25;
+    exposure = clamp(targetExposure, m_flExposure - maxChange, m_flExposure + maxChange);
+#endif
+
+    float3 retColor = getExposure(fbSample, exposure);
     retColor = toHDR(retColor);
 
 #if MODE == 1

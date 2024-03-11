@@ -54,6 +54,7 @@ $Project "Shaders (VANCE)"
 			$File	"ae_depthoffield.cpp"
 			$File	"ae_lensflareshader.cpp"
 			$File	"ae_filmgrainshader.cpp"
+			$File	"SSGI0.cpp"
 		}
 		
 		$Folder "PBR"
