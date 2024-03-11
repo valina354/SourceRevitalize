@@ -126,11 +126,6 @@
 #include "client_virtualreality.h"
 #include "shaderapihack.h"
 #include "mumble.h"
-#include <cstdlib> // for exit
-#include <cstdio>  // for printf
-
-// Declare MessageBox function signature
-extern "C" __declspec( dllimport ) int __stdcall MessageBoxA( void *hWnd, const char *lpText, const char *lpCaption, unsigned int uType );
 
 // NVNT includes
 #include "hud_macros.h"
@@ -1148,11 +1143,17 @@ int CHLClient::Init( CreateInterfaceFn appSystemFactory, CreateInterfaceFn physi
 	IGameSystem::Add( PerfVisualBenchmark() );
 	IGameSystem::Add( MumbleSystem() );
 
+	ConVar IgnoreShaderModelError( "IgnoreShaderModelError", "0", 0, "Ignores shader model 3.0 requirment" );
+
     // Don't want Source engine running on unsupported hardware
 	if ( g_pMaterialSystemHardwareConfig->GetDXSupportLevel() < 95 )
 	{
-		MessageBoxA( nullptr, "This game has a minimum requirement of Shader Model 3.0 to run", "Engine Error GPU", 0x10 /* MB_ICONERROR */ );
-		exit( 0 );
+		if ( !IgnoreShaderModelError.GetBool() )
+		{
+			Error( "This game requires Shader Model 3.0 to run." );
+			DebuggerBreak();
+			exit( 0 );
+		}
 	}
 	
 	#if defined( TF_CLIENT_DLL )
