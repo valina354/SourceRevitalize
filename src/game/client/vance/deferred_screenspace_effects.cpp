@@ -710,7 +710,7 @@ void CSSGIEffect::Shutdown()
 //------------------------------------------------------------------------------
 void CSSGIEffect::Render( int x, int y, int w, int h )
 {
-	if ( !r_post_vignettingeffect.GetBool() || ( IsEnabled() == false ) )
+	if ( !r_post_ssgieffect.GetBool() || ( IsEnabled() == false ) )
 		return;
 
 
@@ -827,12 +827,17 @@ void CColorCorrectionEffect::Shutdown( void )
 	m_Desaturate.Shutdown();
 }
 
+extern ConVar mat_colorcorrection;
+
 ConVar r_post_colorcorrection( "r_post_colorcorrection", "1", FCVAR_ARCHIVE );
 void CColorCorrectionEffect::Render( int x, int y, int w, int h )
 {
 	VPROF( "CColorCorrectionEffect::Render" );
 
 	if ( !r_post_colorcorrection.GetBool() || !IsEnabled() )
+		return;
+
+	if ( !mat_colorcorrection.GetBool() )
 		return;
 
 	IMaterialVar *var;
