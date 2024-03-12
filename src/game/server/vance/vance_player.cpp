@@ -1033,7 +1033,7 @@ bool CVancePlayer::Weapon_CanUse(CBaseCombatWeapon* pWeapon)
 		return false;
 	}
 	if (pWeapon->ClassMatches("weapon_physcannon"))
-		return false;
+		return true;
 
 	return BaseClass::Weapon_CanUse(pWeapon);
 }
