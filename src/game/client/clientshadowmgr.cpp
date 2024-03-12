@@ -102,6 +102,7 @@ static ConVar r_worldlight_shortenfactor( "r_worldlight_shortenfactor", "2", FCV
 static ConVar r_worldlight_mincastintensity( "r_worldlight_mincastintensity", "0.3", FCVAR_CHEAT, "Minimum brightness of a light to be classed as shadow casting", true, 0, false, 0 );
 
 ConVar r_flashlightdepthtexture("r_flashlightdepthtexture", "1");
+ConVar r_max_shadowtextures( "r_max_shadowtextures", "16" );
 
 ConVar r_flashlightdepthres("r_flashlightdepthres", "2048");
 
@@ -1366,8 +1367,8 @@ bool CClientShadowMgr::Init()
 
 	SetShadowBlobbyCutoffArea(0.005);
 
-	#define MAX_PROJECTED_TEXTURE 16
-	m_nMaxDepthTextureShadows = MAX_PROJECTED_TEXTURE; // Maximum of 16 Projected Textures in one frame, a bit overkill
+
+	m_nMaxDepthTextureShadows = ( r_max_shadowtextures.GetInt() > 0 ) ? r_max_shadowtextures.GetInt() : 1;
 
 	bool bLowEnd = (g_pMaterialSystemHardwareConfig->GetDXSupportLevel() < 80);
 
