@@ -15,7 +15,7 @@
 #include <vgui/ILocalize.h>
 #include <vgui/ISurface.h>
 #include "ihudlcd.h"
-#ifdef VANCE
+#ifndef VANCE
 #include "c_vance_player.h"
 #endif
 
@@ -118,7 +118,7 @@ void CHudAmmo::UpdatePlayerAmmo(C_BasePlayer *player)
 
 	C_BaseCombatWeapon *wpn = GetActiveWeapon();
 
-#ifdef VANCE //if the onehanded alyxgun is up that should always take over
+#ifndef VANCE //if the onehanded alyxgun is up that should always take over
 	C_VancePlayer* vanceplayer = static_cast<C_VancePlayer*>(player);
 	if (vanceplayer && vanceplayer->m_bOneHandedWeapon && vanceplayer->Weapon_OwnsThisType("weapon_resistancegun")) {
 		wpn = vanceplayer->Weapon_OwnsThisType("weapon_resistancegun");

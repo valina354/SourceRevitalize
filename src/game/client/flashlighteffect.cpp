@@ -19,7 +19,7 @@
 #include "c_basehlplayer.h"
 #endif // HL2_CLIENT_DLL
 
-#ifdef VANCE
+#ifndef VANCE
 #include "vance_baseweapon_shared.h"
 #endif
 
@@ -304,7 +304,7 @@ void CFlashlightEffect::UpdateLight(	int nEntIdx, const Vector &vecPos, const Ve
 
 	UpdateFlashlightTexture( pTextureName );
 
-#ifdef VANCE
+#ifndef VANCE
 	C_BaseVanceWeapon *pWeapon = (C_BaseVanceWeapon *)C_BasePlayer::GetLocalPlayer()->GetActiveWeapon();
 	if (pWeapon)
 		UpdateMuzzleFlashTexture(pWeapon->GetVanceWpnData().szMuzzleFlashTexture);

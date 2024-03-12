@@ -32,7 +32,7 @@
 
 ConVar crosshair( "crosshair", "1", FCVAR_ARCHIVE );
 ConVar cl_observercrosshair( "cl_observercrosshair", "1", FCVAR_ARCHIVE );
-#ifdef VANCE
+#ifndef VANCE
 ConVar cl_crosshair_forceaimdirection( "cl_crosshair_forceaimdirection", "1" );
 #endif
 
@@ -163,7 +163,7 @@ void CHudCrosshair::GetDrawPosition ( float *pX, float *pY, bool *pbBehindCamera
 	bool bBehindCamera = false;
 
 	C_BasePlayer* pPlayer = C_BasePlayer::GetLocalPlayer();
-	C_BaseCombatWeapon *pWeapon = pPlayer->GetActiveWeapon();
+	//C_BaseCombatWeapon *pWeapon = pPlayer->GetActiveWeapon();
 	if ( ( pPlayer != NULL ) && pPlayer->IsAlive() && ( pPlayer->GetObserverMode()==OBS_MODE_NONE ) )
 	{
 		bool bUseOffset = false;
@@ -172,7 +172,7 @@ void CHudCrosshair::GetDrawPosition ( float *pX, float *pY, bool *pbBehindCamera
 		Vector vecEnd;
 
 		if (UseVR()
-#ifdef VANCE
+#ifndef VANCE
 			|| cl_crosshair_forceaimdirection.GetBool() && pWeapon->GetSequenceActivity(pWeapon->GetSequence()) != ACT_VM_IDLE && pWeapon->GetSequenceActivity(pWeapon->GetSequence()) != ACT_VM_IDLE_EXTENDED
 #endif
 		)
@@ -180,7 +180,7 @@ void CHudCrosshair::GetDrawPosition ( float *pX, float *pY, bool *pbBehindCamera
 
 			
 			// These are the correct values to use, but they lag the high-speed view data...
-#ifdef VANCE
+#ifndef VANCE
 			vecStart = MainViewOrigin();
 #else
 			vecStart = pPlayer->Weapon_ShootPosition();
@@ -188,7 +188,7 @@ void CHudCrosshair::GetDrawPosition ( float *pX, float *pY, bool *pbBehindCamera
 			Vector vecAimDirection = pPlayer->GetAutoaimVector( 1.0f );
 			// ...so in some aim modes, they get zapped by something completely up-to-date.
 			g_ClientVirtualReality.OverrideWeaponHudAimVectors ( &vecStart, &vecAimDirection );
-#ifdef VANCE
+#ifndef VANCE
 			vecEnd = vecStart + vecAimDirection;
 #else
 			vecEnd = vecStart + vecAimDirection * MAX_TRACE_LENGTH;

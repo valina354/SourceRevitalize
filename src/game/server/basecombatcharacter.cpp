@@ -3008,7 +3008,7 @@ int CBaseCombatCharacter::GiveAmmo( int iCount, int iAmmoIndex, bool bSuppressSo
 	// Ammo pickup sound
 	if ( !bSuppressSound )
 	{
-#ifdef VANCE
+#ifndef VANCE
 		CBasePlayer *pPlayer = dynamic_cast<CBasePlayer *>( this );
 		if ( pPlayer && !pPlayer->IsSuitEquipped() )
 		{

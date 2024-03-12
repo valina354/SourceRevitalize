@@ -99,7 +99,7 @@ CHUDQuickInfo::CHUDQuickInfo( const char *pElementName ) :
 
 	SetHiddenBits( HIDEHUD_CROSSHAIR );
 
-#ifdef VANCE
+#ifndef VANCE
 	SetHiddenBits( HIDEHUD_NEEDSUIT );
 #endif
 }

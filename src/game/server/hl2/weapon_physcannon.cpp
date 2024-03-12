@@ -1024,7 +1024,7 @@ void CPlayerPickupController::Init(CBasePlayer *pPlayer, CBaseEntity *pObject)
 		}
 	}
 
-#ifdef VANCE
+#ifndef VANCE
 	//vance has its own use key interaction while suited, so we want to avoid this one getting in the way
 	if (pPlayer->IsSuitEquipped()) {
 		Shutdown();
@@ -1241,7 +1241,7 @@ public:
 	void	ItemPostFrame();
 	void	ItemBusyFrame();
 
-#ifdef VANCE
+#ifndef VANCE
 	virtual bool	SendWeaponAnim(int iActivity);
 	//some hacky shit, we cant easily cast to CWeaponPhysCannon in vance_player, so we are just using the reload function
 	//cause we can call that from CBaseHLCombatWeapon. Yes i know this is retarded and theres probably a better way to do
@@ -1496,7 +1496,7 @@ CWeaponPhysCannon::CWeaponPhysCannon(void)
 	m_bPhyscannonState = false;
 }
 
-#ifdef VANCE
+#ifndef VANCE
 //disable animations
 bool CWeaponPhysCannon::SendWeaponAnim(int iActivity) {
 	return false;
@@ -1662,7 +1662,7 @@ void CWeaponPhysCannon::Precache(void)
 	// Precache our alternate model
 	PrecacheModel(MEGACANNON_MODEL);
 
-#ifdef VANCE
+#ifndef VANCE
 	PrecacheScriptSound("Weapon_PhysCannon.Launch");
 	PrecacheScriptSound("Weapon_PhysCannon.DryFire");
 	PrecacheScriptSound("Weapon_PhysCannon.Pickup");
@@ -3018,7 +3018,7 @@ bool CGGrabController::UpdateObject(CBasePlayer *pPlayer, float flError)
 	AngleMatrix(angles, attachedToWorld);
 	VectorRotate(m_attachedPositionObjectSpace, attachedToWorld, offset);
 
-#ifdef VANCE
+#ifndef VANCE
 	CVancePlayer *vancePlayer = static_cast<CVancePlayer *>(pPlayer);
 	if (vancePlayer && vancePlayer->m_vGglovesManipulatorOffset) {
 		offset += 20 * right + 10 * up;
@@ -3135,7 +3135,7 @@ void CWeaponPhysCannon::ItemPreFrame()
 		m_flTimeNextObjectPurge = gpGlobals->curtime + 0.5f;
 	}
 
-#ifdef VANCE
+#ifndef VANCE
 	//we need to update the player on whether or not we have an attached entity
 	CVancePlayer* pVanceOwner = static_cast<CVancePlayer*>(pOwner);
 	if (m_bActive) {
