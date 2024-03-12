@@ -1416,7 +1416,10 @@ void CClientShadowMgr::InitDepthTextureShadows()
 
 	// SAUL: start benchmark timer
 	CFastTimer timer;
-	timer.Start();
+	if ( developer.GetInt() )
+	{
+		timer.Start();
+	}
 
 	m_nDepthTextureResolution = r_flashlightdepthres.GetInt();
 
@@ -1466,8 +1469,11 @@ void CClientShadowMgr::InitDepthTextureShadows()
 			dstFormat, MATERIAL_RT_DEPTH_NONE, false, "_rt_CascadedShadowDepth");
 		materials->EndRenderTargetAllocation();
 	}
-	timer.End();
-	DevMsg("InitDepthTextureShadows took %.2f msec\n", timer.GetDuration().GetMillisecondsF());
+	if ( developer.GetInt() )
+	{
+		timer.End();
+		DevMsg( "InitDepthTextureShadows took %.2f msec!\n", timer.GetDuration().GetMillisecondsF() );
+	}
 }
 
 void CClientShadowMgr::ShutdownDepthTextureShadows()
