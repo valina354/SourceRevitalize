@@ -3,7 +3,7 @@
 #include "sdk_screenspaceeffect_vs30.inc"
 #include "ae_lensflare_ps30.inc"
 
-ConVar ae_lensflare_intensity( "ae_lensflare_intensity", "1.0", FCVAR_ARCHIVE);
+ConVar ae_lensflare_intensity( "ae_lensflare_intensity", "0.15", FCVAR_ARCHIVE);
 
 BEGIN_VS_SHADER( AELensFlare, "Estranged Lens Flare Shader" )
 
