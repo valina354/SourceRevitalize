@@ -35,9 +35,6 @@ struct DrawLightPass_Vars_t
 	int m_nRoughness;
 	int m_nMetallic;
 	int m_nNoise;
-	int UseParallax;
-	int ParallaxDepth;
-	int ParallaxCenter;
 
 	// config
 	bool bModel;
