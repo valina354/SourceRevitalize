@@ -29,7 +29,7 @@ ITexture *GetSmallBufferHDR1( void );
 ITexture *GetSmallBuffer0( void );							// quarter-sized texture, same fmt as screen
 ITexture *GetSmallBuffer1( void );							// quarter-sized texture, same fmt as screen
 
-#define MAX_TEENY_TEXTURES 3
+#define MAX_TEENY_TEXTURES 32
 
 ITexture *GetTeenyTexture(int which);						// tiny 32x32 texture, always 8888
 

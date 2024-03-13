@@ -121,6 +121,8 @@ ConVar vance_kick_knockback_scale("kick_knockback_scale", "1.2", FCVAR_CHEAT);
 ConVar vance_frag_roll_angle("frag_roll_angle", "30", FCVAR_NONE);
 ConVar vance_frag_redraw_time("frag_redraw_time", "1", FCVAR_NONE);
 
+ConVar vance_parkourenabled( "vance_parkourenabled", "1", FCVAR_ARCHIVE, "Enable Parkour" );
+
 
 int		m_nAttack2Debounce;
 LINK_ENTITY_TO_CLASS( player, CVancePlayer );
@@ -2122,6 +2124,7 @@ void CVancePlayer::PostThink()
 
 	if (m_afButtonPressed & IN_ATTACK3 && m_flNextKick < gpGlobals->curtime && m_ParkourAction.Get() != ParkourAction::Climb && !IsInAVehicle())
 	{
+		if ( vance_parkourenabled.GetBool() )
 		// Play a kick animation for the legs
 		if ( pLegsViewModel )
 		{
@@ -3297,6 +3300,7 @@ void CVancePlayer::Think()
 
 	if (m_ParkourAction.Get() == ParkourAction::None)
 	{
+		if ( vance_parkourenabled.GetBool() )
 		// Hold jump to climb, no special conditions required
 		if (m_nButtons & IN_JUMP)
 		{
