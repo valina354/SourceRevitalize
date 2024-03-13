@@ -380,6 +380,11 @@ void CViewRender::Init( void )
 		flags,
 		0);
 
+	materials->GetBackBufferDimensions( iW, iH );
+	materials->BeginRenderTargetAllocation();
+	ITexture *p = materials->CreateNamedRenderTargetTextureEx( "_rt_FullFrameDepth_Alt", iW, iH, RT_SIZE_NO_CHANGE, IMAGE_FORMAT_A8, MATERIAL_RT_DEPTH_NONE, flags, 0 );
+	materials->EndRenderTargetAllocation();
+
 	// Init all IScreenSpaceEffects
 	g_pScreenSpaceEffects->InitScreenSpaceEffects();
 
