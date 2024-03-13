@@ -989,7 +989,7 @@ ConVar r_post_sunshaft_debug( "r_post_sunshaft_debug", "0", FCVAR_CHEAT );
 
 bool CSunShaftEffect::ShaftsRendering( void )
 {
-	return ( r_post_sunshaft.GetBool() && engine->IsSkyboxVisibleFromPoint( CurrentViewOrigin() ) && IsEnabled() );
+	return ( r_post_sunshaft.GetBool()  && IsEnabled() );
 }
 
 
