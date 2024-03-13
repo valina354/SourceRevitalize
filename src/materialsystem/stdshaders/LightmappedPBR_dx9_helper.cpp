@@ -469,6 +469,12 @@ static void DrawLightmappedPBR_DX9_Internal( CBaseVSShader *pShader, IMaterialVa
 		vEyePos_SpecExponent[3] = 0.0f;
 		pShaderAPI->SetPixelShaderConstant(PSREG_EYEPOS_SPEC_EXPONENT, vEyePos_SpecExponent, 1);
 
+		float flParams[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
+		// Parallax Depth (the strength of the effect)
+		 flParams[0] = GetFloatParam( info.ParallaxDepth, params, 0.0f );
+
+		 pShaderAPI->SetPixelShaderConstant( 34, flParams, 1 );
+
 		if( bHasFlashlight )
 		{
 			VMatrix worldToTexture;
