@@ -138,7 +138,7 @@ float3 ParallaxOcclusionMapping(float2 texCoords, float3 viewDir) {
     float brightnessFactor = 1.0; // Default brightness factor
 
     #define numSteps 4
-	#define BRIGHTNESS_FACTOR_SCALE 0.05
+    #define BRIGHTNESS_FACTOR_SCALE 0.05
 
     // Perform ray marching to find intersection with the surface
     for (int i = 0; i < numSteps; ++i) {
@@ -148,15 +148,18 @@ float3 ParallaxOcclusionMapping(float2 texCoords, float3 viewDir) {
         // Sample height map
         float sampleDepth = tex2D(BumpmapSampler, currentUV).a * PARALLAX_HEIGHT_SCALE;
 
+        // Smooth transition between samples
+        float transitionFactor = smoothstep(0.0, 1.0, abs(currentDepth - prevDepth));
+
         // Compare depths
         if (sampleDepth < currentDepth) {
             // Intersection found, compute final UV and normal
             float3 offsetDir = float3(currentUV - texCoords, currentDepth - sampleDepth);
             float2 adjustedUV = currentUV.xy + offsetDir.xy * PARALLAX_OFFSET_SCALE;
             float3 worldNormal = mul(float3(offsetDir.xy, -PARALLAX_HEIGHT_SCALE), tangentFrame);
-            
+
             // Update brightness factor based on depth difference
-            float depthDifference = sampleDepth - prevDepth;
+            float depthDifference = currentDepth - sampleDepth;
             brightnessFactor *= saturate(1.0 - abs(depthDifference) * BRIGHTNESS_FACTOR_SCALE);
 
             // Adjust brightness of the final color
