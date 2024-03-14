@@ -158,7 +158,7 @@ float3 ParallaxOcclusionMapping(float2 texCoords, float3 viewDir) {
         currentDepth = sampleDepth;
 
         // Terminate if depth is negative (surface missed)
-        if (currentDepth < 0.0)
+        if (currentDepth < 0.001)
             break;
     }
 
