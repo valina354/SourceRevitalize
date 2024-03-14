@@ -134,8 +134,11 @@ float3 ParallaxOcclusionMapping(float2 texCoords, float3 viewDir) {
     // Initialize ray position and depth
     float2 currentUV = texCoords;
     float currentDepth = 0.0;
-	
-	#define numSteps 4
+    float prevDepth = 0.0;
+    float brightnessFactor = 1.0; // Default brightness factor
+
+    #define numSteps 4
+	#define BRIGHTNESS_FACTOR_SCALE 0.05
 
     // Perform ray marching to find intersection with the surface
     for (int i = 0; i < numSteps; ++i) {
@@ -151,8 +154,18 @@ float3 ParallaxOcclusionMapping(float2 texCoords, float3 viewDir) {
             float3 offsetDir = float3(currentUV - texCoords, currentDepth - sampleDepth);
             float2 adjustedUV = currentUV.xy + offsetDir.xy * PARALLAX_OFFSET_SCALE;
             float3 worldNormal = mul(float3(offsetDir.xy, -PARALLAX_HEIGHT_SCALE), tangentFrame);
-            return float3(adjustedUV, height - offsetDir.z);
+            
+            // Update brightness factor based on depth difference
+            float depthDifference = sampleDepth - prevDepth;
+            brightnessFactor *= saturate(1.0 - abs(depthDifference) * BRIGHTNESS_FACTOR_SCALE);
+
+            // Adjust brightness of the final color
+            float3 finalColor = float3(adjustedUV, height - offsetDir.z);
+            return finalColor * brightnessFactor;
         }
+
+        // Update previous depth
+        prevDepth = currentDepth;
 
         // Update current depth
         currentDepth = sampleDepth;
@@ -165,6 +178,7 @@ float3 ParallaxOcclusionMapping(float2 texCoords, float3 viewDir) {
     // If no intersection found, return original texture coordinates
     return float3(texCoords, height);
 }
+
 
 
 // https://www.unrealengine.com/en-US/blog/physically-based-shading-on-mobile
