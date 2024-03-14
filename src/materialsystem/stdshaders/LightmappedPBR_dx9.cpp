@@ -30,9 +30,9 @@ SHADER_PARAM(METALLIC, SHADER_PARAM_TYPE_TEXTURE, "", "")
 SHADER_PARAM(AO, SHADER_PARAM_TYPE_TEXTURE, "", "")
 SHADER_PARAM(EMISSIVE, SHADER_PARAM_TYPE_TEXTURE, "", "")
 SHADER_PARAM(USESMOOTHNESS, SHADER_PARAM_TYPE_BOOL, "0", "Invert roughness")
-SHADER_PARAM( NORMALMAPALPHASMOOTHNESS, SHADER_PARAM_TYPE_BOOL, "0", "Use the alpha channel of bumpmap as inverted roughness" )
 
 SHADER_PARAM( PARALLAXDEPTH, SHADER_PARAM_TYPE_FLOAT, "0", "Depth of the Parallax Map" );
+SHADER_PARAM( PARALLAXSCALING, SHADER_PARAM_TYPE_FLOAT, "0", "Scaling of the Parallax Map" );
 
 SHADER_PARAM(ENVMAPORIGIN, SHADER_PARAM_TYPE_VEC3, "[0 0 0]", "Origin of the env_cubemap (for sphere projected cubemap)")
 SHADER_PARAM(ENVMAPRADIUS, SHADER_PARAM_TYPE_INTEGER, "0", "Radius of the env_cubemap (for sphere projected cubemap)")
@@ -54,8 +54,9 @@ void SetupVars(LightmappedPBR_DX9_Vars_t& info)
 	info.m_nFlashlightTextureFrame = FLASHLIGHTTEXTUREFRAME;
 	info.m_nBRDF = BRDF;
 	info.m_nUseSmoothness = USESMOOTHNESS;
-	info.m_nBumpAlphaSmoothness = NORMALMAPALPHASMOOTHNESS;
 	info.m_nSeamlessMappingScale = SEAMLESS_SCALE;
+	info.ParallaxDepth = PARALLAXDEPTH;
+	info.ParallaxScaling = PARALLAXSCALING;
 
 	info.m_nEnvmapOrigin = ENVMAPORIGIN;
 	info.m_nEnvmapRadius = ENVMAPRADIUS;

@@ -162,10 +162,7 @@ static void DrawLightmappedPBR_DX9_Internal( CBaseVSShader *pShader, IMaterialVa
 	bool bHasEnvmap =(info.m_nEnvmap != -1) && params[info.m_nEnvmap]->IsTexture();
 	bool bHasLegacyEnvSphereMap = bHasEnvmap && IS_FLAG_SET(MATERIAL_VAR_ENVMAPSPHERE);
 	bool bHasBump = IsTextureSet(info.m_nBumpmap, params);
-	bool bBumpAlphaSmoothness =
-		bHasBump && info.m_nBumpAlphaSmoothness != -1 && params[info.m_nBumpAlphaSmoothness]->GetIntValue() == 1;
-	bool bUseSmoothness =
-		!bBumpAlphaSmoothness && info.m_nUseSmoothness != -1 && params[info.m_nUseSmoothness]->GetIntValue() == 1;
+	bool bUseSmoothness = info.m_nUseSmoothness != -1 && params[info.m_nUseSmoothness]->GetIntValue() == 1;
 	bool bSeamlessMapping = ((info.m_nSeamlessMappingScale != -1) && (params[info.m_nSeamlessMappingScale]->GetFloatValue() != 0.0));
 
 
@@ -228,8 +225,7 @@ static void DrawLightmappedPBR_DX9_Internal( CBaseVSShader *pShader, IMaterialVa
 		pShaderShadow->EnableTexture( SHADER_SAMPLER0, true );		// Base (albedo) map
 		pShaderShadow->EnableSRGBRead( SHADER_SAMPLER0, true );
 
-		if ( !bBumpAlphaSmoothness )
-			pShaderShadow->EnableTexture( SHADER_SAMPLER1, true ); // Roughness map
+		pShaderShadow->EnableTexture( SHADER_SAMPLER1, true ); // Roughness map
 		pShaderShadow->EnableTexture(SHADER_SAMPLER2, true);		// Metallic map
 
 		if (bHasEnvmap)
@@ -296,7 +292,6 @@ static void DrawLightmappedPBR_DX9_Internal( CBaseVSShader *pShader, IMaterialVa
 		SET_STATIC_PIXEL_SHADER_COMBO(SMOOTHNESS, bUseSmoothness);
 		SET_STATIC_PIXEL_SHADER_COMBO(SEAMLESS, false);
 		SET_STATIC_PIXEL_SHADER_COMBO(BUMPMAP, bHasBump);
-		SET_STATIC_PIXEL_SHADER_COMBO( BUMPALPHASMOOTHNESS, bBumpAlphaSmoothness );
 		SET_STATIC_PIXEL_SHADER(lightmappedpbr_ps30);
 
 		if( bHasFlashlight )
@@ -337,13 +332,10 @@ static void DrawLightmappedPBR_DX9_Internal( CBaseVSShader *pShader, IMaterialVa
 		else
 			pShaderAPI->BindStandardTexture( SHADER_SAMPLER0, TEXTURE_WHITE );
 
-		if ( !bBumpAlphaSmoothness )
-		{
-			if ( bHasRoughness )
-				pShader->BindTexture( SHADER_SAMPLER1, info.m_nRoughness );
-			else
-				pShaderAPI->BindStandardTexture( SHADER_SAMPLER1, TEXTURE_WHITE );
-		}
+		if ( bHasRoughness )
+			pShader->BindTexture( SHADER_SAMPLER1, info.m_nRoughness );
+		else
+			pShaderAPI->BindStandardTexture( SHADER_SAMPLER1, TEXTURE_WHITE );
 
 		if (bHasMetallic)
 			pShader->BindTexture(SHADER_SAMPLER2, info.m_nMetallic);
@@ -469,11 +461,13 @@ static void DrawLightmappedPBR_DX9_Internal( CBaseVSShader *pShader, IMaterialVa
 		vEyePos_SpecExponent[3] = 0.0f;
 		pShaderAPI->SetPixelShaderConstant(PSREG_EYEPOS_SPEC_EXPONENT, vEyePos_SpecExponent, 1);
 
-		float flParams[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
-		// Parallax Depth (the strength of the effect)
-		flParams[0] = GetFloatParam( info.ParallaxDepth, params, 10.0f );
+			float flParams[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
+			// Parallax Depth (the strength of the effect)
+			flParams[0] = GetFloatParam( info.ParallaxDepth, params, 3.0f );
+			// Parallax scaling
+			flParams[1] = GetFloatParam( info.ParallaxScaling, params, 3.0f );
 
-		  pShaderAPI->SetPixelShaderConstant( 34, flParams, 1 );
+			pShaderAPI->SetPixelShaderConstant( 34, flParams, 1 );
 
 		if( bHasFlashlight )
 		{

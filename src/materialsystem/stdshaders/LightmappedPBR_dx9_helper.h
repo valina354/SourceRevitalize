@@ -38,9 +38,9 @@ struct LightmappedPBR_DX9_Vars_t
 	int m_nFlashlightTextureFrame;
 	int m_nBRDF;
 	int m_nUseSmoothness;
-	int m_nBumpAlphaSmoothness;
 	int m_nSeamlessMappingScale;
 	int ParallaxDepth;
+	int ParallaxScaling;
 
 	int m_nEnvmapOrigin;
 	int m_nEnvmapRadius;

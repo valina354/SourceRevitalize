@@ -11,7 +11,6 @@
 // STATIC: "SMOOTHNESS"					"0..1"
 // STATIC: "SEAMLESS"                   "0..1"
 // STATIC: "BUMPMAP"                    "0..1"
-// STATIC: "BUMPALPHASMOOTHNESS"		"0..1"
 
 // DYNAMIC: "WRITEWATERFOGTODESTALPHA"  "0..1"
 // DYNAMIC: "PIXELFOGTYPE"				"0..1"
@@ -86,8 +85,8 @@ const float4 g_EnvmapOrigin_and_Radius		: register( c21 );
 #define g_FlashlightPos					g_FlashlightPos_RimBoost.xyz
 
 const float4 g_ParallaxParms : register(c34);
-#define PARALLAX_DEPTH g_ParallaxParms.x
-
+#define PARALLAX_HEIGHT_SCALE g_ParallaxParms.r
+#define PARALLAX_OFFSET_SCALE g_ParallaxParms.g
 
 sampler BaseTextureSampler		: register( s0 );	// Base map, selfillum in alpha
 sampler RoughnessSampler		: register( s1 );	// Roughness
@@ -100,23 +99,51 @@ sampler EmissiveSampler			: register( s10 );	// Emissive map
 sampler LightmapSampler			: register( s11 );	// Lightmap texture from the engine
 
 
+// Compute the matrix used to transform tangent space normals to world space
+// This expects DirectX normal maps in Mikk Tangent Space http://www.mikktspace.com
+float3x3 compute_tangent_frame(float3 N, float3 P, float2 uv, out float3 T, out float3 B, out float sign_det)
+{
+    float3 dp1 = ddx(P);
+    float3 dp2 = ddy(P);
+    float2 duv1 = ddx(uv);
+    float2 duv2 = ddy(uv);
+
+    sign_det = dot(dp2, cross(N, dp1)) > 0.0 ? -1 : 1;
+
+    float3x3 M = float3x3(dp1, dp2, cross(dp1, dp2));
+    float2x3 inverseM = float2x3(cross(M[1], M[2]), cross(M[2], M[0]));
+    T = normalize(mul(float2(duv1.x, duv2.x), inverseM));
+    B = normalize(mul(float2(duv1.y, duv2.y), inverseM));
+    return float3x3(T, B, N);
+}
+
 // Parallax Occlusion Mapping function
 float3 ParallaxOcclusionMapping(float2 texCoords, float3 viewDir) {
-    const int numSteps = 16;  // Number of steps for ray marching
+    const int numSteps = 32;  // Number of steps for ray marching
     const float stepSize = 1.0 / numSteps;  // Step size for ray marching
-    float height = tex2D(BumpmapSampler, texCoords).a * g_ParallaxParms.x; // Using alpha channel for height
+    float height = tex2D(BumpmapSampler, texCoords).a * PARALLAX_HEIGHT_SCALE; // Using alpha channel for height
     float3 viewDirXY = normalize(float3(viewDir.xy, 0.0));
     float2 deltaUV = height * viewDirXY / viewDir.z; // Offset direction in UV space
     float2 currentUV = texCoords;
 
+    // Compute tangent frame
+    float3 T, B;
+    float sign_det;
+    float3x3 tangentFrame = compute_tangent_frame(float3(0,0,1), float3(0,0,0), texCoords, T, B, sign_det);
+
     // Perform ray marching to find intersection with the surface
     for (int i = 0; i < numSteps; ++i) {
         currentUV -= deltaUV * stepSize;
-        float depth = tex2D(BumpmapSampler, currentUV).a * g_ParallaxParms.x; // Depth from the height map
+        float depth = tex2D(BumpmapSampler, currentUV).a * PARALLAX_HEIGHT_SCALE; // Depth from the height map
         if (depth > height) {
             // The ray has intersected the surface, adjust the texture coordinates accordingly
             float3 offsetDir = float3(currentUV - texCoords, height - depth);
-            return float3(currentUV.xy + offsetDir.xy * g_ParallaxParms.x, height - offsetDir.z);
+
+            // Adjust texture coordinates with separate scaling factors
+            float2 adjustedUV = currentUV.xy + offsetDir.xy * PARALLAX_OFFSET_SCALE;
+            float3 worldNormal = mul(float3(offsetDir.xy, -PARALLAX_HEIGHT_SCALE), tangentFrame);
+
+            return float3(adjustedUV, height - offsetDir.z);
         }
     }
 
@@ -395,6 +422,11 @@ float3 worldPos = i.worldPos_projPosZ.xyz;
     float3 offsetCoords = ParallaxOcclusionMapping(UV.xy, normalize(i.worldPos_projPosZ.xyz - g_EyePos.xyz));
 	bool bBumpmap = BUMPMAP ? true : false;
 	bool bCubemap = (CUBEMAP) ? true : false;
+#if SMOOTHNESS == 0
+	float  roughnessMap = tex2D( RoughnessSampler, offsetCoords.xy );
+#else
+	float  roughnessMap = 1.0f - tex2D( RoughnessSampler, offsetCoords.xy );
+#endif
 	float  metallicMap = tex2D( MetallicSampler, offsetCoords.xy );
 	float  AOSample = tex2D( AOSampler, offsetCoords.xy );
 	float3  EmissiveSample = tex2D( EmissiveSampler, offsetCoords.xy );
@@ -402,14 +434,7 @@ float3 worldPos = i.worldPos_projPosZ.xyz;
     float4 baseColor2 = 0.0f.xxxx;
     float4 normalTexel = tex2D(BumpmapSampler, offsetCoords.xy);
 	GetBaseTextureAndNormal( BaseTextureSampler, BaseTextureSampler, BumpmapSampler, false, bBumpmap, 
-		UV, i.vertexColor.rgb, baseColor, baseColor2, normalTexel);
-#if BUMPALPHASMOOTHNESS
-	float roughnessMap = 1.0f - normalTexel.a;
-#elif SMOOTHNESS
-	float roughnessMap = 1.0f - tex2D( RoughnessSampler, offsetCoords.xy );
-#else
-	float roughnessMap = tex2D( RoughnessSampler, offsetCoords.xy );
-#endif
+		offsetCoords, i.vertexColor.rgb, baseColor, baseColor2, normalTexel);
 
 	float3 tangentSpaceNormal = normalTexel.rgb * 2.0f - 1.0f;
 

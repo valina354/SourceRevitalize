@@ -9,7 +9,6 @@
 // STATIC: "CUBEMAP"					"0..1"
 // STATIC: "CUBEMAP_SPHERE_LEGACY"		"0..1"
 // STATIC: "SMOOTHNESS"					"0..1"
-// STATIC: "BUMPALPHASMOOTHNESS"		"0..1"
 
 // DYNAMIC: "WRITEWATERFOGTODESTALPHA"  "0..1"
 // DYNAMIC: "PIXELFOGTYPE"				"0..1"
@@ -33,7 +32,6 @@
 
 // both cant exist at the same time
 // SKIP: ( $FLASHLIGHT == 1) && ( $CSM == 1
-// SKIP: ($BUMPALPHASMOOTHNESS == 1) && ($SMOOTHNESS == 1)
 
 // SKIP: $CUBEMAP_SPHERE_LEGACY && ($CUBEMAP == 0)
 
@@ -409,9 +407,8 @@ PS_OUTPUT main(PS_INPUT i) : COLOR
 	float4 baseColor = tex2D(BaseTextureSampler, UV);
     float4 normalTexel = tex2D(BumpmapSampler, UV);
 
-#if BUMPALPHASMOOTHNESS
-	float roughnessMap = 1.0f - normalTexel.a;
-#elif SMOOTHNESS
+
+#if SMOOTHNESS
 	float roughnessMap = 1.0f - tex2D( RoughnessSampler, UV.xy );
 #else
     float roughnessMap = tex2D(RoughnessSampler, UV.xy);
