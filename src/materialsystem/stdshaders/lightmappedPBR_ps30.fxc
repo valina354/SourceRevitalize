@@ -414,15 +414,7 @@ float3 worldPos = i.worldPos_projPosZ.xyz;
 	float3 tangentSpaceNormal = normalTexel.rgb * 2.0f - 1.0f;
 
 	float3 vWorldNormal = mul( tangentSpaceNormal, i.TBN );
-	float3 surfBase; 
-	float flipSign;
-	float3x3 normalBasis = compute_tangent_frame(normalTexel, i.worldPos_projPosZ.xyz, i.baseTexCoord , tangentSpaceNormal, surfBase, flipSign);
-	
 
-	
-
-
-	
     PS_OUTPUT output = (PS_OUTPUT)0;
 	
 

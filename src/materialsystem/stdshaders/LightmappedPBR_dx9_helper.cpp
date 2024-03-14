@@ -471,9 +471,9 @@ static void DrawLightmappedPBR_DX9_Internal( CBaseVSShader *pShader, IMaterialVa
 
 		float flParams[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
 		// Parallax Depth (the strength of the effect)
-		 flParams[0] = GetFloatParam( info.ParallaxDepth, params, 0.0f );
+		flParams[0] = GetFloatParam( info.ParallaxDepth, params, 10.0f );
 
-		 pShaderAPI->SetPixelShaderConstant( 34, flParams, 1 );
+		  pShaderAPI->SetPixelShaderConstant( 34, flParams, 1 );
 
 		if( bHasFlashlight )
 		{
