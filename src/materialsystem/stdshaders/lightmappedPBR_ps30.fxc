@@ -87,6 +87,7 @@ const float4 g_EnvmapOrigin_and_Radius		: register( c21 );
 const float4 g_ParallaxParms : register(c34);
 #define PARALLAX_HEIGHT_SCALE g_ParallaxParms.r
 #define PARALLAX_OFFSET_SCALE g_ParallaxParms.g
+#define PARALLAX_STEP_SCALE g_ParallaxParms.b
 
 sampler BaseTextureSampler		: register( s0 );	// Base map, selfillum in alpha
 sampler RoughnessSampler		: register( s1 );	// Roughness
@@ -119,32 +120,46 @@ float3x3 compute_tangent_frame(float3 N, float3 P, float2 uv, out float3 T, out 
 
 // Parallax Occlusion Mapping function
 float3 ParallaxOcclusionMapping(float2 texCoords, float3 viewDir) {
-    const int numSteps = 32;  // Number of steps for ray marching
-    const float stepSize = 1.0 / numSteps;  // Step size for ray marching
     float height = tex2D(BumpmapSampler, texCoords).a * PARALLAX_HEIGHT_SCALE; // Using alpha channel for height
     float3 viewDirXY = normalize(float3(viewDir.xy, 0.0));
-    float2 deltaUV = height * viewDirXY / viewDir.z; // Offset direction in UV space
-    float2 currentUV = texCoords;
-
+    
     // Compute tangent frame
     float3 T, B;
     float sign_det;
     float3x3 tangentFrame = compute_tangent_frame(float3(0,0,1), float3(0,0,0), texCoords, T, B, sign_det);
 
+    // Ray direction in tangent space
+    float3 rayDirTS = normalize(float3(viewDirXY.x, viewDirXY.y, -viewDir.z));
+    
+    // Initialize ray position and depth
+    float2 currentUV = texCoords;
+    float currentDepth = 0.0;
+	
+	#define numSteps 4
+
     // Perform ray marching to find intersection with the surface
     for (int i = 0; i < numSteps; ++i) {
-        currentUV -= deltaUV * stepSize;
-        float depth = tex2D(BumpmapSampler, currentUV).a * PARALLAX_HEIGHT_SCALE; // Depth from the height map
-        if (depth > height) {
-            // The ray has intersected the surface, adjust the texture coordinates accordingly
-            float3 offsetDir = float3(currentUV - texCoords, height - depth);
+        // Move along the ray
+        currentUV -= currentDepth * rayDirTS.xy * PARALLAX_STEP_SCALE;
 
-            // Adjust texture coordinates with separate scaling factors
+        // Sample height map
+        float sampleDepth = tex2D(BumpmapSampler, currentUV).a * PARALLAX_HEIGHT_SCALE;
+
+        // Compare depths
+        if (sampleDepth < currentDepth) {
+            // Intersection found, compute final UV and normal
+            float3 offsetDir = float3(currentUV - texCoords, currentDepth - sampleDepth);
             float2 adjustedUV = currentUV.xy + offsetDir.xy * PARALLAX_OFFSET_SCALE;
             float3 worldNormal = mul(float3(offsetDir.xy, -PARALLAX_HEIGHT_SCALE), tangentFrame);
-
             return float3(adjustedUV, height - offsetDir.z);
         }
+
+        // Update current depth
+        currentDepth = sampleDepth;
+
+        // Terminate if depth is negative (surface missed)
+        if (currentDepth < 0.0)
+            break;
     }
 
     // If no intersection found, return original texture coordinates

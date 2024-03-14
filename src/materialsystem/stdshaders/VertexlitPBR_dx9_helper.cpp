@@ -312,7 +312,6 @@ static void DrawVertexLitPBR_DX9_Internal( CBaseVSShader *pShader, IMaterialVar*
 		SET_STATIC_PIXEL_SHADER_COMBO( FLASHLIGHT, bHasFlashlight );
 		SET_STATIC_PIXEL_SHADER_COMBO( CONVERT_TO_SRGB, 0 );
 		SET_STATIC_PIXEL_SHADER_COMBO(SMOOTHNESS, bUseSmoothness);
-		SET_STATIC_PIXEL_SHADER_COMBO( BUMPALPHASMOOTHNESS, bBumpAlphaSmoothness );
 		SET_STATIC_PIXEL_SHADER(vertexlitpbr_ps30);
 
 		if( bHasFlashlight )

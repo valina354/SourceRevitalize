@@ -466,6 +466,8 @@ static void DrawLightmappedPBR_DX9_Internal( CBaseVSShader *pShader, IMaterialVa
 			flParams[0] = GetFloatParam( info.ParallaxDepth, params, 3.0f );
 			// Parallax scaling
 			flParams[1] = GetFloatParam( info.ParallaxScaling, params, 3.0f );
+			// Parallax scaling
+			flParams[2] = GetFloatParam( info.ParallaxStep, params, 3.0f );
 
 			pShaderAPI->SetPixelShaderConstant( 34, flParams, 1 );
 

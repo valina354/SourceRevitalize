@@ -33,6 +33,7 @@ SHADER_PARAM(USESMOOTHNESS, SHADER_PARAM_TYPE_BOOL, "0", "Invert roughness")
 
 SHADER_PARAM( PARALLAXDEPTH, SHADER_PARAM_TYPE_FLOAT, "0", "Depth of the Parallax Map" );
 SHADER_PARAM( PARALLAXSCALING, SHADER_PARAM_TYPE_FLOAT, "0", "Scaling of the Parallax Map" );
+SHADER_PARAM( PARALLAXSTEP, SHADER_PARAM_TYPE_FLOAT, "0", "Step Scalling of the Parallax Map" );
 
 SHADER_PARAM(ENVMAPORIGIN, SHADER_PARAM_TYPE_VEC3, "[0 0 0]", "Origin of the env_cubemap (for sphere projected cubemap)")
 SHADER_PARAM(ENVMAPRADIUS, SHADER_PARAM_TYPE_INTEGER, "0", "Radius of the env_cubemap (for sphere projected cubemap)")
@@ -57,6 +58,7 @@ void SetupVars(LightmappedPBR_DX9_Vars_t& info)
 	info.m_nSeamlessMappingScale = SEAMLESS_SCALE;
 	info.ParallaxDepth = PARALLAXDEPTH;
 	info.ParallaxScaling = PARALLAXSCALING;
+	info.ParallaxStep = PARALLAXSTEP;
 
 	info.m_nEnvmapOrigin = ENVMAPORIGIN;
 	info.m_nEnvmapRadius = ENVMAPRADIUS;
