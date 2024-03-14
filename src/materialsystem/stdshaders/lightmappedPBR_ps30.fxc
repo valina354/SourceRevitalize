@@ -182,8 +182,6 @@ float3 ParallaxOcclusionMapping(float2 texCoords, float3 viewDir) {
     return float3(texCoords, height);
 }
 
-
-
 // https://www.unrealengine.com/en-US/blog/physically-based-shading-on-mobile
 half3 EnvBRDFApprox( half3 SpecularColor, half Roughness, half NoV )
 {
