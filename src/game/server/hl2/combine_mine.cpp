@@ -87,9 +87,16 @@ BEGIN_DATADESC( CBounceBomb )
 	DEFINE_FIELD( m_bFoeNearest, FIELD_BOOLEAN ),
 	DEFINE_FIELD( m_flIgnoreWorldTime, FIELD_TIME ),
 	DEFINE_KEYFIELD( m_bDisarmed, FIELD_BOOLEAN, "StartDisarmed" ),
+#ifdef MAPBASE1
+	DEFINE_KEYFIELD( m_iInitialState, FIELD_INTEGER, "InitialState" ),
+#endif
 	DEFINE_KEYFIELD( m_iModification, FIELD_INTEGER, "Modification" ),
 
+	#ifdef MAPBASE1
+	DEFINE_KEYFIELD( m_bPlacedByPlayer, FIELD_BOOLEAN, "Friendly" ),
+#else
 	DEFINE_FIELD( m_bPlacedByPlayer, FIELD_BOOLEAN ),
+	#endif
 	DEFINE_FIELD( m_bHeldByPhysgun, FIELD_BOOLEAN ),
 
 	DEFINE_FIELD( m_iFlipAttempts, FIELD_INTEGER ),
@@ -105,6 +112,14 @@ BEGIN_DATADESC( CBounceBomb )
 
 	DEFINE_OUTPUT( m_OnPulledUp, "OnPulledUp" ),
 	DEFINE_INPUTFUNC( FIELD_VOID, "Disarm", InputDisarm ),
+
+	#ifdef MAPBASE1
+	DEFINE_INPUTFUNC( FIELD_VOID, "Bounce", InputBounce ),
+	DEFINE_INPUTFUNC( FIELD_EHANDLE, "BounceAtTarget", InputBounceAtTarget ),
+
+	DEFINE_OUTPUT( m_OnTriggered, "OnTriggered" ),
+	DEFINE_OUTPUT( m_OnExplode, "OnExplode" ),
+#endif
 
 END_DATADESC()
 
@@ -178,10 +193,23 @@ void CBounceBomb::Spawn()
 	{
 		SetMineState( MINE_STATE_DORMANT );
 	}
+#ifdef MAPBASE1
+	else
+	{
+		// NOTE: MINE_STATE_DEPLOY and MINE_STATE_DORMANT are swapped in this case!
+		if ( m_iInitialState == 0 )
+			SetMineState( MINE_STATE_DEPLOY );
+		else if ( m_iInitialState == 1 )
+			SetMineState( MINE_STATE_DORMANT );
+		else
+			SetMineState( m_iInitialState );
+	}
+#else
 	else
 	{
 		SetMineState( MINE_STATE_DEPLOY );
 	}
+	#endif
 
 	// default to a different skin for cavern turrets (unless explicitly overridden)
 	if ( m_iModification == MINE_MODIFICATION_CAVERN )
@@ -352,7 +380,11 @@ void CBounceBomb::SetMineState( int iState )
 			else
 			{
 				SetThink( &CBounceBomb::BounceThink );
+#ifdef MAPBASE1
+				SetNextThink( gpGlobals->curtime + m_flExplosionDelay );
+#else
 				SetNextThink( gpGlobals->curtime + 0.5 );
+				#endif
 			}
 		}
 		break;
@@ -934,6 +966,12 @@ bool CBounceBomb::IsFriend( CBaseEntity *pEntity )
   		classify == CLASS_COMBINE ||
   		classify == CLASS_MILITARY ||
   		classify == CLASS_COMBINE_HUNTER ||
+		#ifdef MAPBASE1
+		classify == CLASS_MANHACK ||
+		classify == CLASS_STALKER ||
+		classify == CLASS_PROTOSNIPER ||
+		classify == CLASS_COMBINE_GUNSHIP ||
+#endif
   		classify == CLASS_SCANNER )
 	{
 		bIsCombine = true;
@@ -976,7 +1014,12 @@ void CBounceBomb::SearchThink()
 
 	if( m_pConstraint && gpGlobals->curtime - m_flTimeGrabbed >= 1.0f )
 	{
+#ifdef MAPBASE1
+		// We don't already store our holder for some reason
+		m_OnPulledUp.FireOutput( UTIL_GetLocalPlayer(), this );
+#else
 		m_OnPulledUp.FireOutput( this, this );
+		#endif
 		SetMineState( MINE_STATE_CAPTIVE );
 		return;
 	}
@@ -1002,6 +1045,9 @@ void CBounceBomb::SearchThink()
 
 	if( flNearestNPCDist <= BOUNCEBOMB_DETONATE_RADIUS && !IsFriend( m_hNearestNPC ) )
 	{
+#ifdef MAPBASE1
+		m_OnTriggered.FireOutput( m_hNearestNPC, this );
+#endif
 		if( m_bBounce )
 		{
 			SetMineState( MINE_STATE_TRIGGERED );
@@ -1087,6 +1133,10 @@ void CBounceBomb::ExplodeThink()
 	{
 		ExplosionCreate( GetAbsOrigin(), GetAbsAngles(), (pThrower) ? pThrower : this, BOUNCEBOMB_EXPLODE_DAMAGE, BOUNCEBOMB_EXPLODE_RADIUS, true);
 	}
+#ifdef MAPBASE1
+	m_OnExplode.FireOutput( m_hNearestNPC, this );
+#endif
+
 	UTIL_Remove( this );
 }
 
@@ -1164,6 +1214,24 @@ void CBounceBomb::InputDisarm( inputdata_t &inputdata )
 		SetMineState(MINE_STATE_DORMANT);
 	}
 }
+
+#ifdef MAPBASE1
+//---------------------------------------------------------
+//---------------------------------------------------------
+void CBounceBomb::InputBounce( inputdata_t &inputdata )
+{
+	m_hNearestNPC = NULL;
+	SetMineState( MINE_STATE_TRIGGERED );
+}
+
+//---------------------------------------------------------
+//---------------------------------------------------------
+void CBounceBomb::InputBounceAtTarget( inputdata_t &inputdata )
+{
+	m_hNearestNPC = inputdata.value.Entity();
+	SetMineState( MINE_STATE_TRIGGERED );
+}
+#endif
 
 //---------------------------------------------------------
 //---------------------------------------------------------

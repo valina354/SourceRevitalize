@@ -28,6 +28,9 @@ public:
 	//												(waits until it's out of the view frustrum or until there's a lot of motion)
 	// (m_fDisappearDist+):							the bmodel is forced to be invisible
 	CNetworkVar( float, m_fDisappearDist );
+#ifdef MAPBASE1
+	CNetworkVar( float, m_fDisappearMaxDist );
+#endif
 
 // CBaseEntity overrides.
 public:
@@ -41,7 +44,10 @@ public:
 
 IMPLEMENT_SERVERCLASS_ST(CFunc_LOD, DT_Func_LOD)
 	SendPropFloat(SENDINFO(m_fDisappearDist), 0, SPROP_NOSCALE),
-END_SEND_TABLE()
+#ifdef MAPBASE1
+	SendPropFloat( SENDINFO( m_fDisappearMaxDist ), 0, SPROP_NOSCALE ),
+#endif
+	END_SEND_TABLE()
 
 
 LINK_ENTITY_TO_CLASS(func_lod, CFunc_LOD);
@@ -53,6 +59,9 @@ LINK_ENTITY_TO_CLASS(func_lod, CFunc_LOD);
 BEGIN_DATADESC( CFunc_LOD )
 
 	DEFINE_FIELD( m_fDisappearDist,	FIELD_FLOAT ),
+#ifdef MAPBASE1
+	DEFINE_FIELD( m_fDisappearMaxDist, FIELD_FLOAT ),
+#endif
 
 END_DATADESC()
 
@@ -98,6 +107,12 @@ bool CFunc_LOD::KeyValue( const char *szKeyName, const char *szValue )
 	{
 		m_fDisappearDist = (float)atof(szValue);
 	}
+#ifdef MAPBASE1
+	else if ( FStrEq( szKeyName, "DisappearMaxDist" ) )
+	{
+		m_fDisappearMaxDist = (float)atof( szValue );
+	}
+#endif
 	else if (FStrEq(szKeyName, "Solid"))
 	{
 		if (atoi(szValue) != 0)

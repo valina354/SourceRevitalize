@@ -406,6 +406,24 @@ void CBreakable::Precache( void )
 		pGibName = "ConcreteChunks";
 		break;
 
+		#ifdef MAPBASE1
+	case matComputer:
+		pGibName = "ComputerGibs";
+		break;
+
+	case matCeilingTile:
+		pGibName = "CeilingTile";
+		break;
+
+	case matFlesh:
+		pGibName = "FleshGibs";
+		break;
+
+	case matWeb:
+		pGibName = "WebGibs";
+		break;
+#endif
+
 #ifdef HL1_DLL
 	case matComputer:
 		pGibName = "ComputerGibs";
@@ -433,7 +451,7 @@ void CBreakable::Precache( void )
 		break;
 #endif
 
-#if HL2_EPISODIC 
+#if HL2_EPISODIC || MAPBASE1 
 	case matNone:
 		pGibName = "";
 		break;
@@ -1049,6 +1067,11 @@ void CBreakable::Die( void )
 	{
 		iCount = func_break_max_pieces.GetInt();
 	}
+
+	#ifdef MAPBASE1
+	// TEMP TEMP TEMP TEMP
+	DevMsg( "vSize: %f %f %f\n", vSize.x, vSize.y, vSize.z );
+#endif
 
 	ConVarRef breakable_disable_gib_limit( "breakable_disable_gib_limit" );
 	if ( !breakable_disable_gib_limit.GetBool() && iCount )
