@@ -20,7 +20,7 @@ static void Volumetrics_change_Callback(IConVar* var, const char* pOldValue, flo
 		GetLightingManager()->ClearVolumetricsMesh();
 	}
 }
-ConVar r_volumetrics_subdiv("r_volumetrics_subdiv", "128", 0, "", Volumetrics_change_Callback);
+ConVar r_volumetrics_subdiv("r_volumetrics_subdiv", "64", 0, "", Volumetrics_change_Callback);
 ConVar r_volumetrics_distance("r_volumetrics_distance", "1024", 0, "", Volumetrics_change_Callback);
 
 static CLightingManager __g_lightingMan;
