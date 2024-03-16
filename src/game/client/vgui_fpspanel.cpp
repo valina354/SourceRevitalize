@@ -248,7 +248,8 @@ void CFPSPanel::Paint()
 #else
 		const char *pszConfig = "RELEASE";
 #endif
-		g_pMatSystemSurface->DrawColoredText( m_hFont, x, 2 + ( i++ * iFontTall ), 255, 255, 255, 255, "%s %u.%u.%u-%s", MOD_WATERMARK_STR, MOD_VERSION_MAJOR, MOD_VERSION_MINOR, MOD_VERSION_PATCH, pszConfig );
+		g_pMatSystemSurface->DrawColoredText( m_hFont, x, 2 + ( i++ * iFontTall ), 0, 255, 255, 255, "%s %u.%u.%u-%s", MOD_WATERMARK_STR, MOD_VERSION_MAJOR, MOD_VERSION_MINOR, MOD_VERSION_PATCH, pszConfig );
+		g_pMatSystemSurface->DrawColoredText( m_hFont, x, 2 + ( i++ * iFontTall ), 255, 165, 0, 255, "Build Date/Time: %s %s", __DATE__, __TIME__ );
 	}
 
 	if ( g_bDisplayParticlePerformance )
