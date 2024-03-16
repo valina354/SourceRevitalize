@@ -28,7 +28,7 @@ uniform float4x4 g_Proj : register(c20);
 #define g_zNear g_zPlanes.x
 #define g_zFar g_zPlanes.y
 
-#define PI 3.14
+#define PI 3.1415926
 
 float LinearizeDepth(float d, float f, float n)
 {
@@ -42,19 +42,19 @@ float2 ClipToScreen(float2 UV)
 
 float readDepth(in float2 coord)  
 {  
-    float3 pos = tex2D(som, float2(coord.x + g_resolution.x / 1.0f, coord.y + g_resolution.y / 1.0f)).xyz;
+    float3 pos = tex2D(som, float2(coord.x + g_resolution.x / 2.0f, coord.y + g_resolution.y / 2.0f)).xyz;
     return LinearizeDepth(pos.z, g_zFar, g_zNear) / 4000.0f;
 }
 
 float3 readView(in float2 coord)
 {
-    float3 pos = tex2D(som, float2(coord.x + g_resolution.x / 1.0f, coord.y + g_resolution.y / 1.0f)).xyz;
+    float3 pos = tex2D(som, float2(coord.x + g_resolution.x / 2.0f, coord.y + g_resolution.y / 2.0f)).xyz;
     return float3(pos.x, pos.y, pos.z);
 }
 
 float3 readColor(in float2 coord)  
 {  
-    return tex2D(colorSamp, float2(coord.x + g_resolution.x / 1.0f, coord.y + g_resolution.y / 1.0f)).rgb;
+    return tex2D(colorSamp, float2(coord.x + g_resolution.x / 2.0f, coord.y + g_resolution.y / 2.0f)).rgb;
 } 
 
 float3 readPos(in float2 coord)
@@ -70,7 +70,7 @@ float3 readPos(in float2 coord)
 
 float3 readNormal(in float2 coord)
 {
-    float3 normal = tex2D(NormalSamp, float2(coord.x + g_resolution.x / 1.0f, coord.y + g_resolution.y / 1.0f)).rgb;
+    float3 normal = tex2D(NormalSamp, float2(coord.x + g_resolution.x / 2.0f, coord.y + g_resolution.y / 2.0f)).rgb;
     return normal;
 }
 
@@ -89,8 +89,8 @@ float rand(float2 n) {
 				float2(
 					fmod(n.x, 10.0f),
 					fmod(n.y, 10.0f)), 
-					float2(12.9, 4.1)))
-					* 437.0
+					float2(12.9898, 4.1414)))
+					* 43758.5453
 		);
 }
 
@@ -103,8 +103,8 @@ float rand(float3 n) {
 					fmod(n.x, 10.0f),
 					fmod(n.y, 10.0f),
 					fmod(n.z, 10.0f)), 
-					float3(12.9, 4.1, 6.9)))
-					* 437.0
+					float3(12.9898, 4.1414, 6.9696)))
+					* 43758.5453
 		);
 }
 
@@ -117,40 +117,40 @@ float1 interleaved1d(float2 coord)
 {
     float2 screen = coord / g_resolution;
     return float1(
-    frac(52.98 * frac(0.067 * screen.x + 0.0058 * screen.y)));
+    frac(52.9829189 * frac(0.06711056 * screen.x + 0.00583715 * screen.y)));
 }
 
 float2 interleaved2d(float2 coord)
 {
     float2 screen = coord / g_resolution;
     return float2(
-    frac(52.9 * frac(0.067 * screen.x + 0.0058 * screen.y)),
-    frac(52.9 * frac(0.067 * screen.y + 0.0058 * screen.x)));
+    frac(52.9829189 * frac(0.06711056 * screen.x + 0.00583715 * screen.y)),
+    frac(52.9829189 * frac(0.06711056 * screen.y + 0.00583715 * screen.x)));
 }
 
 float3 interleaved3d(float2 coord)
 {
     float2 screen = coord / g_resolution;
     return float3(
-    frac(52.9 * frac(0.067 * screen.x + 0.0058 * screen.y)),
-    frac(52.9 * frac(0.067 * screen.y + 0.0058 * screen.x)),
-    frac(52.9 * frac(0.067 * (1.0f - screen.x) + 0.0058 * (1.0f - screen.y))));
+    frac(52.9829189 * frac(0.06711056 * screen.x + 0.00583715 * screen.y)),
+    frac(52.9829189 * frac(0.06711056 * screen.y + 0.00583715 * screen.x)),
+    frac(52.9829189 * frac(0.06711056 * (1.0f - screen.x) + 0.00583715 * (1.0f - screen.y))));
 }
 
 float3 readNoise(in float2 coord)  
 {  
 	/*float tap1 = tex2D(noiseSamp, float2(fmod(coord.x / g_resolution.x, 512.0f) / 512.0f, fmod(coord.y / g_resolution.y, 512.0f) / 512.0f)).r;
-    float tap2 = tex2D(noiseSamp, float2(fmod(coord.x / g_resolution.x, 128.0f) / 128.0f, fmod((1.0f - coord.y) / g_resolution.y, 128.0f) / 128.0f)).r;
-    float tap3 = tex2D(noiseSamp, float2(fmod((1.0f - coord.x) / g_resolution.x, 128.0f) / 128.0f, fmod(coord.y / g_resolution.y, 128.0f) / 128.0f)).r;
-    float tap4 = tex2D(noiseSamp, float2(fmod((1.0f - coord.x) / g_resolution.x, 128.0f) / 128.0f, fmod((1.0f - coord.y) / g_resolution.y, 128.0f) / 128.0f)).r;
-	//float3 noise = tex2D(noiseSamp, float2(fmod(coord.x / g_resolution.x, 8.0f) / 8.0f, fmod(coord.y / g_resolution.y, 8.0f) / 8.0f)).rgb;
+    float tap2 = tex2D(noiseSamp, float2(fmod(coord.x / g_resolution.x, 512.0f) / 512.0f, fmod((1.0f - coord.y) / g_resolution.y, 512.0f) / 512.0f)).r;
+    float tap3 = tex2D(noiseSamp, float2(fmod((1.0f - coord.x) / g_resolution.x, 512.0f) / 512.0f, fmod(coord.y / g_resolution.y, 512.0f) / 512.0f)).r;
+    float tap4 = tex2D(noiseSamp, float2(fmod((1.0f - coord.x) / g_resolution.x, 512.0f) / 512.0f, fmod((1.0f - coord.y) / g_resolution.y, 512.0f) / 512.0f)).r;
+	//float3 noise = tex2D(noiseSamp, float2(fmod(coord.x / g_resolution.x, 16.0f) / 16.0f, fmod(coord.y / g_resolution.y, 16.0f) / 16.0f)).rgb;
     float3 noise1 = float3(tap1, tap2, tap3);
     float3 noise2 = float3(tap4, tap2, tap2);
     float3 noise3 = float3(tap3, tap2, tap1);
-    return (noise1 + noise2 + noise3) * 0.3f * 2.0f - 1.0f;*/
-    float x = rand(coord * 653);
-    float y = rand(coord * 548);
-    float z = rand(coord * 483);
+    return (noise1 + noise2 + noise3) * 0.333f * 2.0f - 1.0f;*/
+    float x = rand(coord * 65384);
+    float y = rand(coord * 54835);
+    float z = rand(coord * 48325);
     return float3(x, y, z) * 2.0f - 1.0f;
     
     /*float3 interleaved = interleaved3d(coord.xy);
@@ -217,9 +217,9 @@ float2 WorldToUV(in float3 position)
 // [ Jimenez et al. 2016, "Practical Realtime Strategies for Accurate Indirect Occlusion" ]
 float3 AOMultiBounce( float3 BaseColor, float AO )
 {
-    float3 a =  2.04 * BaseColor - 0.33;
-    float3 b = -4.79 * BaseColor + 0.64;
-    float3 c =  2.75 * BaseColor + 0.69;
+    float3 a =  2.0404 * BaseColor - 0.3324;
+    float3 b = -4.7951 * BaseColor + 0.6417;
+    float3 c =  2.7552 * BaseColor + 0.6903;
     return max( AO, ( ( AO * a + b ) * AO + c ) * AO );
 }
 
@@ -252,7 +252,7 @@ float4 main( VS_OUTPUT IN ) : COLOR0
   
     const float radius = g_Radius; //0.002;
 	
-    const int samples = min(g_samples, 1);
+    const int samples = min(g_samples, 32);
     
     float2 uv = float2(IN.texCoord.x,IN.texCoord.y);
     
@@ -264,7 +264,7 @@ float4 main( VS_OUTPUT IN ) : COLOR0
 
 	float radius_depth = radius;
     float result = 1.0;
-	[unroll(1)]
+	[unroll(8)]
     for (int i = 0; i < samples; i++) 
 	{
         float3 curr_sphere = spherical_kernel(IN.texCoord, i, samples);
