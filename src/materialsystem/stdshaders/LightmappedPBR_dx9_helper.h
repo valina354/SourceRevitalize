@@ -22,7 +22,10 @@ class IShaderShadow;
 //-----------------------------------------------------------------------------
 struct LightmappedPBR_DX9_Vars_t
 {
-	LightmappedPBR_DX9_Vars_t() { memset( this, 0xFF, sizeof(*this) ); }
+	LightmappedPBR_DX9_Vars_t()
+	{
+		memset( this, 0xFF, sizeof( *this ) );
+	}
 
 	int m_nBaseTexture;
 	int m_nBaseTextureFrame;
@@ -47,15 +50,10 @@ struct LightmappedPBR_DX9_Vars_t
 	int m_nEnvmapRadius;
 };
 
-void InitParamsLightmappedPBR_DX9( CBaseVSShader *pShader, IMaterialVar** params,
-						 const char *pMaterialName, LightmappedPBR_DX9_Vars_t &info );
+void InitParamsLightmappedPBR_DX9( CBaseVSShader *pShader, IMaterialVar **params, const char *pMaterialName, LightmappedPBR_DX9_Vars_t &info );
 
-void InitLightmappedPBR_DX9( CBaseVSShader *pShader, IMaterialVar** params, 
-				   LightmappedPBR_DX9_Vars_t &info );
+void InitLightmappedPBR_DX9( CBaseVSShader *pShader, IMaterialVar **params, LightmappedPBR_DX9_Vars_t &info );
 
-void DrawLightmappedPBR_DX9( CBaseVSShader *pShader, IMaterialVar** params, IShaderDynamicAPI *pShaderAPI,
-				   IShaderShadow* pShaderShadow, bool bHasFlashlight,
-				   LightmappedPBR_DX9_Vars_t &info, VertexCompressionType_t vertexCompression,
-				   CBasePerMaterialContextData **pContextDataPtr );
+void DrawLightmappedPBR_DX9( CBaseVSShader *pShader, IMaterialVar **params, IShaderDynamicAPI *pShaderAPI, IShaderShadow *pShaderShadow, bool bHasFlashlight, LightmappedPBR_DX9_Vars_t &info, VertexCompressionType_t vertexCompression, CBasePerMaterialContextData **pContextDataPtr );
 
 #endif // EXAMPLE_MODEL_DX9_HELPER_H
