@@ -341,7 +341,7 @@ void CViewRender::Init( void )
 		0);
 	materials->CreateNamedRenderTargetTextureEx(
 		"_rt_VolumetricsBuffer",
-		iW / 4, iH / 4, RT_SIZE_NO_CHANGE,
+		iW, iH, RT_SIZE_NO_CHANGE,
 		IMAGE_FORMAT_RGBA16161616F,
 		MATERIAL_RT_DEPTH_SHARED,
 		flags,
