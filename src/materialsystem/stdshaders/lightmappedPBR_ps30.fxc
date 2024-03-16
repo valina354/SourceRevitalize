@@ -129,7 +129,7 @@ float3 ParallaxOcclusionMapping(float2 texCoords, float3 viewDir) {
     float3x3 tangentFrame = compute_tangent_frame(float3(0,0,1), float3(0,0,0), texCoords, T, B, sign_det);
 
     // Ray direction in tangent space
-    float3 rayDirTS = normalize(float3(viewDirXY.x, viewDirXY.y, viewDir.z));
+    float3 rayDirTS = normalize(float3(viewDirXY.x, viewDirXY.y, -viewDir.z));
     
     // Initialize ray position and depth
     float2 currentUV = texCoords;
@@ -137,7 +137,7 @@ float3 ParallaxOcclusionMapping(float2 texCoords, float3 viewDir) {
     float prevDepth = 0.0;
     float brightnessFactor = 1.0; // Default brightness factor
 
-    #define numSteps 4
+    #define numSteps 6
     #define BRIGHTNESS_FACTOR_SCALE 0.15
 
     // Perform ray marching to find intersection with the surface
