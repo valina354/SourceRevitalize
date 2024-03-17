@@ -140,7 +140,7 @@ float3 ParallaxOcclusionMapping(float2 texCoords, float3 viewDir) {
     float prevDepth = 0.0;
     float brightnessFactor = 1.0; // Default brightness factor
 
-    #define numSteps 6
+    #define numSteps 4
     #define BRIGHTNESS_FACTOR_SCALE 0.15
 
     // Perform ray marching to find intersection with the surface
