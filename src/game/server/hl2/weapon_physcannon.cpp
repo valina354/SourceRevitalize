@@ -1024,7 +1024,7 @@ void CPlayerPickupController::Init(CBasePlayer *pPlayer, CBaseEntity *pObject)
 		}
 	}
 
-#ifndef VANCE
+#ifdef VANCE
 	//vance has its own use key interaction while suited, so we want to avoid this one getting in the way
 	if (pPlayer->IsSuitEquipped()) {
 		Shutdown();
@@ -1241,7 +1241,7 @@ public:
 	void	ItemPostFrame();
 	void	ItemBusyFrame();
 
-#ifndef VANCE
+#ifdef VANCE
 	virtual bool	SendWeaponAnim(int iActivity);
 	//some hacky shit, we cant easily cast to CWeaponPhysCannon in vance_player, so we are just using the reload function
 	//cause we can call that from CBaseHLCombatWeapon. Yes i know this is retarded and theres probably a better way to do
@@ -1496,7 +1496,7 @@ CWeaponPhysCannon::CWeaponPhysCannon(void)
 	m_bPhyscannonState = false;
 }
 
-#ifndef VANCE
+#ifdef VANCE
 //disable animations
 bool CWeaponPhysCannon::SendWeaponAnim(int iActivity) {
 	return false;
@@ -2461,7 +2461,7 @@ void CWeaponPhysCannon::SecondaryAttack(void)
 
 	// See if we should drop a held item
 	if ((m_bActive) 
-#ifndef VANCE
+#ifdef VANCE
 		&& (pOwner->m_afButtonPressed & IN_ATTACK2)
 #endif
 	){
@@ -2596,7 +2596,7 @@ bool CWeaponPhysCannon::AttachObject(CBaseEntity *pObject, const Vector &vPositi
 		// NVNT set the players constant force to simulate holding mass
 		HapticSetConstantForce(pOwner, clamp(m_grabController.GetLoadWeight()*0.05, 1, 5)*Vector(0, -1, 0));
 #endif
-#ifndef VANCE
+#ifdef VANCE
 		pOwner->EnableSprint(false);
 #endif
 
@@ -3018,7 +3018,7 @@ bool CGGrabController::UpdateObject(CBasePlayer *pPlayer, float flError)
 	AngleMatrix(angles, attachedToWorld);
 	VectorRotate(m_attachedPositionObjectSpace, attachedToWorld, offset);
 
-#ifndef VANCE
+#ifdef VANCE
 	CVancePlayer *vancePlayer = static_cast<CVancePlayer *>(pPlayer);
 	if (vancePlayer && vancePlayer->m_vGglovesManipulatorOffset) {
 		offset += 20 * right + 10 * up;
@@ -3107,7 +3107,7 @@ void CWeaponPhysCannon::ItemPreFrame()
 
 	m_flElementPosition = UTIL_Approach(m_flElementDestination, m_flElementPosition, 0.1f);
 
-#ifndef VANCE
+#ifdef VANCE
 	CBaseViewModel *vm = pOwner->GetViewModel();
 
 	if (vm != NULL)
@@ -3135,7 +3135,7 @@ void CWeaponPhysCannon::ItemPreFrame()
 		m_flTimeNextObjectPurge = gpGlobals->curtime + 0.5f;
 	}
 
-#ifndef VANCE
+#ifdef VANCE
 	//we need to update the player on whether or not we have an attached entity
 	CVancePlayer* pVanceOwner = static_cast<CVancePlayer*>(pOwner);
 	if (m_bActive) {
@@ -3498,7 +3498,7 @@ void CWeaponPhysCannon::ItemPostFrame()
 		}
 	}
 
-#ifndef VANCE
+#ifdef VANCE
 	// NOTE: Attack2 will be considered to be pressed until the first item is picked up.
 	int nAttack2Mask = pOwner->m_nButtons & (~m_nAttack2Debounce);
 	if (nAttack2Mask & IN_ATTACK2)
