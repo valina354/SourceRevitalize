@@ -3788,7 +3788,7 @@ bool ClientWorldListInfo_t::OnFinalRelease()
 {
 	if ( m_bPooledAlloc )
 	{
-		Assert( m_pLeafList );
+		Assert(		m_pLeafList );
 		gm_Pool.PutObject( this );
 		return false;
 	}
