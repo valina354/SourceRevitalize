@@ -119,6 +119,9 @@ void ClientPrint( C_BasePlayer *player, int msg_dest, const char *msg_name, cons
 int			UTIL_EntitiesInBox( C_BaseEntity **pList, int listMax, const Vector &mins, const Vector &maxs, int flagMask, int partitionMask = PARTITION_CLIENT_NON_STATIC_EDICTS );
 int			UTIL_EntitiesInSphere( C_BaseEntity **pList, int listMax, const Vector &center, float radius, int flagMask, int partitionMask = PARTITION_CLIENT_NON_STATIC_EDICTS );
 int			UTIL_EntitiesAlongRay( C_BaseEntity **pList, int listMax, const Ray_t &ray, int flagMask, int partitionMask = PARTITION_CLIENT_NON_STATIC_EDICTS );
+#ifdef MAPBASE1
+int UTIL_EntitiesAtPoint( C_BaseEntity **pList, int listMax, const Vector &point, int flagMask, int partitionMask = PARTITION_CLIENT_NON_STATIC_EDICTS );
+#endif
 
 // make this a fixed size so it just sits on the stack
 #define MAX_SPHERE_QUERY	256

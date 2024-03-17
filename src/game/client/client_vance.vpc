@@ -44,6 +44,11 @@ $Project "Client (Vance)"
 		$File	"c_loggamestart.cpp"
 		$File	"IShaderAPIExtClient.cpp"
 		
+		$Folder "MAPBASE" 
+		{
+			$File	"$SRCDIR\game\client\mapbase\c_func_clientclip.cpp"
+		}
+		
 		$Folder "Shader Editor" 
 		{
 			$Folder	"Header Files"

@@ -47,6 +47,13 @@ $Project "Server (Vance)"
 		$File	"$SRCDIR\game\shared\vehicle_choreo_generic_shared.h"
 		$File	"$SRCDIR\game\shared\Multiplayer\multiplayer_animstate.h"
 		
+		$Folder "MAPBASE"
+		{
+		   $File	"$SRCDIR\game\server\mapbase\func_clientclip.cpp"
+		   $File	"$SRCDIR\game\server\mapbase\point_radiation_source.cpp"
+		   $File	"$SRCDIR\game\server\skyboxswapper.cpp"
+		}
+		
 		$Folder	"VANCE"
 		{
 			$File	"vance\vance_client.cpp"

@@ -48,6 +48,9 @@ public:
 	void	TempGunEffect( void );
 
 	string_t			m_strHullName;
+#ifdef MAPBASE1
+	Class_T m_iClassify = CLASS_NONE;
+#endif
 
 	DECLARE_DATADESC();
 };
@@ -66,7 +69,11 @@ END_DATADESC()
 //=========================================================
 Class_T	CGenericActor::Classify ( void )
 {
+#ifdef MAPBASE1
+		return m_iClassify;
+#else
 	return	CLASS_NONE;
+	#endif
 }
 
 //=========================================================
@@ -139,6 +146,10 @@ void CGenericActor::Spawn()
 	m_NPCState			= NPC_STATE_NONE;
 	
 	CapabilitiesAdd( bits_CAP_MOVE_GROUND | bits_CAP_OPEN_DOORS );
+
+	#ifdef MAPBASE1
+	CapabilitiesAdd( bits_CAP_SQUAD );
+#endif
 	
 	// remove head turn if no eyes or forward attachment
 	if (LookupAttachment( "eyes" ) > 0 && LookupAttachment( "forward" ) > 0) 
