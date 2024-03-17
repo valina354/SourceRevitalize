@@ -26,6 +26,9 @@ public:
 	DECLARE_DATADESC();
 
 	CPointSpotlight();
+#ifdef MAPBASE1
+	~CPointSpotlight();
+#endif
 
 	void	Precache(void);
 	void	Spawn(void);
@@ -122,6 +125,16 @@ CPointSpotlight::CPointSpotlight()
 	m_nMinDXLevel = 0;
 	m_bIgnoreSolid = false;
 }
+
+#ifdef MAPBASE1
+//-----------------------------------------------------------------------------
+// Purpose:
+//-----------------------------------------------------------------------------
+CPointSpotlight::~CPointSpotlight()
+{
+	SpotlightDestroy();
+}
+#endif
 
 
 //-----------------------------------------------------------------------------

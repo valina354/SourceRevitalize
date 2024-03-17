@@ -864,6 +864,159 @@
 	input Trigger(void) : "Causes the current sky texture to change to the one specified in this entity."
 ]
 
+@PointClass base(Targetname) size(-8 -8 -8, 8 8 8) = point_template : 
+	"Turns an entity, or set of entities, into a single template that can be instanced anywhere, and multiple times. "+
+	"If there are interdependencies (entity I/O, hierarchy, or other name references) between the entities "+
+	"in the template, the entities in the template will have their names changed and the interdependencies will "+
+	"be reconnected to the changes names. The name change format is as follows: '<original name>&0000', where the 0000 "+
+	"will be replaced with the current global template instance, so wildcard searches for '<original name>*' will still find them.\n"+
+	"If you don't want the name fixup to happen, because you're only spawning the template once, or you want inputs to "+
+	"trigger all instances of the template, check the 'Preserve entity names' spawnflag. \n"+
+	"To spawn the template in other places, use an env_entity_maker."
+[
+	spawnflags(flags) =
+	[
+		1 : "[1] Don't remove template entities" : 0
+		2 : "[2] Preserve entity names (Don't do name fixup)" : 1
+	]
+
+	Template01(target_destination) : "Template 1"
+	Template02(target_destination) : "Template 2"
+	Template03(target_destination) : "Template 3"
+	Template04(target_destination) : "Template 4"
+	Template05(target_destination) : "Template 5"
+	Template06(target_destination) : "Template 6"
+	Template07(target_destination) : "Template 7"
+	Template08(target_destination) : "Template 8"
+	Template09(target_destination) : "Template 9"
+	Template10(target_destination) : "Template 10"
+	Template11(target_destination) : "Template 11"
+	Template12(target_destination) : "Template 12"
+	Template13(target_destination) : "Template 13"
+	Template14(target_destination) : "Template 14"
+	Template15(target_destination) : "Template 15"
+	Template16(target_destination) : "Template 16"
+
+	// Inputs
+	input ForceSpawn(void) : "Spawns an instance of the template at the original position."
+	input ForceSpawnRandomTemplate(void) : "Spawns one of this entity's templates at its original position."
+
+	// Outputs
+	output OnEntitySpawned(void) : "Fired after spawning an instance of this template."
+	output OutSpawnedEntity(ehandle) : "Fired for each entity spawned by this template, passing said entity as the parameter and activator."
+]
+
+@PointClass base(Targetname, Parentname, DamageTypes) sphere(DamageRadius) = point_hurt :
+	"An entity that does damage to all entities in a radius around itself, with a specified delay." +
+	"If 'Target Entity' is specified, the damage is only done to that entity."
+[
+	DamageTarget(target_destination) : "Target Entity" : "" : "If specified, only this entity will take damage. Otherwise, all entities within the Radius will take damage."
+	
+	DamageRadius(float) : "Radius" : 256 : "All entities within this radius of this entity will take damage. If a 'Target Entity' is specified, only that entity will take damage."
+	Damage(integer) : "Damage" : 5 : "Damage done to all affected entities each time this entity fires."
+	DamageDelay(float) : "Delay" : 1 : "Delay between refires, in seconds."
+
+	// Inputs
+	input Hurt(void) : "Force a single fire, damaging either the Target Entity or all entities within the radius."
+	input TurnOn(void) : "Enable this entity. It will start damaging entities everytime it fires, and refire based upon the specified Delay."
+	input TurnOff(void) : "Disable this entity. It will stop damaging entities."
+	input Toggle(void) : "Toggle this entity between On/Off state."
+]
+
+@PointClass base(Targetname, Angles) = point_teleport : 
+	"An entity that teleports a target entity to this position and angles. "+
+	"If 'Teleport Home' spawn flag is set, teleports the target entity to its spawn position instead." +
+	"If object is physically simulated, simulation is turned off when teleported."
+[
+	target(target_destination) : "Entity To Teleport" : : "Name of the entity that will be teleported."
+	spawnflags(flags) =
+	[
+		1 : "[1] Teleport Home" : 0
+		2 : "[2] Into Duck (episodic)" : 0
+	]
+
+	// Inputs
+	input Teleport(void) : "Teleport the target entity."
+]
+
+
+@PointClass color(0 0 255) base(Targetname) iconsprite("editor/choreo_scene.vmt") = logic_choreographed_scene :
+	"Manages a choreographed scene of one or more actors."
+
+[
+	// Keys
+	SceneFile(scene) : "Scene file"
+
+	// Links
+	target1(target_destination) : "Target 1"
+	target2(target_destination) : "Target 2"
+	target3(target_destination) : "Target 3"
+	target4(target_destination) : "Target 4"
+	target5(target_destination) : "Target 5"
+	target6(target_destination) : "Target 6"
+	target7(target_destination) : "Target 7"
+	target8(target_destination) : "Target 8"
+
+	busyactor(choices) : "If an Actor is talking..." : 1 : "What to do if an actor this scene needs is already talking when this scene is told to start." =
+	[
+		0: "Start immediately"
+		1: "Wait for actor to finish"
+		2: "Interrupt at next interrupt event"
+		3: "Cancel at next interrupt event"
+	]
+
+	// Inputs
+	input Start(void) : "Starts playback of the scene file"
+	input Pause(void) : "Pauses playback of the scene file"
+	input Resume(void) : "Resumes playback of the scene if it has been paused"
+	input Cancel(void) : "Cancels playback of the scene"
+	input CancelAtNextInterrupt(void) : "Cancels playback of the scene at the next interrupt event in the scene."
+	input PitchShift(float) : "Multiplies the the pitch"
+
+	input InterjectResponse(string) : "Finds an actor who can respond to the specified concept string while the scene continues playing"
+
+	input StopWaitingForActor(void) : "Stop waiting on an actor to stop talking."
+	
+	// Unmarked inputs
+	input Trigger(integer) : "Fires the OnTrigger output of the specified number."
+	
+	input SetTarget1(target_destination) : "Sets this target to the specified entity."
+	input SetTarget2(target_destination) : "Sets this target to the specified entity."
+	input SetTarget3(target_destination) : "Sets this target to the specified entity."
+	input SetTarget4(target_destination) : "Sets this target to the specified entity."
+	input SetTarget5(target_destination) : "Sets this target to the specified entity."
+	input SetTarget6(target_destination) : "Sets this target to the specified entity."
+	input SetTarget7(target_destination) : "Sets this target to the specified entity."
+	input SetTarget8(target_destination) : "Sets this target to the specified entity."
+
+	// Outputs
+	output OnStart(void) : "The scene has started"
+	output OnCompletion(void) : "The scene has completed"
+	output OnCanceled(void) : "The scene has been canceled"
+	output OnTrigger1(void) : "Scene trigger 1"
+	output OnTrigger2(void) : "Scene trigger 2"
+	output OnTrigger3(void) : "Scene trigger 3"
+	output OnTrigger4(void) : "Scene trigger 4"
+	output OnTrigger5(void) : "Scene trigger 5"
+	output OnTrigger6(void) : "Scene trigger 6"
+	output OnTrigger7(void) : "Scene trigger 7"
+	output OnTrigger8(void) : "Scene trigger 8"
+	output OnTrigger9(void) : "Scene trigger 9"
+	output OnTrigger10(void) : "Scene trigger 10"
+	output OnTrigger11(void) : "Scene trigger 11"
+	output OnTrigger12(void) : "Scene trigger 12"
+	output OnTrigger13(void) : "Scene trigger 13"
+	output OnTrigger14(void) : "Scene trigger 14"
+	output OnTrigger15(void) : "Scene trigger 15"
+	output OnTrigger16(void) : "Scene trigger 16"
+
+	onplayerdeath(choices) : "On player death" : 0 : "What should this entity do if the player dies" =
+	[
+		0 : "Do Nothing"
+		1 : "Cancel Script and return to AI"
+	]
+]
+
 //-------------------------------------------------------------------------
 //
 // Cube map sample
