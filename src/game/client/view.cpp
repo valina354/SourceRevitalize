@@ -125,7 +125,7 @@ static ConVar r_mapextents( "r_mapextents", "16384", FCVAR_CHEAT,
 						   "Set the max dimension for the map.  This determines the far clipping plane" );
 
 // UNDONE: Delete this or move to the material system?
-ConVar	gl_clear( "gl_clear", "0");
+ConVar	gl_clear( "gl_clear", "1");
 ConVar	gl_clear_randomcolor( "gl_clear_randomcolor", "0", FCVAR_CHEAT, "Clear the back buffer to random colors every frame. Helps spot open seams in geometry." );
 
 static ConVar r_farz( "r_farz", "-1", FCVAR_CHEAT, "Override the far clipping plane. -1 means to use the value in env_fog_controller." );
@@ -137,7 +137,8 @@ void SoftwareCursorChangedCB( IConVar *pVar, const char *pOldValue, float fOldVa
 	ConVar *pConVar = (ConVar *)pVar;
 	vgui::surface()->SetSoftwareCursor( pConVar->GetBool() || UseVR() );
 }
-static ConVar cl_software_cursor ( "cl_software_cursor", "1", FCVAR_ARCHIVE, "Switches the game to use a larger software cursor instead of the normal OS cursor", SoftwareCursorChangedCB );
+
+static ConVar cl_software_cursor( "cl_software_cursor", "1", FCVAR_ARCHIVE, "Switches the game to use a larger software cursor instead of the normal OS cursor", SoftwareCursorChangedCB );
 
 
 static Vector s_DemoView;
