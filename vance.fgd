@@ -1023,10 +1023,9 @@
 //
 //-------------------------------------------------------------------------
 
-@PointClass color(0 0 255) sidelist(sides) sphere(radius) iconsprite("editor/env_cubemap.vmt") = env_cubemap : 
+@PointClass color(0 0 255) sidelist(sides) iconsprite("editor/env_cubemap.vmt") = env_cubemap : 
 	"An entity that creates a sample point for the Cubic Environment Map."
 [
-	radius(integer) : "Sphere Mapping radius" : 0 : "Radius of the parallax corrected cubemap. Set to 0 if you dont want parallax correction for this cubemap"
 	cubemapsize(choices) : "Cubemap Size" : 0 =
 	[
 		0 : "Default"
@@ -1041,6 +1040,12 @@
 		9 : "256x256"
 	]
 	sides(sidelist) : "Brush faces": : "(Optional) Brushes faces to directly attach to the env_cubemap. Press Pick then click on faces in the 3D View to select them. Use CTRL while clicking to add or remove from the selection."
+	parallaxobb(target_destination) : "Cubemap Bounds" : : "(Optional) assigns this cubemap a bounding box for parallax correction (brush entity tied to parallax_obb)."
+]
+
+@SolidClass = parallax_obb
+[
+	targetname(target_source) : "Name" : : "The name that other entities refer to this entity by."
 ]
 
 

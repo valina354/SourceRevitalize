@@ -2256,7 +2256,7 @@ void CViewRender::RenderView( const CViewSetup &viewIn, int nClearFlags, int wha
 	CViewSetup view = viewIn;
 
 	if ( building_cubemaps.GetBool() )
-		view.fov += 2.0 * atanf( 64.0f / ( 64.0f - 0.5 ) );
+		view.fov = RAD2DEG( 2.0f * atanf( 64.0f / ( 64 - 0.5f ) ) );
 	m_UnderWaterOverlayMaterial.Shutdown();					// underwater view will set
 
 	m_CurrentView = view;

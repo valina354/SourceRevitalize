@@ -11,12 +11,12 @@
 // STATIC: "SMOOTHNESS"					"0..1"
 // STATIC: "SEAMLESS"                   "0..1"
 // STATIC: "BUMPMAP"                    "0..1"
+// STATIC: "PARALLAXCORRECT"			"0..1"
 
 // DYNAMIC: "WRITEWATERFOGTODESTALPHA"  "0..1"
 // DYNAMIC: "PIXELFOGTYPE"				"0..1"
 // DYNAMIC: "WRITE_DEPTH_TO_DESTALPHA"	"0..1"
 // DYNAMIC: "FLASHLIGHTSHADOWS"			"0..1"
-// DYNAMIC: "CUBEMAPCORRECTED"			"0..1"
 // DYNAMIC: "CSM"						"0..1"
 // DYNAMIC: "CSM_PERF"					"0..2"
 // DYNAMIC: "LIGHT_PREVIEW"             "0..2"
@@ -32,6 +32,7 @@
 // SKIP: ( $CUBEMAP == 0 ) && ( $OLDIBL == 0 ) && ( $OLDIBL == 1 )
 // SKIP: ( $FLASHLIGHT == 1 ) && ( $OLDIBL == 0 ) && ( $OLDIBL == 1 )
 // SKIP: ( $CUBEMAP == 1 ) && ( $FLASHLIGHT == 1 )
+// SKIP: $PARALLAXCORRECT && !$CUBEMAP
 
 // both cant exist at the same time
 // SKIP: ( $FLASHLIGHT == 1) && ( $CSM == 1)
@@ -78,9 +79,11 @@ const float2 g_CascadeResolution			:  register( c32 );
 const float4 g_CascadeSize					:  register( c33 );
 #endif
 const float4 g_TintValuesAndLightmapScale	: register( c20 );
-const float4 g_EnvmapOrigin_and_Radius		: register( c21 );
-#define g_EnvmapOrigin (g_EnvmapOrigin_and_Radius.xyz)
-#define g_EnvmapRadius (g_EnvmapOrigin_and_Radius.w)
+#if PARALLAXCORRECT
+// Parallax cubemaps
+const float3 cubemapPos						: register(c21);
+const float4x4 obbMatrix					: register(c35); //through c38
+#endif
 
 #define g_FlashlightPos					g_FlashlightPos_RimBoost.xyz
 
@@ -210,19 +213,25 @@ float3 DoIBL(float3 vWorldNormal, float3 vWorldPos, float3 albedo, float metalln
     float3 metallic = clamp(metallness, 0.0f, 0.9f);
 #if CUBEMAP == 1
 
-#if CUBEMAPCORRECTED == 0
-		float3 reflectVect = CalcReflectionVectorUnnormalized( vWorldNormal, V );
+#if PARALLAXCORRECT == 0
+	float3 reflectVect = CalcReflectionVectorUnnormalized( vWorldNormal, V );
+#define cubeReflectVect reflectVect
 #else
-		float3 reflectVect = CalcReflectionVectorUnnormalized( vWorldNormal, WorldToEye);
-		float3 BoxSize = float3(g_EnvmapRadius,g_EnvmapRadius,g_EnvmapRadius);
-		float3 BoxMax = BoxSize + g_EnvmapOrigin;
-		float3 BoxMin = -BoxSize + g_EnvmapOrigin;
-		float3 firstPlaneIntersect = (BoxMax - vWorldPos) / reflectVect;
-		float3 secondPlaneIntersect = (BoxMin - vWorldPos) / reflectVect;
-		float3 furthestPlane = max(firstPlaneIntersect, secondPlaneIntersect);
-		float planeDist = min(min(furthestPlane.x, furthestPlane.y), furthestPlane.z);
-		float3 intersectPositionWS = vWorldPos + reflectVect * planeDist;
-		reflectVect = intersectPositionWS - g_EnvmapOrigin;
+	float3 reflectVect = CalcReflectionVectorUnnormalized( vWorldNormal, V);
+		
+	//Parallax correction (2_0b and beyond)
+	//Adapted from http://seblagarde.wordpress.com/2012/09/29/image-based-lighting-approaches-and-parallax-corrected-cubemap/
+    float3 positionLS = mul(float4(vWorldPos, 1), obbMatrix);
+    float3 rayLS = mul(reflectVect, (float3x3) obbMatrix);
+
+    float3 firstPlaneIntersect = (float3(1.0f, 1.0f, 1.0f) - positionLS) / rayLS;
+    float3 secondPlaneIntersect = (-positionLS) / rayLS;
+    float3 furthestPlane = max(firstPlaneIntersect, secondPlaneIntersect);
+    float distance = min(furthestPlane.x, min(furthestPlane.y, furthestPlane.z));
+
+	// Use distance in WS directly to recover intersection
+    float3 intersectPositionWS = vWorldPos + reflectVect * distance;
+    float3 cubeReflectVect = intersectPositionWS - cubemapPos;
 #endif
 
 	float4 directionPosX = { 1.0f, 0.01f, 0.01f, 12.0f }; float4 directionNegX = {-1.0f, 0.01f, 0.01f, 12.0f };
@@ -248,15 +257,11 @@ float3 DoIBL(float3 vWorldNormal, float3 vWorldPos, float3 albedo, float metalln
 	kD *= 1.0 - metallic;	
 
 	float3 diffuseIBL = kD * albedo * irradiance;
-	float3 lookup = ENV_MAP_SCALE * texCUBElod(EnvmapSampler, float4(reflectVect, roughness * 12.0)).rgb;
+	float3 lookup = ENV_MAP_SCALE * texCUBElod(EnvmapSampler, float4(cubeReflectVect, roughness * 12.0)).rgb;
 	float3 specularIrradiance = lerp(lookup, PixelShaderAmbientLight( reflectVect, envmapCube ), roughness * roughness );
 	float3 specularIBL = BRDF * specularIrradiance;
 
-#if CUBEMAPCORRECTED == 1
-		float fallof = saturate(length(g_EnvmapOrigin - vWorldPos) / g_EnvmapRadius);
-		fallof = 1.0f - pow(fallof, 5.0f);
-		specularIBL *= fallof;
-#endif
+
 
     //mix
     return max(0.0, diffuseIBL + specularIBL);

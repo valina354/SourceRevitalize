@@ -33,8 +33,12 @@ SHADER_PARAM( PARALLAXDEPTH, SHADER_PARAM_TYPE_FLOAT, "0", "Depth of the Paralla
 SHADER_PARAM( PARALLAXSCALING, SHADER_PARAM_TYPE_FLOAT, "0", "Scaling of the Parallax Map" );
 SHADER_PARAM( PARALLAXSTEP, SHADER_PARAM_TYPE_FLOAT, "0", "Step Scalling of the Parallax Map" );
 
-SHADER_PARAM( ENVMAPORIGIN, SHADER_PARAM_TYPE_VEC3, "[0 0 0]", "Origin of the env_cubemap (for sphere projected cubemap)" )
-SHADER_PARAM( ENVMAPRADIUS, SHADER_PARAM_TYPE_INTEGER, "0", "Radius of the env_cubemap (for sphere projected cubemap)" )
+// Parallax cubemaps
+SHADER_PARAM( ENVMAPPARALLAX, SHADER_PARAM_TYPE_BOOL, "0", "Enables parallax correction code for env_cubemaps" )
+SHADER_PARAM( ENVMAPPARALLAXOBB1, SHADER_PARAM_TYPE_VEC4, "[1 0 0 0]", "The first line of the parallax correction OBB matrix" )
+SHADER_PARAM( ENVMAPPARALLAXOBB2, SHADER_PARAM_TYPE_VEC4, "[0 1 0 0]", "The second line of the parallax correction OBB matrix" )
+SHADER_PARAM( ENVMAPPARALLAXOBB3, SHADER_PARAM_TYPE_VEC4, "[0 0 1 0]", "The third line of the parallax correction OBB matrix" )
+SHADER_PARAM( ENVMAPORIGIN, SHADER_PARAM_TYPE_VEC3, "[0 0 0]", "The world space position of the env_cubemap being corrected" )
 END_SHADER_PARAMS
 
 void SetupVars( LightmappedPBR_DX9_Vars_t &info )
@@ -58,8 +62,12 @@ void SetupVars( LightmappedPBR_DX9_Vars_t &info )
 	info.ParallaxScaling = PARALLAXSCALING;
 	info.ParallaxStep = PARALLAXSTEP;
 
+	// Parallax cubemaps
+	info.m_nEnvmapParallax = ENVMAPPARALLAX;
+	info.m_nEnvmapParallaxObb1 = ENVMAPPARALLAXOBB1;
+	info.m_nEnvmapParallaxObb2 = ENVMAPPARALLAXOBB2;
+	info.m_nEnvmapParallaxObb3 = ENVMAPPARALLAXOBB3;
 	info.m_nEnvmapOrigin = ENVMAPORIGIN;
-	info.m_nEnvmapRadius = ENVMAPRADIUS;
 }
 
 void SetupVars( DrawLightPass_Vars_t &info )

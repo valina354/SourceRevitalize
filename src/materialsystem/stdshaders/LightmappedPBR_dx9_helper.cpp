@@ -23,7 +23,6 @@ static ConVar mat_fullbright( "mat_fullbright", "0", FCVAR_CHEAT );
 extern ConVar r_csm_bias;
 extern ConVar r_csm_slopescalebias;
 extern ConVar r_csm_performance;
-extern ConVar mat_cubemapparallax;
 
 //-----------------------------------------------------------------------------
 // Initialize shader parameters
@@ -58,8 +57,7 @@ void InitParamsLightmappedPBR_DX9( CBaseVSShader *pShader, IMaterialVar **params
 		SET_FLAGS2( MATERIAL_VAR2_LIGHTING_BUMPED_LIGHTMAP );
 	}
 
-	if ( info.m_nEnvmapRadius != -1 && !params[info.m_nEnvmapRadius]->IsDefined() )
-		params[info.m_nEnvmapRadius]->SetIntValue( -1 );
+
 }
 
 //-----------------------------------------------------------------------------
@@ -154,6 +152,8 @@ static void DrawLightmappedPBR_DX9_Internal( CBaseVSShader *pShader, IMaterialVa
 	bool bHasBump = IsTextureSet( info.m_nBumpmap, params );
 	bool bUseSmoothness = info.m_nUseSmoothness != -1 && params[info.m_nUseSmoothness]->GetIntValue() == 1;
 	bool bSeamlessMapping = ( ( info.m_nSeamlessMappingScale != -1 ) && ( params[info.m_nSeamlessMappingScale]->GetFloatValue() != 0.0 ) );
+	// Parallax cubemaps
+	bool hasParallaxCorrection = params[info.m_nEnvmapParallax]->GetIntValue() > 0;
 
 	bool bHasVertexColor = IS_FLAG_SET( MATERIAL_VAR_VERTEXCOLOR );
 	bool bHasVertexAlpha = IS_FLAG_SET( MATERIAL_VAR_VERTEXALPHA );
@@ -276,6 +276,8 @@ static void DrawLightmappedPBR_DX9_Internal( CBaseVSShader *pShader, IMaterialVa
 		SET_STATIC_PIXEL_SHADER_COMBO( SMOOTHNESS, bUseSmoothness );
 		SET_STATIC_PIXEL_SHADER_COMBO( SEAMLESS, false );
 		SET_STATIC_PIXEL_SHADER_COMBO( BUMPMAP, bHasBump );
+		// Parallax cubemaps enabled for 2_0b and onwards
+		SET_STATIC_PIXEL_SHADER_COMBO( PARALLAXCORRECT, hasParallaxCorrection );
 		SET_STATIC_PIXEL_SHADER( lightmappedpbr_ps30 );
 
 		if ( bHasFlashlight )
@@ -293,9 +295,6 @@ static void DrawLightmappedPBR_DX9_Internal( CBaseVSShader *pShader, IMaterialVa
 	else // not snapshotting -- begin dynamic state
 	{
 		bool bLightingOnly = mat_fullbright.GetInt() == 2 && !IS_FLAG_SET( MATERIAL_VAR_NO_DEBUG_OVERRIDE );
-		bool isEnvmapCorrected = ( info.m_nEnvmapRadius != -1 && info.m_nEnvmapOrigin != -1 ) &&
-			( params[info.m_nEnvmapRadius]->IsDefined() && params[info.m_nEnvmapRadius]->GetIntValue() > 0 ) &&
-			params[info.m_nEnvmapOrigin]->IsDefined();
 
 		float color[4] = { 1.0, 1.0, 1.0, 1.0 };
 		pShader->ComputeModulationColor( color );
@@ -304,14 +303,6 @@ static void DrawLightmappedPBR_DX9_Internal( CBaseVSShader *pShader, IMaterialVa
 		color[1] *= flLScale;
 		color[2] *= flLScale;
 		pShaderAPI->SetPixelShaderConstant( 20, color, 1 );
-
-		if ( isEnvmapCorrected )
-		{
-			float *origin = (float *)params[info.m_nEnvmapOrigin]->GetVecValue();
-			float radius = (float)params[info.m_nEnvmapRadius]->GetIntValue();
-			float origin_And_Radius[4] = { origin[0], origin[1], origin[2], radius };
-			pShaderAPI->SetPixelShaderConstant( 21, origin_And_Radius );
-		}
 
 		if ( bHasBaseTexture )
 			pShader->BindTexture( SHADER_SAMPLER0, info.m_nBaseTexture, info.m_nBaseTextureFrame );
@@ -330,6 +321,8 @@ static void DrawLightmappedPBR_DX9_Internal( CBaseVSShader *pShader, IMaterialVa
 
 		if ( bHasEnvmap )
 			pShader->BindTexture( SHADER_SAMPLER7, info.m_nEnvmap );
+		else
+			pShaderAPI->BindStandardTexture( SHADER_SAMPLER7, TEXTURE_BLACK );
 
 		if ( bHasAO )
 			pShader->BindTexture( SHADER_SAMPLER9, info.m_nAO );
@@ -413,7 +406,6 @@ static void DrawLightmappedPBR_DX9_Internal( CBaseVSShader *pShader, IMaterialVa
 		SET_DYNAMIC_PIXEL_SHADER_COMBO( WRITE_DEPTH_TO_DESTALPHA, bWriteDepthToAlpha );
 		SET_DYNAMIC_PIXEL_SHADER_COMBO( PIXELFOGTYPE, pShaderAPI->GetPixelFogCombo() );
 		SET_DYNAMIC_PIXEL_SHADER_COMBO( FLASHLIGHTSHADOWS, bFlashlightShadows );
-		SET_DYNAMIC_PIXEL_SHADER_COMBO( CUBEMAPCORRECTED, isEnvmapCorrected && mat_cubemapparallax.GetBool() );
 		SET_DYNAMIC_PIXEL_SHADER_COMBO( LIGHT_PREVIEW, pShaderAPI->GetIntRenderingParameter( INT_RENDERPARM_ENABLE_FIXED_LIGHTING ) );
 		SET_DYNAMIC_PIXEL_SHADER_COMBO( CSM, bUseCSM && !bHasFlashlight );
 		SET_DYNAMIC_PIXEL_SHADER_COMBO( CSM_PERF, MAX( 0, MIN( r_csm_performance.GetInt(), 2 ) ) ); // i just dont know anymore
@@ -451,6 +443,30 @@ static void DrawLightmappedPBR_DX9_Internal( CBaseVSShader *pShader, IMaterialVa
 		flParams[2] = GetFloatParam( info.ParallaxStep, params, 3.0f );
 
 		pShaderAPI->SetPixelShaderConstant( 34, flParams, 1 );
+
+		// Parallax cubemaps
+		if ( hasParallaxCorrection )
+		{
+			float envMapOrigin[4] = { 0, 0, 0, 0 };
+			params[info.m_nEnvmapOrigin]->GetVecValue( envMapOrigin, 3 );
+			pShaderAPI->SetPixelShaderConstant( 21, envMapOrigin );
+
+			float *vecs[3];
+			vecs[0] = const_cast<float *>( params[info.m_nEnvmapParallaxObb1]->GetVecValue() );
+			vecs[1] = const_cast<float *>( params[info.m_nEnvmapParallaxObb2]->GetVecValue() );
+			vecs[2] = const_cast<float *>( params[info.m_nEnvmapParallaxObb3]->GetVecValue() );
+			float matrix[4][4];
+			for ( int i = 0; i < 3; i++ )
+			{
+				for ( int j = 0; j < 4; j++ )
+				{
+					matrix[i][j] = vecs[i][j];
+				}
+			}
+			matrix[3][0] = matrix[3][1] = matrix[3][2] = 0;
+			matrix[3][3] = 1;
+			pShaderAPI->SetPixelShaderConstant( 35, &matrix[0][0], 4 );
+		}
 
 		if ( bHasFlashlight )
 		{

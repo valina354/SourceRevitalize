@@ -46,8 +46,12 @@ struct LightmappedPBR_DX9_Vars_t
 	int ParallaxScaling;
 	int ParallaxStep;
 
+	// Parallax cubemaps
+	int m_nEnvmapParallax; // Needed for editor
+	int m_nEnvmapParallaxObb1;
+	int m_nEnvmapParallaxObb2;
+	int m_nEnvmapParallaxObb3;
 	int m_nEnvmapOrigin;
-	int m_nEnvmapRadius;
 };
 
 void InitParamsLightmappedPBR_DX9( CBaseVSShader *pShader, IMaterialVar **params, const char *pMaterialName, LightmappedPBR_DX9_Vars_t &info );

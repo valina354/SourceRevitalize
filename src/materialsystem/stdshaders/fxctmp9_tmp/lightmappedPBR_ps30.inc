@@ -148,6 +148,27 @@ public:
 		m_bBUMPMAP = true;
 #endif
 	}
+private:
+	int m_nPARALLAXCORRECT;
+#ifdef _DEBUG
+	bool m_bPARALLAXCORRECT;
+#endif
+public:
+	void SetPARALLAXCORRECT( int i )
+	{
+		Assert( i >= 0 && i <= 1 );
+		m_nPARALLAXCORRECT = i;
+#ifdef _DEBUG
+		m_bPARALLAXCORRECT = true;
+#endif
+	}
+	void SetPARALLAXCORRECT( bool i )
+	{
+		m_nPARALLAXCORRECT = i ? 1 : 0;
+#ifdef _DEBUG
+		m_bPARALLAXCORRECT = true;
+#endif
+	}
 public:
 	lightmappedpbr_ps30_Static_Index( )
 	{
@@ -179,19 +200,23 @@ public:
 		m_bBUMPMAP = false;
 #endif // _DEBUG
 		m_nBUMPMAP = 0;
+#ifdef _DEBUG
+		m_bPARALLAXCORRECT = false;
+#endif // _DEBUG
+		m_nPARALLAXCORRECT = 0;
 	}
 	int GetIndex()
 	{
 		// Asserts to make sure that we aren't using any skipped combinations.
 		// Asserts to make sure that we are setting all of the combination vars.
 #ifdef _DEBUG
-		bool bAllStaticVarsDefined = m_bCONVERT_TO_SRGB && m_bFLASHLIGHT && m_bCUBEMAP && m_bCUBEMAP_SPHERE_LEGACY && m_bSMOOTHNESS && m_bSEAMLESS && m_bBUMPMAP;
+		bool bAllStaticVarsDefined = m_bCONVERT_TO_SRGB && m_bFLASHLIGHT && m_bCUBEMAP && m_bCUBEMAP_SPHERE_LEGACY && m_bSMOOTHNESS && m_bSEAMLESS && m_bBUMPMAP && m_bPARALLAXCORRECT;
 		Assert( bAllStaticVarsDefined );
 #endif // _DEBUG
-		return ( 576 * m_nCONVERT_TO_SRGB ) + ( 576 * m_nFLASHLIGHT ) + ( 1152 * m_nCUBEMAP ) + ( 2304 * m_nCUBEMAP_SPHERE_LEGACY ) + ( 4608 * m_nSMOOTHNESS ) + ( 9216 * m_nSEAMLESS ) + ( 18432 * m_nBUMPMAP ) + 0;
+		return ( 288 * m_nCONVERT_TO_SRGB ) + ( 288 * m_nFLASHLIGHT ) + ( 576 * m_nCUBEMAP ) + ( 1152 * m_nCUBEMAP_SPHERE_LEGACY ) + ( 2304 * m_nSMOOTHNESS ) + ( 4608 * m_nSEAMLESS ) + ( 9216 * m_nBUMPMAP ) + ( 18432 * m_nPARALLAXCORRECT ) + 0;
 	}
 };
-#define shaderStaticTest_lightmappedpbr_ps30 psh_forgot_to_set_static_CONVERT_TO_SRGB + psh_forgot_to_set_static_FLASHLIGHT + psh_forgot_to_set_static_CUBEMAP + psh_forgot_to_set_static_CUBEMAP_SPHERE_LEGACY + psh_forgot_to_set_static_SMOOTHNESS + psh_forgot_to_set_static_SEAMLESS + psh_forgot_to_set_static_BUMPMAP + 0
+#define shaderStaticTest_lightmappedpbr_ps30 psh_forgot_to_set_static_CONVERT_TO_SRGB + psh_forgot_to_set_static_FLASHLIGHT + psh_forgot_to_set_static_CUBEMAP + psh_forgot_to_set_static_CUBEMAP_SPHERE_LEGACY + psh_forgot_to_set_static_SMOOTHNESS + psh_forgot_to_set_static_SEAMLESS + psh_forgot_to_set_static_BUMPMAP + psh_forgot_to_set_static_PARALLAXCORRECT + 0
 class lightmappedpbr_ps30_Dynamic_Index
 {
 private:
@@ -279,27 +304,6 @@ public:
 #endif
 	}
 private:
-	int m_nCUBEMAPCORRECTED;
-#ifdef _DEBUG
-	bool m_bCUBEMAPCORRECTED;
-#endif
-public:
-	void SetCUBEMAPCORRECTED( int i )
-	{
-		Assert( i >= 0 && i <= 1 );
-		m_nCUBEMAPCORRECTED = i;
-#ifdef _DEBUG
-		m_bCUBEMAPCORRECTED = true;
-#endif
-	}
-	void SetCUBEMAPCORRECTED( bool i )
-	{
-		m_nCUBEMAPCORRECTED = i ? 1 : 0;
-#ifdef _DEBUG
-		m_bCUBEMAPCORRECTED = true;
-#endif
-	}
-private:
 	int m_nCSM;
 #ifdef _DEBUG
 	bool m_bCSM;
@@ -382,10 +386,6 @@ public:
 #endif // _DEBUG
 		m_nFLASHLIGHTSHADOWS = 0;
 #ifdef _DEBUG
-		m_bCUBEMAPCORRECTED = false;
-#endif // _DEBUG
-		m_nCUBEMAPCORRECTED = 0;
-#ifdef _DEBUG
 		m_bCSM = false;
 #endif // _DEBUG
 		m_nCSM = 0;
@@ -403,10 +403,10 @@ public:
 		// Asserts to make sure that we aren't using any skipped combinations.
 		// Asserts to make sure that we are setting all of the combination vars.
 #ifdef _DEBUG
-		bool bAllDynamicVarsDefined = m_bWRITEWATERFOGTODESTALPHA && m_bPIXELFOGTYPE && m_bWRITE_DEPTH_TO_DESTALPHA && m_bFLASHLIGHTSHADOWS && m_bCUBEMAPCORRECTED && m_bCSM && m_bCSM_PERF && m_bLIGHT_PREVIEW;
+		bool bAllDynamicVarsDefined = m_bWRITEWATERFOGTODESTALPHA && m_bPIXELFOGTYPE && m_bWRITE_DEPTH_TO_DESTALPHA && m_bFLASHLIGHTSHADOWS && m_bCSM && m_bCSM_PERF && m_bLIGHT_PREVIEW;
 		Assert( bAllDynamicVarsDefined );
 #endif // _DEBUG
-		return ( 1 * m_nWRITEWATERFOGTODESTALPHA ) + ( 2 * m_nPIXELFOGTYPE ) + ( 4 * m_nWRITE_DEPTH_TO_DESTALPHA ) + ( 8 * m_nFLASHLIGHTSHADOWS ) + ( 16 * m_nCUBEMAPCORRECTED ) + ( 32 * m_nCSM ) + ( 64 * m_nCSM_PERF ) + ( 192 * m_nLIGHT_PREVIEW ) + 0;
+		return ( 1 * m_nWRITEWATERFOGTODESTALPHA ) + ( 2 * m_nPIXELFOGTYPE ) + ( 4 * m_nWRITE_DEPTH_TO_DESTALPHA ) + ( 8 * m_nFLASHLIGHTSHADOWS ) + ( 16 * m_nCSM ) + ( 32 * m_nCSM_PERF ) + ( 96 * m_nLIGHT_PREVIEW ) + 0;
 	}
 };
-#define shaderDynamicTest_lightmappedpbr_ps30 psh_forgot_to_set_dynamic_WRITEWATERFOGTODESTALPHA + psh_forgot_to_set_dynamic_PIXELFOGTYPE + psh_forgot_to_set_dynamic_WRITE_DEPTH_TO_DESTALPHA + psh_forgot_to_set_dynamic_FLASHLIGHTSHADOWS + psh_forgot_to_set_dynamic_CUBEMAPCORRECTED + psh_forgot_to_set_dynamic_CSM + psh_forgot_to_set_dynamic_CSM_PERF + psh_forgot_to_set_dynamic_LIGHT_PREVIEW + 0
+#define shaderDynamicTest_lightmappedpbr_ps30 psh_forgot_to_set_dynamic_WRITEWATERFOGTODESTALPHA + psh_forgot_to_set_dynamic_PIXELFOGTYPE + psh_forgot_to_set_dynamic_WRITE_DEPTH_TO_DESTALPHA + psh_forgot_to_set_dynamic_FLASHLIGHTSHADOWS + psh_forgot_to_set_dynamic_CSM + psh_forgot_to_set_dynamic_CSM_PERF + psh_forgot_to_set_dynamic_LIGHT_PREVIEW + 0
