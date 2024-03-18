@@ -1265,6 +1265,9 @@ int CHLClient::Init( CreateInterfaceFn appSystemFactory, CreateInterfaceFn physi
 	ConnectDeferredExt();
 #endif
 
+	ConVarRef r_radiosity( "r_radiosity" );
+	r_radiosity.SetValue( "2" );
+
 	return true;
 }
 
