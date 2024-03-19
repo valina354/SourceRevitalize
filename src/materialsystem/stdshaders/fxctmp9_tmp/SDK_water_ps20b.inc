@@ -128,27 +128,6 @@ public:
 #endif
 	}
 private:
-	int m_nBLURRY_REFRACT;
-#ifdef _DEBUG
-	bool m_bBLURRY_REFRACT;
-#endif
-public:
-	void SetBLURRY_REFRACT( int i )
-	{
-		Assert( i >= 0 && i <= 1 );
-		m_nBLURRY_REFRACT = i;
-#ifdef _DEBUG
-		m_bBLURRY_REFRACT = true;
-#endif
-	}
-	void SetBLURRY_REFRACT( bool i )
-	{
-		m_nBLURRY_REFRACT = i ? 1 : 0;
-#ifdef _DEBUG
-		m_bBLURRY_REFRACT = true;
-#endif
-	}
-private:
 	int m_nNORMAL_DECODE_MODE;
 #ifdef _DEBUG
 	bool m_bNORMAL_DECODE_MODE;
@@ -197,10 +176,6 @@ public:
 #endif // _DEBUG
 		m_nABOVEWATER = 0;
 #ifdef _DEBUG
-		m_bBLURRY_REFRACT = false;
-#endif // _DEBUG
-		m_nBLURRY_REFRACT = 0;
-#ifdef _DEBUG
 		m_bNORMAL_DECODE_MODE = false;
 #endif // _DEBUG
 		m_nNORMAL_DECODE_MODE = 0;
@@ -210,13 +185,13 @@ public:
 		// Asserts to make sure that we aren't using any skipped combinations.
 		// Asserts to make sure that we are setting all of the combination vars.
 #ifdef _DEBUG
-		bool bAllStaticVarsDefined = m_bCONVERT_TO_SRGB && m_bBASETEXTURE && m_bMULTITEXTURE && m_bREFLECT && m_bREFRACT && m_bABOVEWATER && m_bBLURRY_REFRACT && m_bNORMAL_DECODE_MODE;
+		bool bAllStaticVarsDefined = m_bCONVERT_TO_SRGB && m_bBASETEXTURE && m_bMULTITEXTURE && m_bREFLECT && m_bREFRACT && m_bABOVEWATER && m_bNORMAL_DECODE_MODE;
 		Assert( bAllStaticVarsDefined );
 #endif // _DEBUG
-		return ( 4 * m_nCONVERT_TO_SRGB ) + ( 8 * m_nBASETEXTURE ) + ( 16 * m_nMULTITEXTURE ) + ( 32 * m_nREFLECT ) + ( 64 * m_nREFRACT ) + ( 128 * m_nABOVEWATER ) + ( 256 * m_nBLURRY_REFRACT ) + ( 512 * m_nNORMAL_DECODE_MODE ) + 0;
+		return ( 2 * m_nCONVERT_TO_SRGB ) + ( 4 * m_nBASETEXTURE ) + ( 8 * m_nMULTITEXTURE ) + ( 16 * m_nREFLECT ) + ( 32 * m_nREFRACT ) + ( 64 * m_nABOVEWATER ) + ( 128 * m_nNORMAL_DECODE_MODE ) + 0;
 	}
 };
-#define shaderStaticTest_sdk_water_ps20b psh_forgot_to_set_static_BASETEXTURE + psh_forgot_to_set_static_MULTITEXTURE + psh_forgot_to_set_static_REFLECT + psh_forgot_to_set_static_REFRACT + psh_forgot_to_set_static_ABOVEWATER + psh_forgot_to_set_static_BLURRY_REFRACT + psh_forgot_to_set_static_NORMAL_DECODE_MODE + 0
+#define shaderStaticTest_sdk_water_ps20b psh_forgot_to_set_static_BASETEXTURE + psh_forgot_to_set_static_MULTITEXTURE + psh_forgot_to_set_static_REFLECT + psh_forgot_to_set_static_REFRACT + psh_forgot_to_set_static_ABOVEWATER + psh_forgot_to_set_static_NORMAL_DECODE_MODE + 0
 class sdk_water_ps20b_Dynamic_Index
 {
 private:
@@ -248,7 +223,7 @@ private:
 public:
 	void SetWRITE_DEPTH_TO_DESTALPHA( int i )
 	{
-		Assert( i >= 0 && i <= 1 );
+		Assert( i >= 0 && i <= 0 );
 		m_nWRITE_DEPTH_TO_DESTALPHA = i;
 #ifdef _DEBUG
 		m_bWRITE_DEPTH_TO_DESTALPHA = true;

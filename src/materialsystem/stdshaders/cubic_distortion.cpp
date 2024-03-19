@@ -38,7 +38,7 @@ BEGIN_VS_SHADER_FLAGS( Cubic_Distortion, "Help for Cubic Distortion", SHADER_NOT
 		}
 		return 0;
 	}
-
+	
 	SHADER_DRAW
 	{
 		SHADOW_STATE
