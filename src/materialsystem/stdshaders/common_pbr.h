@@ -70,6 +70,16 @@ float3 Diffuse_OrenNayar(float3 DiffuseColor, float Roughness, float NoV, float 
 
 float3 DoPBRLight(float3 vWorldPos, float3 vWorldNormal, float3 albedo, float3 vPosition, float3 vColor, float3 vEye, float atten_radius, float3 metallness, float3 rough)
 {
+    // Calculate darkness factor based on the dot product of the surface normal and view direction
+    float darknessFactor = dot(vWorldNormal, normalize(vEye - vWorldPos));
+
+    // Define factors to modify metallicness and roughness based on darkness
+    float metallicFactor = 1.0f - darknessFactor; // Invert darkness factor to increase metallicness on darker surfaces
+    float roughnessFactor = 1.0f - darknessFactor; // Invert darkness factor to increase roughness on darker surfaces
+
+    // Adjust the metallic and roughness values based on the factors
+    float3 adjustedMetallic = clamp(metallness * metallicFactor, 0.0f, 0.9f);
+    float3 adjustedRoughness = clamp(rough * roughnessFactor, 0.015f, 1.0f);
 	float3 Li = (vPosition - vWorldPos );
     //float3 L = normalize(vPosition - vWorldPos);
 	float3 V = normalize( vEye - vWorldPos );
