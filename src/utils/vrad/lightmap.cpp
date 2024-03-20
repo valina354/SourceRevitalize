@@ -1819,6 +1819,20 @@ void CreateDirectLights (void)
 		{
 			ParseLightPoint( e );
 		}
+		else if ( !strcmp( name, "light_deferred" ) )
+		{
+			if ( IntForKey( e, "static" ) )
+			{
+				if ( IntForKey( e, "lighttype" ) )
+				{
+					ParseLightSpot( e );
+				}
+				else
+				{
+					ParseLightPoint( e );
+				}
+			}
+		}
 		else
 		{
 			qprintf( "unsupported light entity: \"%s\"\n", name );
