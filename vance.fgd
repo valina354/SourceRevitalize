@@ -652,6 +652,8 @@
 	_constant_attn(string)	: "Constant" : "0"
 	_linear_attn(string)	: "Linear" : "0"
 	_quadratic_attn(string)	: "Quadratic" : "1"
+	
+    static(integer) : "Static Lighting" : 0 : "Set this to 1 if building baked lighting"
 
 	_exponent(integer) : "Focus" : 1
 
@@ -1119,6 +1121,11 @@
 	input InputSetThicknes(float) : "Set the thickness of the clouds."
 	input InputSetCoverage(float) : "Set how many clouds cover the sky."
 	input EnableDynamicSky(integer) : "Set if the sky is on or off"
+]
+
+@SolidClass base(Targetname, Parentname) = func_detail_blocker : 
+	"A brush entity that prevents detail sprites from being placed inside its volume."
+[
 ]
 
 @PointClass base(Item) studio("models/healthvial.mdl") = item_stim : "Stimulant" []
