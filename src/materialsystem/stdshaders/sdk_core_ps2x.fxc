@@ -45,9 +45,11 @@ const float g_CoreColorTexCoordOffset : register( c9 );
 const float3 g_EyePos			: register( c8 );
 const float4 g_FogParams		: register( c11 );
 
-#define SPHERE_CENTER_X 2688.0f
-#define SPHERE_CENTER_Y 12139.0f
-#define SPHERE_CENTER_Z 5170.0f
+const float4 g_SphereParams : register(c12);
+
+#define SPHERE_CENTER_X g_SphereParams.r
+#define SPHERE_CENTER_Y g_SphereParams.g
+#define SPHERE_CENTER_Z g_SphereParams.b
 
 float LengthThroughSphere( float3 vecRayOrigin, float3 vecRayDelta, 
 						  float3 vecSphereCenter, float flRadius, out float alpha )

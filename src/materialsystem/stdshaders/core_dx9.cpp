@@ -36,6 +36,9 @@ BEGIN_VS_SHADER( SDK_Core_DX90,
 		SHADER_PARAM( CORECOLORTEXTURE, SHADER_PARAM_TYPE_TEXTURE, "", "" );
 		SHADER_PARAM( CORECOLORTEXTUREFRAME, SHADER_PARAM_TYPE_INTEGER, "", "" );
 		SHADER_PARAM( FLOWMAPTEXCOORDOFFSET, SHADER_PARAM_TYPE_FLOAT, "0.0", "" );
+		SHADER_PARAM( COREPOSX, SHADER_PARAM_TYPE_FLOAT, "2688.0", "" );
+		SHADER_PARAM( COREPOSY, SHADER_PARAM_TYPE_FLOAT, "12139.0", "" );
+		SHADER_PARAM( COREPOSZ, SHADER_PARAM_TYPE_FLOAT, "5170.0", "" );
 	END_SHADER_PARAMS
 	SHADER_INIT_PARAMS()
 	{
@@ -284,6 +287,13 @@ BEGIN_VS_SHADER( SDK_Core_DX90,
 
 				SetPixelShaderConstant( 9, FLOWMAPTEXCOORDOFFSET );
 			}
+
+			float flParams[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
+			flParams[0] = GetFloatParam( COREPOSX, params, 3.0f );
+			flParams[1] = GetFloatParam( COREPOSY, params, 3.0f );
+			flParams[2] = GetFloatParam( COREPOSZ, params, 3.0f );
+
+			pShaderAPI->SetPixelShaderConstant( 12, flParams, 1 );
 		}
 		Draw();
 	}
