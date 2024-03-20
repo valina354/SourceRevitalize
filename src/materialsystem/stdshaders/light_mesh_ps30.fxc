@@ -18,6 +18,7 @@ float4x4 g_ViewInv : register(c4);
 float4x4 g_ProjInv : register(c8);
 
 float3 g_EyePos : register(c12);
+#define NoAlbedo
 
 struct PS_INPUT
 {
@@ -87,8 +88,11 @@ float4 main( PS_INPUT i ) : COLOR
         }
     }
     
-    float3 lighting = DoPBRLight(worldPos, normals, albedo, lightOrigin, lightColor_InnerCos.xyz, g_EyePos, dist_falloff * spot_falloff, metallness, roughness);
+	#ifdef NoAlbedo
+    float3 lighting = DoPBRLight(worldPos, normals, 0, lightOrigin, lightColor_InnerCos.xyz, g_EyePos, dist_falloff * spot_falloff, metallness, roughness);
+	#else
+	float3 lighting = DoPBRLight(worldPos, normals, albedo, lightOrigin, lightColor_InnerCos.xyz, g_EyePos, dist_falloff * spot_falloff, metallness, roughness);
+	#endif
     
     return float4(lighting.xyz, 1.0f);
 }
-
