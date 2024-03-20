@@ -33,6 +33,7 @@ static const char * const pszShaderReplaceDict[][2] = {
 	"VertexLitGeneric",				"SDK_VertexLitGeneric",
 	"LightmappedGeneric",			"SDK_LightmappedGeneric",
 	"WorldVertexTransition",		"SDK_WorldVertexTransition",
+	"Core",		"SDK_Core",
 	//"LightmappedGeneric_Decal",		"SDK_LightmappedGeneric_Decal",
 };
 static const int iNumShaderReplaceDict = ARRAYSIZE(pszShaderReplaceDict);
