@@ -115,6 +115,8 @@ static ConVar cl_maxrenderable_dist("cl_maxrenderable_dist", "3000", FCVAR_CHEAT
 
 ConVar r_entityclips( "r_entityclips", "1" ); //FIXME: Nvidia drivers before 81.94 on cards that support user clip planes will have problems with this, require driver update? Detect and disable?
 
+ConVar r_post_sunshaft( "r_post_sunshaft", "0", FCVAR_ARCHIVE );
+
 // Matches the version in the engine
 static ConVar r_drawopaqueworld( "r_drawopaqueworld", "1", FCVAR_CHEAT );
 static ConVar r_drawtranslucentworld( "r_drawtranslucentworld", "1", FCVAR_CHEAT );
@@ -150,6 +152,7 @@ static ConVar fog_colorskybox( "fog_colorskybox", "-1 -1 -1", FCVAR_CHEAT );
 static ConVar fog_enableskybox( "fog_enableskybox", "1", FCVAR_CHEAT );
 static ConVar fog_maxdensity( "fog_maxdensity", "-1", FCVAR_CHEAT );
 
+extern void UpdateViewMask(const CViewSetup &view, bool VIEWMODEL, bool combine);
 
 //-----------------------------------------------------------------------------
 // Water-related convars
@@ -172,7 +175,6 @@ static ConVar mat_clipz( "mat_clipz", "1" );
 static ConVar r_screenfademinsize( "r_screenfademinsize", "0" );
 static ConVar r_screenfademaxsize( "r_screenfademaxsize", "0" );
 static ConVar cl_drawmonitors( "cl_drawmonitors", "1" );
-ConVar r_post_sunshaft( "r_post_sunshaft", "0", FCVAR_ARCHIVE, 0 );
 static ConVar r_eyewaterepsilon( "r_eyewaterepsilon", "10.0f", FCVAR_CHEAT );
 
 static ConVar r_csm_angle("r_csm_angle", "0");
@@ -867,6 +869,11 @@ CLIENTEFFECT_REGISTER_BEGIN( PrecachePostProcessingEffects )
 	CLIENTEFFECT_MATERIAL( "dev/blurgaussian_3x3" )
 	CLIENTEFFECT_MATERIAL( "dev/motion_blur" )
 	CLIENTEFFECT_MATERIAL( "dev/upscale" )
+
+	CLIENTEFFECT_MATERIAL( "shaders/sunrays_to_screen" )
+	CLIENTEFFECT_MATERIAL( "shaders/sunrayblurx" )
+	CLIENTEFFECT_MATERIAL( "shaders/sunrayblury" )
+
 
 #ifdef TF_CLIENT_DLL
 	CLIENTEFFECT_MATERIAL( "dev/pyro_blur_filter_y" )
@@ -2350,6 +2357,9 @@ void CViewRender::RenderView( const CViewSetup &viewIn, int nClearFlags, int wha
 		if ((bDrew3dSkybox = pSkyView->Setup(view, &nClearFlags, &nSkyboxVisible)) != false)
 		{
 			AddViewToScene(pSkyView);
+			VPROF_SCOPE_BEGIN( "UpdateViewMask::SkyMask[0]" );
+			UpdateViewMask( view, false, false ); //UPDATE SKY MASK
+			VPROF_SCOPE_END();
 			g_ShaderEditorSystem->UpdateSkymask( false, view.x, view.y, view.width, view.height );
 		}
 		SafeRelease(pSkyView);
@@ -2442,8 +2452,22 @@ void CViewRender::RenderView( const CViewSetup &viewIn, int nClearFlags, int wha
 		pRenderContext->CopyRenderTargetToTextureEx(GetScopeTexture(), 0, &srcRect);
 		pRenderContext.SafeRelease(); // don't want to hold for long periods in case in a locking active share thread mode
 
+
+		// steve - do we even need the viewmask stuff anymore when rendering with depth?
+		// Steve - the viewmask is perf poopy, needs a rewrite
+		VPROF_SCOPE_BEGIN( "UpdateViewMask::ViewModel[0]" );
+		UpdateViewMask( view, true, false );
+		VPROF_SCOPE_END();
+
 		// Now actually draw the viewmodel
 		DrawViewModels( view, whatToDraw & RENDERVIEW_DRAWVIEWMODEL );
+
+		VPROF_SCOPE_BEGIN( "UpdateViewMask::SkyMask[1]" );
+		UpdateViewMask( view, false, bDrew3dSkybox ); //COMBINE SKY MASK
+		VPROF_SCOPE_END();
+		VPROF_SCOPE_BEGIN( "UpdateViewMask::ViewModel[1]" );
+		UpdateViewMask( view, true, true );
+		VPROF_SCOPE_END();
 
 		g_ShaderEditorSystem->UpdateSkymask( bDrew3dSkybox, view.x, view.y, view.width, view.height );
 
@@ -2485,6 +2509,13 @@ void CViewRender::RenderView( const CViewSetup &viewIn, int nClearFlags, int wha
 			}
 			pRenderContext.SafeRelease();
 		}
+
+		// Steve - custom effects here.
+		if ( !building_cubemaps.GetBool() && view.m_bDoBloomAndToneMapping )
+			DoCustomPostProcessing( view );
+
+		// Prevent sound stutter if going slow
+		engine->Sound_ExtraUpdate();
 
 		g_ShaderEditorSystem->CustomPostRender();
 
@@ -5412,7 +5443,7 @@ void CSkyboxView::DrawInternal( view_id_t iSkyBoxViewID, bool bInvokePreAndPostR
 	}
 
 	render->BeginUpdateLightmaps();
-	BuildWorldRenderLists( true, true, -1 );
+	BuildWorldRenderLists( true, -1, true );
 	BuildRenderableRenderLists( iSkyBoxViewID );
 	render->EndUpdateLightmaps();
 

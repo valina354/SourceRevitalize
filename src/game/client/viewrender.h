@@ -439,6 +439,13 @@ public:
 	void			DrawSky(const CViewSetup& view);
 
 	void			PushGBufferRT(bool firstPush = false);
+
+protected:
+	void PerformScreenSpaceEffects( int x, int y, int w, int h );
+	virtual void DoCustomPostProcessing( const CViewSetup &view )
+	{
+	}
+
 private:
 	int				m_BuildWorldListsNumber;
 
@@ -454,7 +461,7 @@ private:
 	bool			DrawOneMonitor( ITexture *pRenderTarget, int cameraNum, C_PointCamera *pCameraEnt, const CViewSetup &cameraView, C_BasePlayer *localPlayer, 
 						int x, int y, int width, int height );
 
-	void			PerformScreenSpaceEffects( int x, int y, int w, int h );
+	//void			PerformScreenSpaceEffects( int x, int y, int w, int h );
 
 	// Overlays
 	void			SetScreenOverlayMaterial( IMaterial *pMaterial );

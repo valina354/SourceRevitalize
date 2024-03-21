@@ -131,6 +131,14 @@ SDK_windowimposter_vs20.fxc
 sdk_core_ps2x.fxc
 sdk_core_vs20.fxc
 
+//sunrays
+fbquad_ps20b.fxc
+fbquad_vsxx.fxc
+skymask_ps20b.fxc
+skymask_vsxx.fxc
+sunrays_calc_ps20b.fxc
+sunrays_calc_vsxx.fxc
+
 //example_model_ps20b.fxc
 //example_model_vs20.fxc
 

@@ -55,6 +55,8 @@ $Project "Shaders (VANCE)"
 			$File	"ae_lensflareshader.cpp"
 			$File	"ae_filmgrainshader.cpp"
 			$File	"SSGI0.cpp"
+			$File	"ss_sunrays.cpp"
+			$File	"skymask.cpp"
 		}
 		
 		$Folder "PBR"

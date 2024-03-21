@@ -45,6 +45,24 @@ ITexture* CBaseClientRenderTargets::CreateCameraTexture( IMaterialSystem* pMater
 		CREATERENDERTARGETFLAGS_HDR );
 }
 
+ITexture *CBaseClientRenderTargets::InitViewMask( IMaterialSystem *pMaterialSystem, const char *szName )
+{
+	/*return materials->CreateNamedRenderTargetTextureEx( szName,
+		128, 128,
+		RT_SIZE_HDR,
+		pMaterialSystem->GetBackBufferFormat(),
+		MATERIAL_RT_DEPTH_NONE,
+		TEXTUREFLAGS_NOMIP | TEXTUREFLAGS_NOLOD | TEXTUREFLAGS_RENDERTARGET | TEXTUREFLAGS_NODEPTHBUFFER | TEXTUREFLAGS_CLAMPS | TEXTUREFLAGS_CLAMPT, 0 );*/
+
+	return pMaterialSystem->CreateNamedRenderTargetTextureEx2(
+		szName,
+		128, 128, RT_SIZE_HDR,
+		pMaterialSystem->GetBackBufferFormat(),
+		MATERIAL_RT_DEPTH_SHARED,
+		TEXTUREFLAGS_CLAMPS | TEXTUREFLAGS_CLAMPT,
+		CREATERENDERTARGETFLAGS_HDR);
+}
+
 //-----------------------------------------------------------------------------
 // Purpose: Called by the engine in material system init and shutdown.
 //			Clients should override this in their inherited version, but the base
@@ -60,6 +78,9 @@ void CBaseClientRenderTargets::InitClientRenderTargets( IMaterialSystem* pMateri
 
 	// Monitors
 	m_CameraTexture.Init( CreateCameraTexture( pMaterialSystem, iCameraTextureSize ) );
+
+	m_ViewMask[0].Init( InitViewMask( pMaterialSystem, "_rt_SkyMask" ) );
+	m_ViewMask[1].Init( InitViewMask( pMaterialSystem, "_rt_ViewmodelMask" ) );
 }
 
 //-----------------------------------------------------------------------------
@@ -75,4 +96,7 @@ void CBaseClientRenderTargets::ShutdownClientRenderTargets()
 
 	// Monitors
 	m_CameraTexture.Shutdown();
+
+	m_ViewMask[0].Shutdown();
+	m_ViewMask[1].Shutdown();
 }

@@ -54,10 +54,13 @@ protected:
 	// Used for the HUD in stereo and head tracking mode
 	CTextureReference		m_UITexture;
 
+	CTextureReference m_ViewMask[2];
+
 	// Init functions for the common render targets
 	ITexture* CreateWaterReflectionTexture( IMaterialSystem* pMaterialSystem, int iSize = 1024 );
 	ITexture* CreateWaterRefractionTexture( IMaterialSystem* pMaterialSystem, int iSize = 1024 );
 	ITexture* CreateCameraTexture( IMaterialSystem* pMaterialSystem, int iSize = 256 );
+	ITexture *InitViewMask( IMaterialSystem *pMaterialSystem, const char *szName );
 
 };
 

@@ -55,6 +55,12 @@ SDK_windowimposter_ps2x.fxc-----SDK_windowimposter_ps30
 SDK_windowimposter_vs20.fxc-----SDK_windowimposter_vs30
 sdk_core_ps2x.fxc-----sdk_core_ps30
 sdk_core_vs20.fxc-----sdk_core_vs30
+fbquad_ps20b.fxc-----fbquad_ps30
+fbquad_vsxx.fxc-----fbquad_vs30
+skymask_ps20b.fxc-----skymask_ps30
+skymask_vsxx.fxc-----skymask_vs30
+sunrays_calc_ps20b.fxc-----sunrays_calc_ps30
+sunrays_calc_vsxx.fxc-----sunrays_calc_vs30
 lightpass_ps30.fxc-----lightpass_ps30
 lightpass_vs30.fxc-----lightpass_vs30
 deferred_pointlights_ps30.fxc-----deferred_pointlights_ps30

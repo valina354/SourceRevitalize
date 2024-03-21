@@ -953,9 +953,6 @@ private:
 	CMaterialReference m_SunShaftDebug;
 };
 
-// Sun Shafts
-ADD_SCREENSPACE_EFFECT( CSunShaftEffect, c17_sunshaft );
-
 ConVar r_post_sunshaft_blur( "r_post_sunshaft_blur", "1", FCVAR_ARCHIVE );
 ConVar r_post_sunshaft_blur_amount( "r_post_sunshaft_blur_amount", "0.5", FCVAR_CHEAT );
 void CSunShaftEffect::Init( void )
@@ -989,10 +986,8 @@ ConVar r_post_sunshaft_debug( "r_post_sunshaft_debug", "0", FCVAR_CHEAT );
 
 bool CSunShaftEffect::ShaftsRendering( void )
 {
-	return ( r_post_sunshaft.GetBool()  && IsEnabled() );
+	return ( r_post_sunshaft.GetBool() /*&& engine->IsSkyboxVisibleFromPoint(CurrentViewOrigin())*/ && IsEnabled() );
 }
-
-
 
 void CSunShaftEffect::Render( int x, int y, int w, int h )
 {
@@ -1067,3 +1062,6 @@ void CSunShaftEffect::Render( int x, int y, int w, int h )
 	//Render our sun to the screen additively.
 	DrawScreenEffectMaterial( m_SunShaftBlendMat, x, y, w, h );
 }
+
+// Sun Shafts
+ADD_SCREENSPACE_EFFECT(CSunShaftEffect, c17_sunshaft);
