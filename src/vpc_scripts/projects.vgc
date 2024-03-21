@@ -148,3 +148,8 @@ $Project "minimp3"
 {
 	"minimp3\vaudio_minimp3.vpc" [$WIN32]
 }
+
+$Project "video_services"
+{
+    "video_services/video_services/video_services.vpc"
+}

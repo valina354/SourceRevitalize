@@ -1074,6 +1074,35 @@ int CHLClient::Init( CreateInterfaceFn appSystemFactory, CreateInterfaceFn physi
 	if (!g_pMatSystemSurface)
 		return false;
 
+	#define USE_WEBM
+	#ifdef USE_WEBM
+	// disconnect the original video services
+	if ( g_pVideo )
+	{
+		g_pVideo->Shutdown();
+		g_pVideo->Disconnect();
+		g_pVideo = nullptr;
+	}
+
+	// get video_services.dll from our game's bin folder
+	char video_service_path[MAX_PATH];
+	Q_snprintf( video_service_path, sizeof( video_service_path ), "%s\\bin\\video_services.dll", engine->GetGameDirectory() );
+
+	CSysModule *video_services_module = Sys_LoadModule( video_service_path );
+	if ( video_services_module != nullptr )
+	{
+		CreateInterfaceFn VideoServicesFactory = Sys_GetFactory( video_services_module );
+		if ( VideoServicesFactory )
+		{
+			g_pVideo = (IVideoServices *)VideoServicesFactory( VIDEO_SERVICES_INTERFACE_VERSION, NULL );
+			if ( g_pVideo != nullptr )
+			{
+				g_pVideo->Connect( appSystemFactory );
+			}
+		}
+	}
+	#endif
+
 #ifdef WORKSHOP_IMPORT_ENABLED
 	if ( !ConnectDataModel( appSystemFactory ) )
 		return false;

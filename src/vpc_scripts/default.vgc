@@ -21,4 +21,3 @@ $Conditional "SOURCESDK" "1"
 
 $Include "vpc_scripts\projects.vgc"
 $Include "vpc_scripts\groups.vgc"
-

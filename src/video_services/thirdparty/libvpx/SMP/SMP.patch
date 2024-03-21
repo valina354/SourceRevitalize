@@ -1,0 +1,181 @@
+diff --git a/vp8/common/x86/idctllm_mmx.asm b/vp8/common/x86/idctllm_mmx.asm
+index 6cea86fe0..6f06c7afa 100644
+--- a/vp8/common/x86/idctllm_mmx.asm
++++ b/vp8/common/x86/idctllm_mmx.asm
+@@ -11,6 +11,7 @@
+ 
+ %include "vpx_ports/x86_abi_support.asm"
+ 
++section .text
+ ; /****************************************************************************
+ ; * Notes:
+ ; *
+diff --git a/vp8/common/x86/idctllm_sse2.asm b/vp8/common/x86/idctllm_sse2.asm
+index bb79d2da3..410f3112e 100644
+--- a/vp8/common/x86/idctllm_sse2.asm
++++ b/vp8/common/x86/idctllm_sse2.asm
+@@ -11,6 +11,7 @@
+ 
+ %include "vpx_ports/x86_abi_support.asm"
+ 
++section .text
+ ;void vp8_idct_dequant_0_2x_sse2
+ ; (
+ ;   short *qcoeff       - 0
+diff --git a/vp8/common/x86/loopfilter_block_sse2_x86_64.asm b/vp8/common/x86/loopfilter_block_sse2_x86_64.asm
+index 8d12f5385..b8e51a07f 100644
+--- a/vp8/common/x86/loopfilter_block_sse2_x86_64.asm
++++ b/vp8/common/x86/loopfilter_block_sse2_x86_64.asm
+@@ -11,6 +11,7 @@
+ 
+ %include "vpx_ports/x86_abi_support.asm"
+ 
++section .text
+ %macro LF_ABS 2
+         ; %1 value not preserved
+         ; %2 value preserved
+diff --git a/vp8/common/x86/loopfilter_sse2.asm b/vp8/common/x86/loopfilter_sse2.asm
+index ce5c31313..defb5b7f1 100644
+--- a/vp8/common/x86/loopfilter_sse2.asm
++++ b/vp8/common/x86/loopfilter_sse2.asm
+@@ -10,6 +10,8 @@
+ 
+ 
+ %include "vpx_ports/x86_abi_support.asm"
++
++section .text
+ %define _t0 0
+ %define _t1 _t0 + 16
+ %define _p3 _t1 + 16
+diff --git a/vp8/common/x86/subpixel_sse2.asm b/vp8/common/x86/subpixel_sse2.asm
+index 94e14aed6..89acbbecd 100644
+--- a/vp8/common/x86/subpixel_sse2.asm
++++ b/vp8/common/x86/subpixel_sse2.asm
+@@ -11,6 +11,7 @@
+ 
+ %include "vpx_ports/x86_abi_support.asm"
+ 
++section .text
+ %define BLOCK_HEIGHT_WIDTH 4
+ %define VP8_FILTER_WEIGHT 128
+ %define VP8_FILTER_SHIFT  7
+diff --git a/vp8/common/x86/subpixel_ssse3.asm b/vp8/common/x86/subpixel_ssse3.asm
+index 17247227d..a46b510f6 100644
+--- a/vp8/common/x86/subpixel_ssse3.asm
++++ b/vp8/common/x86/subpixel_ssse3.asm
+@@ -11,6 +11,7 @@
+ 
+ %include "vpx_ports/x86_abi_support.asm"
+ 
++section .text
+ %define BLOCK_HEIGHT_WIDTH 4
+ %define VP8_FILTER_WEIGHT 128
+ %define VP8_FILTER_SHIFT  7
+diff --git a/vp8/encoder/x86/copy_sse3.asm b/vp8/encoder/x86/copy_sse3.asm
+index c40b2d8bf..34c927b25 100644
+--- a/vp8/encoder/x86/copy_sse3.asm
++++ b/vp8/encoder/x86/copy_sse3.asm
+@@ -10,6 +10,7 @@
+ 
+ %include "vpx_ports/x86_abi_support.asm"
+ 
++section .text
+ %macro STACK_FRAME_CREATE_X3 0
+ %if ABI_IS_32BIT
+   %define     src_ptr       rsi
+diff --git a/vp8/encoder/x86/dct_sse2.asm b/vp8/encoder/x86/dct_sse2.asm
+index 3c28cb902..c50db001c 100644
+--- a/vp8/encoder/x86/dct_sse2.asm
++++ b/vp8/encoder/x86/dct_sse2.asm
+@@ -11,6 +11,7 @@
+ 
+ %include "vpx_ports/x86_abi_support.asm"
+ 
++section .text
+ %macro STACK_FRAME_CREATE 0
+ %if ABI_IS_32BIT
+   %define       input       rsi
+diff --git a/vpx_dsp/x86/deblock_sse2.asm b/vpx_dsp/x86/deblock_sse2.asm
+index b3af677d2..7b65bb4a7 100644
+--- a/vpx_dsp/x86/deblock_sse2.asm
++++ b/vpx_dsp/x86/deblock_sse2.asm
+@@ -11,6 +11,7 @@
+ 
+ %include "vpx_ports/x86_abi_support.asm"
+ 
++section .text
+ ;macro in deblock functions
+ %macro FIRST_2_ROWS 0
+         movdqa      xmm4,       xmm0
+diff --git a/vpx_dsp/x86/ssim_opt_x86_64.asm b/vpx_dsp/x86/ssim_opt_x86_64.asm
+index 41ffbb07e..efb7759f5 100644
+--- a/vpx_dsp/x86/ssim_opt_x86_64.asm
++++ b/vpx_dsp/x86/ssim_opt_x86_64.asm
+@@ -10,6 +10,7 @@
+ 
+ %include "vpx_ports/x86_abi_support.asm"
+ 
++section .text
+ ; tabulate_ssim - sums sum_s,sum_r,sum_sq_s,sum_sq_r, sum_sxr
+ %macro TABULATE_SSIM 0
+         paddusw         xmm15, xmm3  ; sum_s
+diff --git a/vpx_dsp/x86/vpx_high_subpixel_8t_sse2.asm b/vpx_dsp/x86/vpx_high_subpixel_8t_sse2.asm
+index fc301fb39..318cb2682 100644
+--- a/vpx_dsp/x86/vpx_high_subpixel_8t_sse2.asm
++++ b/vpx_dsp/x86/vpx_high_subpixel_8t_sse2.asm
+@@ -11,6 +11,7 @@
+ 
+ %include "vpx_ports/x86_abi_support.asm"
+ 
++section .text
+ ;Note: tap3 and tap4 have to be applied and added after other taps to avoid
+ ;overflow.
+ 
+diff --git a/vpx_dsp/x86/vpx_high_subpixel_bilinear_sse2.asm b/vpx_dsp/x86/vpx_high_subpixel_bilinear_sse2.asm
+index bd51c75bc..e5f94fc76 100644
+--- a/vpx_dsp/x86/vpx_high_subpixel_bilinear_sse2.asm
++++ b/vpx_dsp/x86/vpx_high_subpixel_bilinear_sse2.asm
+@@ -10,6 +10,7 @@
+ 
+ %include "vpx_ports/x86_abi_support.asm"
+ 
++section .text
+ %macro HIGH_GET_PARAM_4 0
+     mov         rdx, arg(5)                 ;filter ptr
+     mov         rsi, arg(0)                 ;src_ptr
+diff --git a/vpx_dsp/x86/vpx_subpixel_8t_sse2.asm b/vpx_dsp/x86/vpx_subpixel_8t_sse2.asm
+index c8455e13a..ba052c85f 100644
+--- a/vpx_dsp/x86/vpx_subpixel_8t_sse2.asm
++++ b/vpx_dsp/x86/vpx_subpixel_8t_sse2.asm
+@@ -11,6 +11,7 @@
+ 
+ %include "vpx_ports/x86_abi_support.asm"
+ 
++section .text
+ ;Note: tap3 and tap4 have to be applied and added after other taps to avoid
+ ;overflow.
+ 
+diff --git a/vpx_dsp/x86/vpx_subpixel_bilinear_sse2.asm b/vpx_dsp/x86/vpx_subpixel_bilinear_sse2.asm
+index 65790b1c2..aa3f094bc 100644
+--- a/vpx_dsp/x86/vpx_subpixel_bilinear_sse2.asm
++++ b/vpx_dsp/x86/vpx_subpixel_bilinear_sse2.asm
+@@ -10,6 +10,7 @@
+ 
+ %include "vpx_ports/x86_abi_support.asm"
+ 
++section .text
+ %macro GET_PARAM_4 0
+     mov         rdx, arg(5)                 ;filter ptr
+     mov         rsi, arg(0)                 ;src_ptr
+diff --git a/vpx_dsp/x86/vpx_subpixel_bilinear_ssse3.asm b/vpx_dsp/x86/vpx_subpixel_bilinear_ssse3.asm
+index 32e3cd3d9..a370eeeae 100644
+--- a/vpx_dsp/x86/vpx_subpixel_bilinear_ssse3.asm
++++ b/vpx_dsp/x86/vpx_subpixel_bilinear_ssse3.asm
+@@ -10,6 +10,7 @@
+ 
+ %include "vpx_ports/x86_abi_support.asm"
+ 
++section .text
+ %macro GET_PARAM_4 0
+     mov         rdx, arg(5)                 ;filter ptr
+     mov         rsi, arg(0)                 ;src_ptr
