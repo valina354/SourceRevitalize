@@ -144,3 +144,7 @@ $Project "gamepadui"
     "game\gamepadui\gamepadui_vance.vpc" [$VANCE]
 }
 
+$Project "minimp3"
+{
+	"minimp3\vaudio_minimp3.vpc" [$WIN32]
+}
