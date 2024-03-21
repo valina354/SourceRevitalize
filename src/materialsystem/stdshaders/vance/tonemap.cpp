@@ -10,8 +10,8 @@
 #include "SDK_screenspaceeffect_vs30.inc"
 #include "Vance_Tonemap_ps30.inc"
 
-ConVar r_post_tonemap_underexposure("r_post_tonemap_underexposure", "1");
-ConVar r_post_tonemap_overexposure("r_post_tonemap_overexposure", "1");
+ConVar r_post_tonemap_underexposure("r_post_tonemap_underexposure", "0.5");
+ConVar r_post_tonemap_overexposure("r_post_tonemap_overexposure", "1.2");
 ConVar r_post_tonemap_exposure("r_post_tonemap_exposure", "1");
 ConVar r_post_tonemap_mode("r_post_tonemap_mode", "1");
 ConVar r_post_tonemap_autoexposure( "r_post_tonemap_autoexposure", "1" );
