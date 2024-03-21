@@ -130,6 +130,17 @@ public:
 	void GetPerformanceSettings( physics_performanceparams_t* pOutput ) const override;
 	void SetPerformanceSettings( const physics_performanceparams_t* pSettings ) override;
 
+	// physics params related
+	inline float MaxVelocity() const;
+	inline float MaxAngularVelocity() const;
+	// most likely will go unused
+	inline int MaxCollisionsPerObjectPerTimestep() const;
+	inline int MaxCollisionChecksPerTimestep() const;
+	inline float LookAheadTimeObjectsVsWorld() const;
+	inline float LookAheadTimeObjectsVsObject() const;
+	inline float MinFrictionMass() const;
+	inline float MaxFrictionMass() const;
+
 	void ReadStats( physics_stats_t* pOutput ) override;
 	void ClearStats() override;
 
@@ -172,7 +183,7 @@ public:
 private:
 
 	void RemoveBodyAndDeleteObject( JoltPhysicsObject* pObject );
-	void DeleteDeadObjects();
+	void DeleteDeadObjects(bool delBodies = false);
 
 	template <typename T>
 	void AddPhysicsSaveRestorePointer( uintp oldPtr, T* newPtr );
