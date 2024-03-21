@@ -220,7 +220,7 @@ public:
 
 	virtual bool				ShouldReceiveProjectedTextures( int flags )
 	{
-		return false;
+		return true;
 	}
 
 

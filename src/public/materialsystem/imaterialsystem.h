@@ -71,7 +71,7 @@ typedef uint64 VertexFormat_t;
 #ifdef POSIX
 #define ABSOLUTE_MINIMUM_DXLEVEL 90
 #else
-#define ABSOLUTE_MINIMUM_DXLEVEL 80
+#define ABSOLUTE_MINIMUM_DXLEVEL 95
 #endif
 
 enum ShaderParamType_t 
@@ -381,7 +381,7 @@ struct MaterialSystem_SortInfo_t
 };
 
 
-#define MAX_FB_TEXTURES 4
+#define MAX_FB_TEXTURES 16
 
 //-----------------------------------------------------------------------------
 // Information about each adapter
@@ -421,10 +421,10 @@ struct FlashlightState_t
 {
 	FlashlightState_t()
 	{
-		m_bEnableShadows = false;						// Provide reasonable defaults for shadow depth mapping parameters
+		m_bEnableShadows = true;						// Provide reasonable defaults for shadow depth mapping parameters
 		m_bDrawShadowFrustum = false;
 		m_flShadowMapResolution = 1024.0f;
-		m_flShadowFilterSize = 0.5f;
+		m_flShadowFilterSize = 1.0f;
 		m_flShadowSlopeScaleDepthBias = 16.0f;
 		m_flShadowDepthBias = 0.0005f;
 		m_flShadowJitterSeed = 0.0f;

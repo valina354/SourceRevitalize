@@ -93,7 +93,7 @@ public:
 	}
 
 	// Should this object be able to have shadows cast onto it?
-	virtual bool	ShouldReceiveProjectedTextures( int flags ) { return false; }
+	virtual bool	ShouldReceiveProjectedTextures( int flags ) { return true; }
 
 // Static members
 public:
