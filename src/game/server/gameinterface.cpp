@@ -578,7 +578,7 @@ bool CServerGameDLL::DLLInit( CreateInterfaceFn appSystemFactory,
 	if ( cvar == NULL )
 		return false;
 
-#ifndef _X360
+#ifndef NO_STEAM
 	s_SteamAPIContext.Init();
 	s_SteamGameServerAPIContext.Init();
 #endif
@@ -792,7 +792,7 @@ void CServerGameDLL::DLLShutdown( void )
 	gamestatsuploader->InitConnection();
 #endif
 
-#ifndef _X360
+#ifndef NO_STEAM
 	s_SteamAPIContext.Clear(); // Steam API context shutdown
 	s_SteamGameServerAPIContext.Clear();
 #endif	

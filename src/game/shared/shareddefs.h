@@ -31,6 +31,13 @@
 #endif
 #define ANIMATION_CYCLE_MINFRAC		(1.0f / (1<<ANIMATION_CYCLE_BITS))
 
+//#define STANDALONE_GAME
+
+#ifdef STANDALONE_GAME
+#define NO_STEAM
+#endif // STANDALONE_GAME
+
+
 // Each mod defines these for itself.
 class CViewVectors
 {

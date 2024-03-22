@@ -903,6 +903,7 @@ void CVoteController::TrackVoteCaller( CBasePlayer *pPlayer )
 	if ( !pPlayer )
 		return;
 
+	#ifndef NO_STEAM
 	CSteamID steamID;
 	pPlayer->GetSteamID( &steamID );
 
@@ -915,6 +916,7 @@ void CVoteController::TrackVoteCaller( CBasePlayer *pPlayer )
 	}
 
 	m_VoteCallers.Insert( steamID.ConvertToUint64(), gpGlobals->curtime + sv_vote_creation_timer.GetInt() );
+#endif // !NO_STEAM
 };
 
 //-----------------------------------------------------------------------------
@@ -926,8 +928,10 @@ bool CVoteController::CanEntityCallVote( CBasePlayer *pPlayer, int &nCooldown, v
 		return false;
 
 #ifndef _DEBUG
+	#ifndef NO_STEAM
 	CSteamID steamID;
 	pPlayer->GetSteamID( &steamID );
+
 
 	// Has this SteamID tried to call a vote recently?
 	int iIdx = m_VoteCallers.Find( steamID.ConvertToUint64() );
@@ -944,6 +948,7 @@ bool CVoteController::CanEntityCallVote( CBasePlayer *pPlayer, int &nCooldown, v
 		// Expired
 		m_VoteCallers.Remove( iIdx );
 	}
+	#endif
 #endif
 
 	return true;

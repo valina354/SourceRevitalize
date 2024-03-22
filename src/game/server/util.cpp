@@ -575,6 +575,10 @@ CBasePlayer	*UTIL_PlayerByIndex( int playerIndex )
 
 CBasePlayer *UTIL_PlayerBySteamID( const CSteamID &steamID )
 {
+#ifndef NO_STEAM
+
+
+
 	CSteamID steamIDPlayer;
 	for ( int i = 1; i <= gpGlobals->maxClients; i++ )
 	{
@@ -588,7 +592,9 @@ CBasePlayer *UTIL_PlayerBySteamID( const CSteamID &steamID )
 		if ( steamIDPlayer == steamID )
 			return pPlayer;
 	}
+#endif // !NO_STEAM
 	return NULL;
+
 }
 
 CBasePlayer* UTIL_PlayerByName( const char *name )
