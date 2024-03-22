@@ -102,6 +102,57 @@ void CTonemap::Render(int x, int y, int w, int h)
 	DrawScreenEffectMaterial(m_Tonemap, x, y, w, h);
 }
 
+class CEyeAdaption : public IScreenSpaceEffect
+{
+public:
+	CEyeAdaption( void ){};
+
+	virtual void Init( void );
+	virtual void Shutdown( void );
+	virtual void SetParameters( KeyValues *params ){};
+	virtual void Enable( bool bEnable )
+	{
+		m_bEnabled = bEnable;
+	}
+	virtual bool IsEnabled()
+	{
+		return m_bEnabled;
+	}
+
+	virtual void Render( int x, int y, int w, int h );
+
+private:
+	bool m_bEnabled;
+
+	CMaterialReference m_EyeAdaption;
+};
+
+// Tonemap
+ADD_SCREENSPACE_EFFECT( CEyeAdaption, Eye_Adaption );
+
+void CEyeAdaption::Init( void )
+{
+	PrecacheMaterial( "shaders/eyeadaption" );
+
+	m_EyeAdaption.Init( materials->FindMaterial( "shaders/eyeadaption", TEXTURE_GROUP_PIXEL_SHADERS, true ) );
+}
+
+void CEyeAdaption::Shutdown( void )
+{
+	m_EyeAdaption.Shutdown();
+}
+
+ConVar r_post_eyeadaption( "r_post_eyeadaption", "1", FCVAR_ARCHIVE );
+void CEyeAdaption::Render( int x, int y, int w, int h )
+{
+	VPROF( "CEYEADAPTION::Render" );
+
+	if ( !r_post_eyeadaption.GetBool() || ( IsEnabled() == false ) )
+		return;
+
+	DrawScreenEffectMaterial( m_EyeAdaption, x, y, w, h );
+}
+
 void CSSAO::Init(void)
 {
 	PrecacheMaterial("shaders/ssgi");

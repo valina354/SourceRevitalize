@@ -1,0 +1,80 @@
+// STATIC: "CONVERT_TO_SRGB" "0..1"    [ps20b][= g_pHardwareConfig->NeedsShaderSRGBConversion()] [PC]
+// STATIC: "CONVERT_TO_SRGB" "0..0"    [= 0] [XBOX]
+
+#define HDRTYPE HDR_TYPE_NONE
+#include "common_ps_fxc.h"
+
+sampler2D FBSampler : register(s0);
+
+struct PS_INPUT
+{
+    float2 texCoord : TEXCOORD0;
+};
+
+uniform float3 LumCoeff = float3(0.212656, 0.715158, 0.072186);
+uniform float Frametime;
+
+uniform float fAdp_BrightenMidtones = 0.2; // Adaptation strength for midtones
+uniform float fAdp_BrightenShadows = 0.1;   // Adaptation strength for shadows
+uniform float fAdp_BrightenHighlights = 0.1; // Adaptation strength for highlights
+
+float PS_Luma(float4 pos : SV_Position, float2 texcoord : TEXCOORD) : SV_Target
+{
+    float4 color = tex2D(FBSampler, texcoord);
+    float luma = dot(color.xyz, LumCoeff);
+    return luma;
+}
+
+float PS_AvgLuma(float4 pos : SV_Position, float2 texcoord : TEXCOORD) : SV_Target
+{
+    // Implement averaging of luminance here
+    float avgLuma = 0.0;
+    for (int i = -1; i <= 1; ++i) {
+        for (int j = -1; j <= 1; ++j) {
+            float2 sampleCoord = texcoord + float2(i, j) * 0.5; // Adjust the step size as needed
+            avgLuma += tex2D(FBSampler, sampleCoord).r;
+        }
+    }
+    avgLuma /= 9.0; // Adjust based on the number of samples taken
+    return avgLuma;
+}
+
+float AdaptionDelta(float luma, float strengthMidtones, float strengthShadows, float strengthHighlights)
+{
+    // Calculate the adaptation delta based on current luminance and strength parameters
+    float midtones = (4.0 * strengthMidtones - strengthHighlights - strengthShadows) * luma * (1.0 - luma);
+    float shadows = strengthShadows * (1.0 - luma);
+    float highlights = strengthHighlights * luma;
+    float delta = midtones + shadows + highlights;
+    return delta;
+}
+
+float4 PS_Adaption(float4 pos : SV_Position, float2 texcoord : TEXCOORD) : SV_Target
+{
+    // Calculate the new scene color based on adaptation delta and apply it
+    float4 color = tex2D(FBSampler, texcoord);
+    float avgLuma = PS_AvgLuma(pos, texcoord);
+    float adaptationDelta = AdaptionDelta(avgLuma, fAdp_BrightenMidtones, fAdp_BrightenShadows, fAdp_BrightenHighlights);
+    color.rgb += adaptationDelta; // Adjust brightness based on adaptation delta
+    return color;
+}
+
+float PS_StoreAvgLuma(float4 pos : SV_Position, float2 texcoord : TEXCOORD) : SV_Target
+{
+    // Store the calculated average luminance value for future use
+    float avgLuma = PS_AvgLuma(pos, texcoord);
+    return avgLuma;
+}
+
+float4 main(PS_INPUT i) : SV_Target
+{
+    // Map texcoord from [0, 1] range to [-1, 1] range
+    float2 screenPos = 2.0 * i.texCoord - 1.0;
+    screenPos.y *= -1.0; // Invert Y-axis to match screen space
+
+    // Construct SV_Position with normalized device coordinates
+    float4 pos = float4(screenPos, 0.0, 1.0);
+
+    // Call PS_Adaption function with corrected SV_Position
+    return PS_Adaption(pos, i.texCoord);
+}

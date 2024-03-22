@@ -139,6 +139,10 @@ skymask_vsxx.fxc
 sunrays_calc_ps20b.fxc
 sunrays_calc_vsxx.fxc
 
+
+//eye adaption
+eye_adaption_ps30.fxc
+
 //example_model_ps20b.fxc
 //example_model_vs20.fxc
 
