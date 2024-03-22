@@ -39,8 +39,8 @@ BEGIN_VS_SHADER( ScreenBlood, "Help for Screen Blood" )
 	
 	SHADER_FALLBACK
 	{
-		// Requires SM3.0 or above.
-		if ( !g_pHardwareConfig->SupportsShaderModel_3_0() )
+		// Requires DX9 + above
+		if ( g_pHardwareConfig->GetDXSupportLevel() < 90 )
 		{
 			Assert( 0 );
 			return "Wireframe";
