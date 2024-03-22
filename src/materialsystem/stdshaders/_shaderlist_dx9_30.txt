@@ -143,6 +143,10 @@ sunrays_calc_vsxx.fxc
 //eye adaption
 eye_adaption_ps30.fxc
 
+//screen blood
+screenblood_ps30.fxc
+screenblood_vs20.fxc
+
 //example_model_ps20b.fxc
 //example_model_vs20.fxc
 

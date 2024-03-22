@@ -57,6 +57,7 @@ $Project "Shaders (VANCE)"
 			$File	"SSGI0.cpp"
 			$File	"ss_sunrays.cpp"
 			$File	"skymask.cpp"
+			$File	"screenblood.cpp"
 		}
 		
 		$Folder "PBR"
