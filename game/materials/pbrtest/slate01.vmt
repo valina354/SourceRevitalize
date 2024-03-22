@@ -4,10 +4,6 @@
    "$roughness" "pbrtest\slate01_rough"
    "$normalmap" "pbrtest\slate01_bump"
    "$ao" "pbrtest\slate01_ao"
-   //Parallax mapping
-	$parallax "1"
-	$parallaxcenter "0.5" //controls the height of the highest point on your heightmap. Higher values = Closer to the applied face. Make sure this is adjusted so the highest point is flush with the floor/wall!
-	$parallaxdepth "10" //controls the intensity of the heightmap. Higher values = more depth
    
    "$envmap" "env_cubemap"
 }

@@ -5,8 +5,10 @@
   "$ao" "pbrtest\redbrick01_ao"
   "$roughness" "pbrtest\redbrick01_rough"
   "$envmap" "env_cubemap"
-  "$parallax" "1"
-	"$parallaxdepth" "0.25"
-    "$parallaxcenter" "0.5"
+  "$PARALLAXDEPTH" "0.01"
+  "$ParallaxScaling" "0.4"
+  "$PARALLAXSTEP" "1"
+
+
 
 }

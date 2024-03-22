@@ -1,0 +1,7 @@
+"LightmappedPBR"
+{
+  "$basetexture" "showcasevidpbr\tile\tiledfloor01_diff"
+  "$normalmap" "showcasevidpbr\tile\tiledfloor01_norm"
+  "$roughness" "showcasevidpbr\tile\tiledfloor01_rough"
+  "$ao" "showcasevidpbr\tile\tiledfloor01_ao"
+}

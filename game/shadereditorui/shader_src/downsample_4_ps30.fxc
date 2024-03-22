@@ -20,7 +20,7 @@ sampler _Sampler_00		: register( s0 );
 const float2 _g_TexelSize		: register( c16 );
 
 // Arrays
-static const float2 g_cArray_2356[4] =
+static const float2 g_cArray_391[4] =
 {
 	float2( 0.000000f, 0.000000f ),
 	float2( 2.000000f, 0.000000f ),
@@ -49,7 +49,7 @@ PS_OUTPUT main( const PS_INPUT In )
 	for ( int _var2 = 0; _var2 < 4; _var2++ )
 	{
 		float2 _var3 = _var1;
-		float2 _var4 = g_cArray_2356[_var2] * _g_TexelSize;
+		float2 _var4 = g_cArray_391[_var2] * _g_TexelSize;
 		_var3 = _var3 + _var4;
 		float4 _var5 = tex2D( _Sampler_00, _var3 ).rgba;
 		_var0 = _var0 + _var5;

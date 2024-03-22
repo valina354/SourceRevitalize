@@ -1,6 +1,6 @@
 "cubic_distortion"
 {
-	"$FBTEXTURE"		"_rt_FullFrameFB" 
+	"$FBTEXTURE"		"_rt_VanceHDR" 
 	"$DISTORTION"		"-0.15"
 	"$CUBICDISTORTION"	"0.5"
 	"$ignorez"		1

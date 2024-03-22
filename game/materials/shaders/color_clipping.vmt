@@ -1,6 +1,6 @@
 "color_clipping"
 {
-	"$FBTEXTURE"		"_rt_FullFrameFB" 
+	"$FBTEXTURE"		"_rt_VanceHDR" 
 	"$MINCOLOR"		"[0 0 0 1]"
 	"$MAXCOLOR"		"[1 1 1 1]"
 	"$SQUISH"		1

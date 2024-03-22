@@ -1,0 +1,9 @@
+"VertexlitPBR"
+{
+ "$basetexture" "models\pbrprop\sofa_02_diff"
+ "$roughness" "models\pbrprop\sofa_02_norm"
+ "$metalness" "models\pbrprop\sofa_02_metal"
+ "$normalmap" "models\pbrprop\sofa_02_rough"
+ 
+ "$envmap" "env_cubemap"
+}

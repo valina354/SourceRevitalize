@@ -1,7 +1,5 @@
-"nightvision"
+"editor_shader"
 {
-	"$FBTEXTURE"		"_rt_FullFrameFB" 
-	"$FINENOISETEX"		"effects/shaders/nightvision_noise"
-	"$SPECTRUMTEX"	"effects/shaders/nightvision_spectrum"
-	"$ignorez"		1
+	"$shadername"	"postproc_nightvision"
+	"$MUTABLE_01" "1"
 }

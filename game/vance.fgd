@@ -37,6 +37,482 @@
 	output OnHacked(void) : "Fired when this object is hacked."
 ]
 
+@SolidClass base(Targetname) sphere(DisappearDist) sphere(DisappearMaxDist) = func_lod : 
+	"Brush-built model that fades out over a specified distance. Useful for creating world detail that doesn't need to be drawn far away, for performance reasons."
+[
+	DisappearDist(integer)    : "Disappear Distance" : 2000 : "Distance at which these brushes should start to fade out."
+	DisappearMaxDist(integer)    : "Maximum Disappear Distance" : 0 : "If specified, this would be distance at which these brushes should fade out completely. If 0, it will combine the regular disappear distance with the value stored in the 'lod_TransitionDist' convar, which is 800 by default."
+	Solid(choices) : "Solid" : 0 : "Set whether or not these brushes should collide with other entities." =
+	[
+		0: "Solid"
+		1: "Nonsolid"
+	]
+]
+
+@PointClass base(Targetname, Parentname, Angles) studio("models/editor/cone_helper.mdl") line(255 255 255, targetname, cpoint1) line(255 255 255, targetname, cpoint2) line(255 255 255, targetname, cpoint3) line(255 255 255, targetname, cpoint4) line(255 255 255, targetname, cpoint5) line(255 255 255, targetname, cpoint6) line(255 255 255, targetname, cpoint7) line(255 255 255, targetname, cpoint8) line(255 255 255, targetname, cpoint9) line(255 255 255, targetname, cpoint10) line(255 255 255, targetname, cpoint11) line(255 255 255, targetname, cpoint12) line(255 255 255, targetname, cpoint13) line(255 255 255, targetname, cpoint14) line(255 255 255, targetname, cpoint15) line(255 255 255, targetname, cpoint16) line(255 255 255, targetname, cpoint17) line(255 255 255, targetname, cpoint18) line(255 255 255, targetname, cpoint19) line(255 255 255, targetname, cpoint20) line(255 255 255, targetname, cpoint21) line(255 255 255, targetname, cpoint22) line(255 255 255, targetname, cpoint23) line(255 255 255, targetname, cpoint24) line(255 255 255, targetname, cpoint25) line(255 255 255, targetname, cpoint26) line(255 255 255, targetname, cpoint27) line(255 255 255, targetname, cpoint28) line(255 255 255, targetname, cpoint29) line(255 255 255, targetname, cpoint30) line(255 255 255, targetname, cpoint31) line(255 255 255, targetname, cpoint32) line(255 255 255, targetname, cpoint33) line(255 255 255, targetname, cpoint34) line(255 255 255, targetname, cpoint35) line(255 255 255, targetname, cpoint36) line(255 255 255, targetname, cpoint37) line(255 255 255, targetname, cpoint38) line(255 255 255, targetname, cpoint39) line(255 255 255, targetname, cpoint40) line(255 255 255, targetname, cpoint41) line(255 255 255, targetname, cpoint42) line(255 255 255, targetname, cpoint43) line(255 255 255, targetname, cpoint44) line(255 255 255, targetname, cpoint45) line(255 255 255, targetname, cpoint46) line(255 255 255, targetname, cpoint47) line(255 255 255, targetname, cpoint48) line(255 255 255, targetname, cpoint49) line(255 255 255, targetname, cpoint50) line(255 255 255, targetname, cpoint51) line(255 255 255, targetname, cpoint52) line(255 255 255, targetname, cpoint53) line(255 255 255, targetname, cpoint54) line(255 255 255, targetname, cpoint55) line(255 255 255, targetname, cpoint56) line(255 255 255, targetname, cpoint57) line(255 255 255, targetname, cpoint58) line(255 255 255, targetname, cpoint59) line(255 255 255, targetname, cpoint60) line(255 255 255, targetname, cpoint61) line(255 255 255, targetname, cpoint62) line(255 255 255, targetname, cpoint63) = info_particle_system : 
+	"An entity that spawns a particle system built using the particle editor."
+[
+	effect_name(string) : "Particle System Name"
+	start_active(choices) : "Start Active?" : 0 =
+	[
+		0 : "No"
+		1 : "Yes"
+	]
+	flag_as_weather(choices) : "Flag as Weather?" : 0 : "Is this particle system going to be used as a weather effect?" =
+	[
+		0 : "No"
+		1 : "Yes"
+	]
+	
+	cpoint1(target_destination) : "Control Point 1" : : "If set, control point 1 of the effect will be at this entity's location."
+	cpoint2(target_destination) : "Control Point 2" : : "If set, control point 2 of the effect will be at this entity's location. If control point 1 is not set, this will be ignored."
+	cpoint3(target_destination) : "Control Point 3" : : "If set, control point 3 of the effect will be at this entity's location. If control point 2 is not set, this will be ignored."
+	cpoint4(target_destination) : "Control Point 4" : : "If set, control point 4 of the effect will be at this entity's location. If control point 3 is not set, this will be ignored."
+	cpoint5(target_destination) : "Control Point 5" : : "If set, control point 5 of the effect will be at this entity's location. If control point 4 is not set, this will be ignored."
+	cpoint6(target_destination) : "Control Point 6" : : "If set, control point 6 of the effect will be at this entity's location. If control point 5 is not set, this will be ignored."
+	cpoint7(target_destination) : "Control Point 7" : : "If set, control point 7 of the effect will be at this entity's location. If control point 6 is not set, this will be ignored."
+	cpoint8(target_destination) : "Control Point 8" : : "If set, control point 8 of the effect will be at this entity's location. If control point 7 is not set, this will be ignored."
+	cpoint9(target_destination) : "Control Point 9" : : "If set, control point 9 of the effect will be at this entity's location. If control point 8 is not set, this will be ignored."
+	cpoint10(target_destination) : "Control Point 10" : : "If set, control point 10 of the effect will be at this entity's location. If control point 9 is not set, this will be ignored."
+	cpoint11(target_destination) : "Control Point 11" : : "If set, control point 11 of the effect will be at this entity's location. If control point 10 is not set, this will be ignored."
+	cpoint12(target_destination) : "Control Point 12" : : "If set, control point 12 of the effect will be at this entity's location. If control point 11 is not set, this will be ignored."
+	cpoint13(target_destination) : "Control Point 13" : : "If set, control point 13 of the effect will be at this entity's location. If control point 12 is not set, this will be ignored."
+	cpoint14(target_destination) : "Control Point 14" : : "If set, control point 14 of the effect will be at this entity's location. If control point 13 is not set, this will be ignored."
+	cpoint15(target_destination) : "Control Point 15" : : "If set, control point 15 of the effect will be at this entity's location. If control point 14 is not set, this will be ignored."
+	cpoint16(target_destination) : "Control Point 16" : : "If set, control point 16 of the effect will be at this entity's location. If control point 15 is not set, this will be ignored."
+	cpoint17(target_destination) : "Control Point 17" : : "If set, control point 17 of the effect will be at this entity's location. If control point 16 is not set, this will be ignored."
+	cpoint18(target_destination) : "Control Point 18" : : "If set, control point 18 of the effect will be at this entity's location. If control point 17 is not set, this will be ignored."
+	cpoint19(target_destination) : "Control Point 19" : : "If set, control point 19 of the effect will be at this entity's location. If control point 18 is not set, this will be ignored."
+	cpoint20(target_destination) : "Control Point 20" : : "If set, control point 20 of the effect will be at this entity's location. If control point 19 is not set, this will be ignored."
+	cpoint21(target_destination) : "Control Point 21" : : "If set, control point 21 of the effect will be at this entity's location. If control point 10 is not set, this will be ignored."
+	cpoint22(target_destination) : "Control Point 22" : : "If set, control point 22 of the effect will be at this entity's location. If control point 21 is not set, this will be ignored."
+	cpoint23(target_destination) : "Control Point 23" : : "If set, control point 23 of the effect will be at this entity's location. If control point 22 is not set, this will be ignored."
+	cpoint24(target_destination) : "Control Point 24" : : "If set, control point 24 of the effect will be at this entity's location. If control point 23 is not set, this will be ignored."
+	cpoint25(target_destination) : "Control Point 25" : : "If set, control point 25 of the effect will be at this entity's location. If control point 24 is not set, this will be ignored."
+	cpoint26(target_destination) : "Control Point 26" : : "If set, control point 26 of the effect will be at this entity's location. If control point 25 is not set, this will be ignored."
+	cpoint27(target_destination) : "Control Point 27" : : "If set, control point 27 of the effect will be at this entity's location. If control point 26 is not set, this will be ignored."
+	cpoint28(target_destination) : "Control Point 28" : : "If set, control point 28 of the effect will be at this entity's location. If control point 27 is not set, this will be ignored."
+	cpoint29(target_destination) : "Control Point 29" : : "If set, control point 29 of the effect will be at this entity's location. If control point 28 is not set, this will be ignored."
+	cpoint30(target_destination) : "Control Point 30" : : "If set, control point 30 of the effect will be at this entity's location. If control point 29 is not set, this will be ignored."
+	cpoint31(target_destination) : "Control Point 31" : : "If set, control point 31 of the effect will be at this entity's location. If control point 30 is not set, this will be ignored."
+	cpoint32(target_destination) : "Control Point 32" : : "If set, control point 32 of the effect will be at this entity's location. If control point 31 is not set, this will be ignored."
+	cpoint33(target_destination) : "Control Point 33" : : "If set, control point 33 of the effect will be at this entity's location. If control point 32 is not set, this will be ignored."
+	cpoint34(target_destination) : "Control Point 34" : : "If set, control point 34 of the effect will be at this entity's location. If control point 33 is not set, this will be ignored."
+	cpoint35(target_destination) : "Control Point 35" : : "If set, control point 35 of the effect will be at this entity's location. If control point 34 is not set, this will be ignored."
+	cpoint36(target_destination) : "Control Point 36" : : "If set, control point 36 of the effect will be at this entity's location. If control point 35 is not set, this will be ignored."
+	cpoint37(target_destination) : "Control Point 37" : : "If set, control point 37 of the effect will be at this entity's location. If control point 36 is not set, this will be ignored."
+	cpoint38(target_destination) : "Control Point 38" : : "If set, control point 38 of the effect will be at this entity's location. If control point 37 is not set, this will be ignored."
+	cpoint39(target_destination) : "Control Point 39" : : "If set, control point 39 of the effect will be at this entity's location. If control point 38 is not set, this will be ignored."
+	cpoint40(target_destination) : "Control Point 40" : : "If set, control point 40 of the effect will be at this entity's location. If control point 39 is not set, this will be ignored."
+	cpoint41(target_destination) : "Control Point 41" : : "If set, control point 41 of the effect will be at this entity's location. If control point 40 is not set, this will be ignored."
+	cpoint42(target_destination) : "Control Point 42" : : "If set, control point 42 of the effect will be at this entity's location. If control point 41 is not set, this will be ignored."
+	cpoint43(target_destination) : "Control Point 43" : : "If set, control point 43 of the effect will be at this entity's location. If control point 42 is not set, this will be ignored."
+	cpoint44(target_destination) : "Control Point 44" : : "If set, control point 44 of the effect will be at this entity's location. If control point 43 is not set, this will be ignored."
+	cpoint45(target_destination) : "Control Point 45" : : "If set, control point 45 of the effect will be at this entity's location. If control point 44 is not set, this will be ignored."
+	cpoint46(target_destination) : "Control Point 46" : : "If set, control point 46 of the effect will be at this entity's location. If control point 45 is not set, this will be ignored."
+	cpoint47(target_destination) : "Control Point 47" : : "If set, control point 47 of the effect will be at this entity's location. If control point 46 is not set, this will be ignored."
+	cpoint48(target_destination) : "Control Point 48" : : "If set, control point 48 of the effect will be at this entity's location. If control point 47 is not set, this will be ignored."
+	cpoint49(target_destination) : "Control Point 49" : : "If set, control point 49 of the effect will be at this entity's location. If control point 48 is not set, this will be ignored."
+	cpoint50(target_destination) : "Control Point 50" : : "If set, control point 50 of the effect will be at this entity's location. If control point 49 is not set, this will be ignored."
+	cpoint51(target_destination) : "Control Point 51" : : "If set, control point 51 of the effect will be at this entity's location. If control point 50 is not set, this will be ignored."
+	cpoint52(target_destination) : "Control Point 52" : : "If set, control point 52 of the effect will be at this entity's location. If control point 51 is not set, this will be ignored."
+	cpoint53(target_destination) : "Control Point 53" : : "If set, control point 53 of the effect will be at this entity's location. If control point 52 is not set, this will be ignored."
+	cpoint54(target_destination) : "Control Point 54" : : "If set, control point 54 of the effect will be at this entity's location. If control point 53 is not set, this will be ignored."
+	cpoint55(target_destination) : "Control Point 55" : : "If set, control point 55 of the effect will be at this entity's location. If control point 54 is not set, this will be ignored."
+	cpoint56(target_destination) : "Control Point 56" : : "If set, control point 56 of the effect will be at this entity's location. If control point 55 is not set, this will be ignored."
+	cpoint57(target_destination) : "Control Point 57" : : "If set, control point 57 of the effect will be at this entity's location. If control point 56 is not set, this will be ignored."
+	cpoint58(target_destination) : "Control Point 58" : : "If set, control point 58 of the effect will be at this entity's location. If control point 57 is not set, this will be ignored."
+	cpoint59(target_destination) : "Control Point 59" : : "If set, control point 59 of the effect will be at this entity's location. If control point 58 is not set, this will be ignored."
+	cpoint60(target_destination) : "Control Point 60" : : "If set, control point 60 of the effect will be at this entity's location. If control point 59 is not set, this will be ignored."
+	cpoint61(target_destination) : "Control Point 61" : : "If set, control point 61 of the effect will be at this entity's location. If control point 60 is not set, this will be ignored."
+	cpoint62(target_destination) : "Control Point 62" : : "If set, control point 62 of the effect will be at this entity's location. If control point 61 is not set, this will be ignored."
+	cpoint63(target_destination) : "Control Point 63" : : "If set, control point 63 of the effect will be at this entity's location. If control point 62 is not set, this will be ignored."
+	
+	cpoint1_parent(integer) : "Control Point 1's Parent" : 0 : "If set and nonzero, control point 1 of the effect will use this point for its parent."
+	cpoint2_parent(integer) : "Control Point 2's Parent" : 0 : "If set and nonzero, control point 2 of the effect will use this point for its parent."
+	cpoint3_parent(integer) : "Control Point 3's Parent" : 0 : "If set and nonzero, control point 3 of the effect will use this point for its parent."
+	cpoint4_parent(integer) : "Control Point 4's Parent" : 0 : "If set and nonzero, control point 4 of the effect will use this point for its parent."
+	cpoint5_parent(integer) : "Control Point 5's Parent" : 0 : "If set and nonzero, control point 5 of the effect will use this point for its parent."
+	cpoint6_parent(integer) : "Control Point 6's Parent" : 0 : "If set and nonzero, control point 6 of the effect will use this point for its parent."
+	cpoint7_parent(integer) : "Control Point 7's Parent" : 0 : "If set and nonzero, control point 7 of the effect will use this point for its parent."
+
+	// Inputs
+	input Start(void) : "Tells the particle system to start emitting."
+	input Stop(void) : "Tells the particle system to stop emitting."
+	input DestroyImmediately(void) : "Makes the particle system stop emitting and remove its existing particles immediately."
+]
+
+@PointClass base(Targetname, RenderFxChoices) size(-4 -4 -4, 4 4 4) line(255 255 255, targetname, LightningStart, targetname, LightningEnd) = env_beam : 
+	"An entity that creates a visible beam between two points. The points can be attached to entities to make the beam move around."
+[
+	renderamt(integer) : "Brightness (1 - 255)" : 100
+	rendercolor(color255) : "Beam Color (R G B)" : "255 255 255"
+	Radius(integer) : "Radius" : 256 : "If the 'Random Strike' spawnflag is set, this radius determines the area within which the endpoints will randomly strike."
+	life(string) : "Life (seconds 0 = infinite)" : "1" : "Amount of time before the beam dies. Setting to zero will make the beam stay forever."
+	BoltWidth(float) : "Width of beam" : 2 : "Pixel width of the beam."
+	NoiseAmplitude(float) : "Amount of noise (0-255)" : 0 : "The amount of noise in the beam. 0 is a perfectly straight beam."
+	texture(sprite) : "Sprite Name" : "sprites/laserbeam.spr" : "The material used to draw the beam."
+	TextureScroll(integer) : "Texture Scroll Rate (0-100)" : 35 : "Rate at which the beam texture should scroll along the beam."
+	framerate(integer) : "Frames per 10 seconds" : 0 : "Framerate at which the beam texture should animate, if it has multiple frames."
+	framestart(integer) : "Starting Frame" : 0 : "The frame to start the beam texture on."
+	StrikeTime(string) : "Strike again time (secs)" : "1" : "Refire time between random strikes of the beam. Only used if the 'Random Strike' spawnflag is set."
+	damage(string) : "Damage / second" : "0" : "How much damage this beam does per second to things it hits when it is continually on, or instantaneously if it strikes. For continuous damage, the value should be greater than 10 or it may not work."
+	LightningStart(target_destination) : "Start Entity" : "" : "Entity that the beam starts at."
+	LightningEnd(target_destination) : "Ending Entity" : "" : "Entity that the beam ends at."
+	decalname(string) : "Decal Name" : "Bigshot" : "Decal to be applied at the end of the beam"
+	HDRColorScale(float) : "HDR color scale." : "1.0" : "float value to multiply sprite color by when running in HDR mode."
+
+
+	spawnflags(flags) = 
+	[
+		1 : "[1] Start On" : 0
+		2 : "[2] Toggle" : 0
+		4 : "[4] Random Strike" : 0
+		8 : "[8] Ring (non-functional)" : 0
+		16: "[16] StartSparks" : 0
+		32: "[32] EndSparks" : 0
+		64: "[64] Decal End" : 0
+		128: "[128] Shade Start" : 0
+		256: "[256] Shade End" : 0
+		512: "[512] Taper Out" : 0
+	]
+
+	TouchType(choices) : "Touch Type (tripwire)" : 0 : "If you want the beam to fire an output when touched by entities, choose the entity type here." =
+	[	
+		0 : "Not a tripwire"
+		1 : "Player Only"
+		2 : "NPC Only"
+		3 : "Player or NPC"
+		4 : "Player or NPC or Physprop"
+	]
+
+	filtername(filterclass) : "Filter Name" : : "Filter to use to see if activator triggers me. See filter_activator_name for more explanation."
+
+	// Inputs
+	input TurnOn(void) : "Turns the beam on."
+	input TurnOff(void) : "Turns the beam off."
+	input Toggle(void) : "Toggles the beam between on and off."
+	input StrikeOnce(void) : "Causes the beam to strike once. It will stay on for its set Life and then turn off (it will never turn off if Life is set to zero)."
+	input Alpha(integer) : "Sets the beam's alpha (0 - 255)."
+	input Color(color255) : "Sets the beam's render color (R G B)."
+	input ColorRedValue(float) : "Sets the red color channel's value (0 - 255)."
+	input ColorGreenValue(float) : "Sets the green color channel's value (0 - 255)."
+	input ColorBlueValue(float) : "Sets the blue color channel's value (0 - 255)."
+	input Amplitude(float) : "Set the amplitude of beam noise (0 - 255)."
+	input ScrollSpeed(float) : "Set the scroll speed in units per second (0 - 100)."
+	input Width(float) : "Set the width of the beam, in pixels."
+	input Noise(float) : "Set the noise of the beam, in pixels."
+	input SetStartEntity(target_destination) : "Sets the start entity."
+	input SetEndEntity(target_destination) : "Sets the end entity."
+
+	// Outputs
+	output OnTouchedByEntity(void) : "Fired when an entity touches the beam. Only fired if the entity passes the 'Touch Type' choice."
+]
+
+@PointClass base(Targetname) iconsprite("editor/env_fade") = env_fade : 
+	"An entity that controls screen fades."
+[
+	spawnflags(flags) =
+	[
+		1: "[1] Fade From" : 0
+		2: "[2] Modulate" : 0
+		4: "[4] Triggering player only" : 0
+		8: "[8] Stay Out" : 0
+		16: "[16] Don't purge other active fades" : 0
+	]
+	duration(string) : "Duration (seconds)" : "2" : "The time that it will take to fade the screen in or out."
+	holdtime(string) : "Hold Fade (seconds)" : "0" : "The time to hold the faded in/out state."
+	renderamt(integer) : "Fade Alpha" : 255 : "Alpha of the fade, where 0 = fully transparent and 255 = fully opaque." 
+	rendercolor(color255) : "Fade Color (R G B)" : "0 0 0"
+	
+	// Inputs
+	input Fade(void) : "Start the screen fade."
+
+	// Outputs
+	output OnBeginFade(void) : "Fired when the fade has begun."
+]
+
+@PointClass base(Targetname, Parentname, RenderFxChoices) size(-4 -4 -4, 4 4 4) line(255 255 255, targetname, LaserTarget) = env_laser : 
+	"An entity that creates a laser beam between itself and a given target."
+[
+	LaserTarget(target_destination) : "Target of Laser" : : "Name of entity, or entities, to strike at. The target is randomly chosen if there are multiple entities matching the given name."
+	renderamt(integer) : "Brightness (1 - 255)" : 100
+	rendercolor(color255) : "Beam Color (R G B)" : "255 255 255"
+	width(float) : "Width of Beam" : 2 : "The width of the laser beam, in pixels."
+	NoiseAmplitude(integer) : "Amount of noise (0-255)" : 0 : "The amount of noise in the beam. 0 is a perfectly straight beam."
+	texture(sprite) : "Sprite Name" : "sprites/laserbeam.spr" : "The material used to draw the laser beam."
+	EndSprite(sprite) : "End Sprite" : "" : "If specified, this sprite will be drawn at the end of the laser beam."
+	TextureScroll(integer) : "Texture Scroll Rate (0-100)" : 35 : "Rate at which the beam texture should scroll along the beam."
+	framestart(integer) : "Starting Frame" : 0 : "The frame to start the beam texture on."
+	damage(string) : "Damage / second" : "100" : "How much damage this laser does. per second. to things it hits."
+	dissolvetype(choices) : "Dissolve Type" : "None" =
+	[
+		-1 : "None"
+		0 : "Energy"
+		1 : "Heavy electrical"
+		2 : "Light electrical"
+	]
+	spawnflags(flags) = 
+	[
+		1 : "[1] Start On" : 0
+		16: "[16] StartSparks" : 0
+		32: "[32] EndSparks" : 0
+		64: "[64] Decal End" : 0
+	]
+
+	// Inputs
+	input TurnOn(void) : "Turns the laser on."
+	input TurnOff(void) : "Turns the laser off."
+	input Toggle(void) : "Toggles the laser between on and off."
+	input SetTarget(target_destination) : "Sets the laser's target."
+	
+	// Outputs
+	output OnTouchedByEntity(void) : "Fired when an entity touches the laser. Please note this fires for each frame the entity is touching, unlike env_beam."
+]
+
+@PointClass base(Targetname) size(-8 -8 -8, 8 8 8) = env_message : 
+	"An entity that draws a text message on player's HUDs."
+[
+	message(string) : "Message Text"
+	spawnflags(flags) =
+	[
+		1: "[1] Play Once" : 0
+		2: "[2] All Clients" : 0
+	]
+	messagesound(sound) : "Sound Effect" : "" : "When the message is shown, this sound effect will be played, originating from this entity."
+	messagevolume(string) : "Volume 0-10" : "10" : "Volume of the sound effect."
+	messageattenuation(Choices) : "Sound Radius" : 0 =
+	[
+		0 : "Small Radius"
+		1 : "Medium Radius"
+		2 : "Large  Radius"
+		3 : "Play Everywhere"
+	]
+	
+	// Inputs
+	input ShowMessage(void) : "Shows the message and plays the sound."
+	
+	// Outputs
+	output OnShowMessage(void) : "Fired when the message is activated."
+]
+
+@PointClass base(Targetname, Parentname, EnableDisable) iconsprite("editor/env_microphone.vmt") sphere(MaxRange) color(0 0 255) = env_microphone :
+	"An entity that acts as a microphone. It works in one of two modes. If it has a 'Speaker' set, it picks up all sounds within the specified sound range, " +
+	"and rebroadcasts them through the Speaker entity. In this Speaker mode, it ignores the Hears X spawnflags and does not fire the SoundLevel output. " +
+	"If it has no Speaker set, it measures the sound level at a point, and outputs the sound level as a value between 0 and 1. In Measuring mode, it only hears sounds that match the Hear X spawnflags."
+[
+	target(target_destination) : "Measure target" : : "If the speaker is in Measuring mode, this is the name of the entity where the sound level is to be measured."
+	SpeakerName(target_destination) : "Speaker target" : "" : "The name of an info_target entity through which to play any sounds heard by this microphone. If specified, the microphone will consider itself in Speaker mode."
+	ListenFilter(filterclass) : "Listen Filter" : "" : "The name of an filter entity which specifies the only entities the microphone can hear. Sounds emitted by other entities will not be heard."
+	speaker_dsp_preset(choices) : "Speaker DSP Preset" : 0 : "Only useful in Speaker mode. If specified, when the microphone is enabled, it'll set the global dsp_speaker preset to this value. Sounds played back through speakers will then be affected by the selected DSP." =
+	[
+ 		0 : "Use Default"
+		50 : "1 NO EFFECT"
+		51 : "2 (DUPLICATE OF 1)"
+		52 : "3 (DUPLICATE OF 1)"
+		53 : "4 (DUPLICATE OF 1)"
+		54 : "5 (DUPLICATE OF 1)"
+		55 : "6 SPEAKER, LOUDER"
+		56 : "7 SPEAKER VERY SMALL"
+		57 : "8 LOUDSPEAKER, ECHO"
+		58 : "9 SPEAKER SMALL"
+		59 : "10 SPEAKER TINY"
+		
+		// A few unmarked DSP presets added with Mapbase
+		32 : "32 EXPLOSION MUFFLE 1"
+		33 : "33 EXPLOSION MUFFLE 2"
+		34 : "34 EXPLOSION MUFFLE 3"
+		35 : "35 EXPLOSION RING 1"
+		36 : "36 EXPLOSION RING 2"
+		37 : "37 EXPLOSION RING 3"
+		38 : "38 ''EXPLOSION RING'' 4"
+		44 : "44 Test 1 (High Pitch)"
+		45 : "45 Test 2 (Low Pitch)"
+		46 : "46 Test 3 (Silence?)"
+		47 : "47 Test 4 (Distort)"
+		48 : "48 Test 5 (Long Wobble)"
+		49 : "49 Test 6 (Silence?)"
+	]
+
+	spawnflags(flags) =
+	[
+		1 : "[1] Hears combat sounds" : 1
+		2 : "[2] Hears world sounds" : 1
+		4 : "[4] Hears player sounds" : 1
+		8 : "[8] Hears bullet impacts" : 1
+		16: "[16] Swallows sounds routed through speakers" : 0
+		32: "[32] Hears explosions" : 0
+		64: "[64] Ignores non-attenuated sounds" : 0
+	]
+
+	Sensitivity(float) : "Sensitivity (0 - 10)" : 1 : "Microphone sensitivity, 0=deaf, 1=default, 10=extremely sensitive). Only applicable in Measuring mode."
+	SmoothFactor(float) : "Smoothing (0 - 1)" : 0 : "Smoothing factor, 0=no smoothing, 1=maximum smoothing). Only applicable in Measuring mode."
+	MaxRange(float) : "Maximum hearing range (0=infinite)" : 240 : "Sounds beyond this range won't be heard, irrelevant of attenuation. "+
+		"WARNING: setting this to zero (or a value > 1024) when the microphone is in Speaker mode can be very bad for performance!!"
+		
+	landmark(target_destination) : "Local Destination Landmark" : : "If specified, then sounds offset from the speaker by their initial offset from this landmark. Only applicable in Speaker mode."
+
+	// Inputs
+	input SetSpeakerName(target_destination) : "Set the microphone to output through a different speaker entity."
+	input SetDSPPreset(integer) : "Sets our DSP preset."
+
+	// Outputs
+	output SoundLevel(float) : "Fired in Measuring mode whenever the sound level changes."
+	output OnRoutedSound(void) : "Fired whenever a sound is routed out through the specified speaker (if any)."
+	output OnHeardSound(void) : "Fired whenever this microphone hears any sound it cares about."
+]
+
+@SolidClass base(func_areaportal) color(0 255 255) = func_areaportal_oneway :	"An areaportal that is only open when viewed from one direction."
+[
+	origin_(origin) readonly : "Origin" : : "Point from which the areaportal's location is determined (they are a special case and cannot use the normal value). Read-only."
+	group(string) : "One-way group" : : "Optimisation: oneway portals in the same group share a single closed/open state. Use this, for example, on walls full of one-way windows."
+	onewayfacing(angle) : "Open direction" : "0 0 0" : "The portal will be open when the player is within 90 degrees of this direction."
+	avoidpop(choices) : "Avoid latency pop" : 0 : "Enable this if it becomes noticeable that the portal stays closed momentarily after the player walks past it. The portal will open 80 units in advance." =
+	[
+		0 : "No"
+		1 : "Yes"
+	]
+	
+	input DisableOneWay(void) : "Disable the one-way behaviour of the portal."
+	input EnableOneWay(void) : "Enable the one-way behaviour of the portal."
+	input ToggleOneWay(void) : "Toggle the one-way behaviour of the portal."
+	input InvertOneWay(void) : "Flip the one-way direction."
+]
+
+@PointClass base(Targetname, Parentname, Angles, BaseFadeProp) sphere(fademindist) sphere(fademaxdist) studio("models/props_combine/combine_mine01.mdl") = combine_mine : "A bouncing Combine mine. Mapbase adds a few new I/O/KV, but probably not enough."
+[
+	bounce(choices) : "Bounce" : 1 : "Whether the mine should bounce up in the air before exploding." =
+	[
+		0: "No"
+		1: "Yes"
+	]
+	
+	ExplosionDelay(float) : "Delay" : "0.5" : "The delay after being triggered before this mine bounces, or before it explodes if bouncing is disabled. Does not apply to the cavern type."
+
+	LockSilently(choices) : "Lock Silently" : 1 : "Prevents the mine from making any clamping sound when it plants itself for the first time, after which it makes sound again." =
+	[
+		0: "No"
+		1: "Yes"
+	]
+
+	// Still kept in for legacy support, but otherwise deprecated
+	//StartDisarmed(choices) : "Start Disarmed" : 0 : "If yes, mine begins dormant." =
+	//[
+	//	0 : "No"
+	//	1 : "Yes"
+	//]
+	
+	InitialState(choices) : "Initial State" : 0 : "The initial state of this mine." =
+	[
+		0 : "Deploying"
+		1 : "Disarmed"
+		2 : "Captive (locked in physgun)"
+		3 : "Planted"
+		4 : "Triggered (bounce, explode on touch)"
+		5 : "Physgun Launch (no bounce, explode on touch)"
+	]
+	
+	Modification(choices): "Citizen modified" : 0 : "'Normal' is default Combine behavior. 'Cavern' detonates earlier in its jump, and has a different default skin." = 
+	[
+		0 : "Normal"
+		1 : "Cavern"
+	]
+	
+	Friendly(choices): "Start Friendly" : 0 : "Makes this combine_mine friendly, as if it was placed by the player." = 
+	[
+		0 : "No"
+		1 : "Yes"
+	]
+	
+	enemyfilter(filterclass) : "Enemy Filter" : : "Makes this combine_mine target specific NPCs as enemies. It will also use its default targets unless ''Filter Exclusive'' is enabled."
+	friendfilter(filterclass) : "Friend Filter" : : "Makes this combine_mine target specific NPCs as friends. It will also use its default targets unless ''Filter Exclusive'' is enabled."
+	FilterExclusive(choices): "Filter Exclusive" : 0 : "If enabled, the filters will be the exclusive factor in determining whether a mine is friendly or hostile towards a target. Entities that pass neither filter will be ignored by the mine." = 
+	[
+		0 : "No"
+		1 : "Yes"
+	]
+
+	// Inputs
+	input Disarm(void) : "Disarm this mine (open hooks and shut off) if not placed by player."
+	input Bounce(void) : "Causes this mine to instantly bounce straight up into the air."
+	input BounceAtTarget(target_destination) : "Causes this mine to bounce at the specified entity, regardless of distance."
+	input SetEnemyFilter(target_destination) : "Changes this mine's enemy filter to the named filter."
+	input SetFriendFilter(target_destination) : "Changes this mine's friend filter to the named filter."
+
+	// Outputs
+	output OnPulledUp(void) : "Fires when this mine is uprooted with a physgun."
+	output OnTriggered(void) : "Fires when this mine is triggered by an enemy."
+	output OnExplode(void) : "Fires when this mine actually explodes."
+]
+
+@PointClass base(Targetname,Parentname,Angles) sphere(DamageRadius) studio("models/props_combine/headcrabcannister01b.mdl") = env_headcrabcanister : "Headcrab canister"
+[
+	spawnflags(Flags) = 
+	[
+		1 :  "[1] No Impact Sound" : 0
+		2 :  "[2] No Launch Sound" : 0
+		4096 : "[4096] Start Impacted" : 0
+		8192 : "[8192] Land at initial position" : 0
+		16384 : "[16384] Wait for input to open" : 0
+		32768 : "[32768] Wait for input to spawn headcrabs" : 0
+		65536 : "[65536] No smoke" : 0
+		131072 : "[131072] No shake" : 0
+		262144 : "[262144] Remove on impact" : 0
+		524288 : "[524288] No impact effects" : 0
+	]
+	HeadcrabType(choices) : "Which headcrab to spawn?" : 0 =
+	[
+		0 : "Normal headcrabs"
+		1 : "Fast Headcrabs"
+		2 : "Poison Headcrabs"
+	]
+	HeadcrabCount(integer) : "Headcrab count" : 6 : "Number of headcrabs to spawn on impact"
+	FlightSpeed(float) : "Flight Speed" : 3000  : "Speed to fly through the air"
+	FlightTime(float) : "Flight Time" : 5	    : "Time to fly through the air in seconds"
+	StartingHeight(float) : "Starting Height" : 0 : "Relative height from the landing position at which the canister should be launched. Positive values mean launch it above the impact point, negative values mean launch it below."
+	MinSkyboxRefireTime(float) : "Min Refire Time" : 0 : "Min number of seconds before the cannister is refired. This will only work for cannisters placed in the skybox."
+	MaxSkyboxRefireTime(float) : "Max Refire Time" : 0 : "Max number of seconds before the cannister is refired. This will only work for cannisters placed in the skybox."
+	SkyboxCannisterCount(integer) : "Cannister count" : 1 : "Number of cannisters to fire in the skybox (0 means fire continuously, forever)."
+	Damage(float) : "Impact damage" : 150 : "Max damage the canister applies on impact"
+	DamageRadius(float) : "Impact damage radius": 750 : "Max radius of the impact damage for the canister"
+	SmokeLifetime(float) : "Smoke Duration" : 30 : "Duration that the canister smokes.  -1 means always smoke."
+	LaunchPositionName(target_destination) : "Launch Position Name" : "" : "If the canister should launch to it's origin from another point within the world, this should specify an info_target at the launch origin."
+
+	// Inputs
+	input FireCanister(void) : "Fire the canister"
+	input OpenCanister(void) : "Opens the canister (must be called after the OnImpacted output is fired)"
+	input SpawnHeadcrabs(void) : "Spawns headcrabs (must be called after the OnImpacted output is fired and after OpenCanister is triggered, if the Wait for Input to open spawnflag is checked.)"
+	input StopSmoke(void) : "Stops the smoke if it's on"
+	input StopHissing(void) : "Stops post-impact hissing."
+
+	// Outputs
+	output OnLaunched(string) : "Fires when the canister is launched"
+	output OnImpacted(void) : "Fires when canister hits the ground"
+	output OnOpened(void) : "Fires when canister has finished opening"
+	output OnCrab(ehandle) : "Fires for each headcrab that comes out of this canister"
+]
+
+@PointClass base(Parentname, Targetname, Angles, EnableDisable) color(255 128 0) studio("models/editor/axis_helper_thick.mdl") sphere(MinDist) sphere(MaxDist) = env_lightglow : 
+	"An entity that puts an additive glow in the world, mostly used over light sources."
+[
+	rendercolor(color255) : "Color (R G B)" : "255 255 255"
+	VerticalGlowSize(integer) : "Vertical Size" : 30
+	HorizontalGlowSize(integer) : "Horizontal Size" : 30
+	MinDist(integer) : "Minimum Distance" : 500 : "The distance at which this effect will be fully translucent."
+	MaxDist(integer) : "Maximum Distance" : 2000 : "The distance at which this effect will be at full intensity."
+	OuterMaxDist(integer) : "Outer Maximum Distance" : 0 : "If larger than the maximum distance, this is the length at which the glow will fade completely out, between the span of the maximum distance and this length."
+	GlowProxySize(float) : "Glow Proxy Geometry Size" : "2.0" : "Size of the glow to be rendered for visibility testing. Must be larger than the distance from the sprite center to empty space. So if this glow is inside geometry (like a light bulb), set this value to be bigger than the bulb's radius. Any time a sphere of this radius would be visible (poking through any nearby geometry), the glow will be rendered."
+	HDRColorScale(float) : "HDR color scale." : "1.0" : "float value to multiply sprite color by when running in HDR mode."
+
+	// Inputs
+	input Color(color255) : "Change the render color of the glow. Format: <Red 0-255> <Green 0-255> <Blue 0-255>"
+
+	spawnflags(flags) =
+	[
+		1: "[1] Visible only from front" : 0
+	]
+]
+
 //-------------------------------------------------------------------------
 // Global Light
 //-------------------------------------------------------------------------
@@ -65,6 +541,21 @@
 
 	color(color255) : "Light Color" : "255 255 255 1" : "This is the color of the sunlight."
 	ambient(color255) : "Ambient Color" : "255 255 255 1" : "This is the color of the sunlight."
+]
+
+@PointClass base(Angles) iconsprite("editor/light_env.vmt") = light_environment : 
+	"Sets the color and angle of the light from the sun and sky."
+[
+	pitch(integer) : "Pitch" : 0 : "The downward pitch of the light from the sun. 0 is horizontal, -90 is straight down."
+	builddlight(integer) : "BuildDirectLIGHT" : 1 : "Set this to 1 if too build light env direct lighting or no, made for csm"
+	_light(color255) : "Brightness" : "255 255 255 200"
+	_ambient(color255) : "Ambient" : "255 255 255 20"
+	_lightHDR(color255) : "BrightnessHDR" : "-1 -1 -1 1"
+	_lightscaleHDR(float) : "BrightnessScaleHDR" : "1" : "Amount to scale the light by when compiling for HDR."
+	_ambientHDR(color255) : "AmbientHDR" : "-1 -1 -1 1"
+	_AmbientScaleHDR(float) : "AmbientScaleHDR" : "1" : "Amount to scale the ambient light by when compiling for hdr."
+	pitch(integer) : "Pitch" : 0 : "The downward pitch of the light from the sun. 0 is horizontal, -90 is straight down."
+	SunSpreadAngle(float) : "SunSpreadAngle" : 0 : "The angular extent of the sun for casting soft shadows. Higher numbers are more diffuse. 5 is a good starting value."
 ]
 
 
@@ -161,6 +652,8 @@
 	_constant_attn(string)	: "Constant" : "0"
 	_linear_attn(string)	: "Linear" : "0"
 	_quadratic_attn(string)	: "Quadratic" : "1"
+	
+    static(integer) : "Static Lighting" : 0 : "Set this to 1 if building baked lighting"
 
 	_exponent(integer) : "Focus" : 1
 
@@ -252,16 +745,289 @@
 	input SetSpeed(float) : "Set the speed at which the door rotates. 100 is default."
 ]
 
+@PointClass base(Targetname) iconsprite("editor/env_credits.vmt") = env_credits : 
+	"An entity to control the rolling credits."
+[
+	CreditsFile(string) : "Custom Credits File" : : "Allows a custom credits file to be loaded instead of the default 'scripts/credits.txt'."
+
+	// Inputs
+	input RollCredits(void) : "Start the intro credits rolling."
+	input RollOutroCredits(void) : "Start the outro credits rolling."
+	input ShowLogo(void) : "Show the HL2 logo."
+	
+	// Outputs
+	output OnCreditsDone(void)  : "Fired when the credits having finished rolling."
+]
+
+@SolidClass base(Targetname, Parentname, EnableDisable) = func_clip_client : 
+	"A brush entity that's considered solid to clientside ragdolls and other clientside objects." 
+[
+	input Toggle(void) : "Toggles this entity."
+]
+
+
+@PointClass base(Targetname) size(-8 -8 -8, 8 8 8) = point_ragdollboogie : 
+	"An entity that makes ragdolls dance."
+[
+	spawnflags(flags) =
+	[
+		65536: "[65536] Electrical" : 1
+		131072: "[131072] Narrow arcs (must be electrical)" : 0
+	]
+
+	target(target_destination) : "Boogie target(s)" : : "The one(s) that must boogie. prop_ragdolls have no hassle, but NPCs will have to break them elbows and become prop_ragdolls themselves (a.k.a. die) in order to boogie."
+	StartTime(float) : "Start time" : "0" : "How long after we've received the 'Activate' input should ragdolls boogie?"
+	BoogieLength(float) : "Boogie length" : "5.0" : "How long should the boogie last?"
+	Magnitude(float) : "Magnitude" : "150" : "How intense is the boogie?"
+
+	// Inputs
+	input Activate(void) : "Makes the targets dance."
+	input Deactivate(void) : "Makes the targets stop dancing, if they're still dancing."
+	input SetTarget(target_destination) : "Sets the ragdoll(s) to target."
+	input BoogieTarget(target_destination) : "Boogies specific target(s) without using or modifying our target field."
+]
+
+@PointClass base(Targetname, EnableDisable, Parentname, Angles) iconsprite("editor/info_target.vmt") sphere(radius) = phys_ragdollmagnet : 
+	"An entity that acts like a magnet for ragdolls. Useful for crafting exaggerated ragdoll behavior (i.e. guys falling over rails on death). If the "+
+	"Bar Magnet spawnflag is set, the magnet works like it was a cylindrical magnet i.e. it attracts ragdolls to the nearest point on a line."
+[
+	axis(vecline) : "Bar Magnet Axis"
+	radius(float) : "Effective Radius" : "512" : "Radius in which ragdolls are affected around this entity's origin."
+	force(float) : "Force" : "5000" : "Magnetic force to apply to ragdolls within the radius. Expressed as kilograms per inch per second. So a force of 1000 will add 10 inches/second to a 100kg man. It will add 100 inches per second to a 10kg headcrab."
+	BoneTarget(string) : "Bone Target" : : "Targets a specific bone to apply the force to. (e.g. ValveBiped.Bip01_R_Foot)"
+
+	target(target_destination) : "Entity to affect" : "" : "If specified, the phys_ragdollmagnet will only affect the target entity."
+
+	spawnflags( Flags ) =
+	[
+		2 : "Bar Magnet (use axis helper)" : 0
+	]
+	
+	// Outputs
+	output OnUsed(vector) : "Fires when this magnet is used by a ragdoll. Passes the ragdoll's original force + the force this magnet has applied."
+]
+
+@PointClass base(Targetname,Parentname,Angles) = env_entity_maker : 
+	"Spawns the specified entity template at its origin. If set to auto-spawn, it will spawn the template whenever there's room and the player "+
+	"is looking elsewhere." 
+[
+	spawnflags(Flags) =
+	[
+		1 : "[1] Enable AutoSpawn (will spawn whenever there's room)" : 0
+		2 : "[2] AutoSpawn: Wait for entity destruction" : 0
+		4 : "[4] AutoSpawn: Even if the player is looking" : 0
+		8 : "[8] ForceSpawn: Only if there's room" : 0
+	  	16 : "[16] ForceSpawn: Only if the player isn't looking" : 0
+	]
+
+	EntityTemplate(target_destination) : "Point_template To Spawn" : "" : "Name of the point_template to spawn here."
+
+	PostSpawnSpeed(float) : "PostSpawn Movement Speed" : "0" : "If specified, all the entities created in the template will move this fast in the specified PostSpawn Movement Direction."
+	PostSpawnDirection(angle) : "PostSpawn Movement Direction" : "0 0 0" : "If a PostSpawn Movement Speed is specified, all the entities created in the template will move in this direction."
+	PostSpawnDirectionVariance(float) : "PostSpawn Direction Variance" : "0.15" : "This variance is applied to the PostSpawn Movement Direction for each spawned entity in the template. Use it to apply some randomness to the directions."
+	PostSpawnInheritAngles(choices) : "PostSpawn Inherit Angles" : 0 : "If in hierarchy, is spawn direction in world space, or object local space of parent" =
+	[
+		0 : "No"
+		1 : "Yes"
+	]
+
+	// Inputs
+	input ForceSpawn(void)				: "Spawn an instance of the template at this origin and angle."
+	input ForceSpawnAtEntityOrigin(target_destination) : "Spawns an instance of the template that has the same origin and angles as the specified entity."
+	input ForceSpawnAtEntityCenter(target_destination) : "Spawns an instance of the template at the specified entity's world space center and angles."
+	input ForceSpawnAtPosition(vector) : "Spawn an instance of the template at the specified position (has env_entity_maker's angles)"
+
+	// Outputs
+	output OnEntitySpawned(void) : "Fired when an instance of the entity template has been spawned."
+	output OnEntityFailedSpawn(void) : "Fired when a ForceSpawn input failed to spawn the template, either due to lack of space or being in player's view, depending on the spawnflags."
+	output OutSpawnedEntity(ehandle) : "Fired for each entity spawned by this template, passing said entity as the parameter and activator."
+]
+
+@PointClass base(Targetname, EnableDisable) sphere(SetRadius) = point_radiation_source : "Radiation source that trips the player's geiger counter. Does no actual damage."
+[
+	SetRadius(float): "Radius" : "0" : "Only affects the geiger counter if the player is within this radius. 0 = no radius, use intensity only"
+	SetIntensity(float): "Intensity" : "1.0" : "The intensity of the radiation source. Cannot be 0."
+	
+	TestPVS(choices) : "Test PVS" : 1 : "Tests whether the player is in this entity's PVS before attempting to update." =
+	[
+		0 : "No"
+		1 : "Yes"
+	]
+	
+	input Enable(void) : "Enable"
+	input Disable(void) : "Disable"
+]
+
+@PointClass base(Targetname) size(-8 -8 -8, 8 8 8) = skybox_swapper : 
+	"An entity that swaps skybox textures." 
+[
+	SkyboxName(string) : "Sky Name" : "" : "The name of the sky texture to change to."
+	
+	input Trigger(void) : "Causes the current sky texture to change to the one specified in this entity."
+]
+
+@PointClass base(Targetname) size(-8 -8 -8, 8 8 8) = point_template : 
+	"Turns an entity, or set of entities, into a single template that can be instanced anywhere, and multiple times. "+
+	"If there are interdependencies (entity I/O, hierarchy, or other name references) between the entities "+
+	"in the template, the entities in the template will have their names changed and the interdependencies will "+
+	"be reconnected to the changes names. The name change format is as follows: '<original name>&0000', where the 0000 "+
+	"will be replaced with the current global template instance, so wildcard searches for '<original name>*' will still find them.\n"+
+	"If you don't want the name fixup to happen, because you're only spawning the template once, or you want inputs to "+
+	"trigger all instances of the template, check the 'Preserve entity names' spawnflag. \n"+
+	"To spawn the template in other places, use an env_entity_maker."
+[
+	spawnflags(flags) =
+	[
+		1 : "[1] Don't remove template entities" : 0
+		2 : "[2] Preserve entity names (Don't do name fixup)" : 1
+	]
+
+	Template01(target_destination) : "Template 1"
+	Template02(target_destination) : "Template 2"
+	Template03(target_destination) : "Template 3"
+	Template04(target_destination) : "Template 4"
+	Template05(target_destination) : "Template 5"
+	Template06(target_destination) : "Template 6"
+	Template07(target_destination) : "Template 7"
+	Template08(target_destination) : "Template 8"
+	Template09(target_destination) : "Template 9"
+	Template10(target_destination) : "Template 10"
+	Template11(target_destination) : "Template 11"
+	Template12(target_destination) : "Template 12"
+	Template13(target_destination) : "Template 13"
+	Template14(target_destination) : "Template 14"
+	Template15(target_destination) : "Template 15"
+	Template16(target_destination) : "Template 16"
+
+	// Inputs
+	input ForceSpawn(void) : "Spawns an instance of the template at the original position."
+	input ForceSpawnRandomTemplate(void) : "Spawns one of this entity's templates at its original position."
+
+	// Outputs
+	output OnEntitySpawned(void) : "Fired after spawning an instance of this template."
+	output OutSpawnedEntity(ehandle) : "Fired for each entity spawned by this template, passing said entity as the parameter and activator."
+]
+
+@PointClass base(Targetname, Parentname, DamageTypes) sphere(DamageRadius) = point_hurt :
+	"An entity that does damage to all entities in a radius around itself, with a specified delay." +
+	"If 'Target Entity' is specified, the damage is only done to that entity."
+[
+	DamageTarget(target_destination) : "Target Entity" : "" : "If specified, only this entity will take damage. Otherwise, all entities within the Radius will take damage."
+	
+	DamageRadius(float) : "Radius" : 256 : "All entities within this radius of this entity will take damage. If a 'Target Entity' is specified, only that entity will take damage."
+	Damage(integer) : "Damage" : 5 : "Damage done to all affected entities each time this entity fires."
+	DamageDelay(float) : "Delay" : 1 : "Delay between refires, in seconds."
+
+	// Inputs
+	input Hurt(void) : "Force a single fire, damaging either the Target Entity or all entities within the radius."
+	input TurnOn(void) : "Enable this entity. It will start damaging entities everytime it fires, and refire based upon the specified Delay."
+	input TurnOff(void) : "Disable this entity. It will stop damaging entities."
+	input Toggle(void) : "Toggle this entity between On/Off state."
+]
+
+@PointClass base(Targetname, Angles) = point_teleport : 
+	"An entity that teleports a target entity to this position and angles. "+
+	"If 'Teleport Home' spawn flag is set, teleports the target entity to its spawn position instead." +
+	"If object is physically simulated, simulation is turned off when teleported."
+[
+	target(target_destination) : "Entity To Teleport" : : "Name of the entity that will be teleported."
+	spawnflags(flags) =
+	[
+		1 : "[1] Teleport Home" : 0
+		2 : "[2] Into Duck (episodic)" : 0
+	]
+
+	// Inputs
+	input Teleport(void) : "Teleport the target entity."
+]
+
+
+@PointClass color(0 0 255) base(Targetname) iconsprite("editor/choreo_scene.vmt") = logic_choreographed_scene :
+	"Manages a choreographed scene of one or more actors."
+
+[
+	// Keys
+	SceneFile(scene) : "Scene file"
+
+	// Links
+	target1(target_destination) : "Target 1"
+	target2(target_destination) : "Target 2"
+	target3(target_destination) : "Target 3"
+	target4(target_destination) : "Target 4"
+	target5(target_destination) : "Target 5"
+	target6(target_destination) : "Target 6"
+	target7(target_destination) : "Target 7"
+	target8(target_destination) : "Target 8"
+
+	busyactor(choices) : "If an Actor is talking..." : 1 : "What to do if an actor this scene needs is already talking when this scene is told to start." =
+	[
+		0: "Start immediately"
+		1: "Wait for actor to finish"
+		2: "Interrupt at next interrupt event"
+		3: "Cancel at next interrupt event"
+	]
+
+	// Inputs
+	input Start(void) : "Starts playback of the scene file"
+	input Pause(void) : "Pauses playback of the scene file"
+	input Resume(void) : "Resumes playback of the scene if it has been paused"
+	input Cancel(void) : "Cancels playback of the scene"
+	input CancelAtNextInterrupt(void) : "Cancels playback of the scene at the next interrupt event in the scene."
+	input PitchShift(float) : "Multiplies the the pitch"
+
+	input InterjectResponse(string) : "Finds an actor who can respond to the specified concept string while the scene continues playing"
+
+	input StopWaitingForActor(void) : "Stop waiting on an actor to stop talking."
+	
+	// Unmarked inputs
+	input Trigger(integer) : "Fires the OnTrigger output of the specified number."
+	
+	input SetTarget1(target_destination) : "Sets this target to the specified entity."
+	input SetTarget2(target_destination) : "Sets this target to the specified entity."
+	input SetTarget3(target_destination) : "Sets this target to the specified entity."
+	input SetTarget4(target_destination) : "Sets this target to the specified entity."
+	input SetTarget5(target_destination) : "Sets this target to the specified entity."
+	input SetTarget6(target_destination) : "Sets this target to the specified entity."
+	input SetTarget7(target_destination) : "Sets this target to the specified entity."
+	input SetTarget8(target_destination) : "Sets this target to the specified entity."
+
+	// Outputs
+	output OnStart(void) : "The scene has started"
+	output OnCompletion(void) : "The scene has completed"
+	output OnCanceled(void) : "The scene has been canceled"
+	output OnTrigger1(void) : "Scene trigger 1"
+	output OnTrigger2(void) : "Scene trigger 2"
+	output OnTrigger3(void) : "Scene trigger 3"
+	output OnTrigger4(void) : "Scene trigger 4"
+	output OnTrigger5(void) : "Scene trigger 5"
+	output OnTrigger6(void) : "Scene trigger 6"
+	output OnTrigger7(void) : "Scene trigger 7"
+	output OnTrigger8(void) : "Scene trigger 8"
+	output OnTrigger9(void) : "Scene trigger 9"
+	output OnTrigger10(void) : "Scene trigger 10"
+	output OnTrigger11(void) : "Scene trigger 11"
+	output OnTrigger12(void) : "Scene trigger 12"
+	output OnTrigger13(void) : "Scene trigger 13"
+	output OnTrigger14(void) : "Scene trigger 14"
+	output OnTrigger15(void) : "Scene trigger 15"
+	output OnTrigger16(void) : "Scene trigger 16"
+
+	onplayerdeath(choices) : "On player death" : 0 : "What should this entity do if the player dies" =
+	[
+		0 : "Do Nothing"
+		1 : "Cancel Script and return to AI"
+	]
+]
+
 //-------------------------------------------------------------------------
 //
 // Cube map sample
 //
 //-------------------------------------------------------------------------
 
-@PointClass color(0 0 255) sidelist(sides) sphere(radius) iconsprite("editor/env_cubemap.vmt") = env_cubemap : 
+@PointClass color(0 0 255) sidelist(sides) iconsprite("editor/env_cubemap.vmt") = env_cubemap : 
 	"An entity that creates a sample point for the Cubic Environment Map."
 [
-	radius(integer) : "Sphere Mapping radius" : 0 : "Radius of the parallax corrected cubemap. Set to 0 if you dont want parallax correction for this cubemap"
 	cubemapsize(choices) : "Cubemap Size" : 0 =
 	[
 		0 : "Default"
@@ -276,6 +1042,12 @@
 		9 : "256x256"
 	]
 	sides(sidelist) : "Brush faces": : "(Optional) Brushes faces to directly attach to the env_cubemap. Press Pick then click on faces in the 3D View to select them. Use CTRL while clicking to add or remove from the selection."
+	parallaxobb(target_destination) : "Cubemap Bounds" : : "(Optional) assigns this cubemap a bounding box for parallax correction (brush entity tied to parallax_obb)."
+]
+
+@SolidClass = parallax_obb
+[
+	targetname(target_source) : "Name" : : "The name that other entities refer to this entity by."
 ]
 
 
@@ -349,6 +1121,56 @@
 	input InputSetThicknes(float) : "Set the thickness of the clouds."
 	input InputSetCoverage(float) : "Set how many clouds cover the sky."
 	input EnableDynamicSky(integer) : "Set if the sky is on or off"
+]
+
+@SolidClass base(Targetname, Parentname) = func_detail_blocker : 
+	"A brush entity that prevents detail sprites from being placed inside its volume."
+[
+]
+
+@PointClass base(Targetname, Angles) color(255 0 0) = env_sun : 
+	"An entity to control & draw a sun effect in the sky."
+[
+	target(target_destination) : "Viewer entity" : : "Name of an entity used to determine where the sun is in the skybox. The sun should be lined up on a line from this entity to the env_sun entity."
+	
+	use_angles(choices) : "UseAngles" : 0 : "The old way to orient env_sun is to point it at a target. The new way is to specify the angles. If you use the new way, set this property to YES." = 
+	[
+		0 : "No"
+		1 : "Yes"
+	]
+
+	pitch(integer) : "Pitch" : 0
+
+	rendercolor(color255) : "Sun Color (R G B)" : "100 80 80"
+	overlaycolor(color255) : "Overlay Color (R G B)" : "0 0 0" : "A value of 0 0 0 will act the old way."
+	
+	//size(integer) : "Size" : 16
+	//overlaysize(integer) : "Overlay Size" : -1 : "A value of -1 means the overlay will act the old way."
+	
+	HorzSize(integer) : "Horizontal Size" : 16
+	VertSize(integer) : "Vertical Size" : 16
+	OverlayHorzSize(integer) : "Horizontal Overlay Size" : -1 : "A value of -1 means the overlay will act the old way."
+	OverlayVertSize(integer) : "Vertical Overlay Size" : -1 : "A value of -1 means the overlay will act the old way."
+	NumLayers(integer) : "Layer count" : 1 : "Number of sun layers, max 4"
+	
+	material(sprite) : "Material Name" : "sprites/light_glow02_add_noz" : "Material of the inner glow."
+	overlaymaterial(sprite) : "Overlay Material Name" : "sprites/light_glow02_add_noz" : "Material of the overlay glow."
+
+	HDRColorScale(float) : "HDR color scale." : "1.0" : "float value to multiply sprite color by when running in HDR mode."
+
+	raystrength(choices) : "GodRay intensity" : 1 : "" =
+	[
+		0 : "Low"
+		1 : "Medium"
+		2 : "Normal"
+		3 : "Overbright"
+		4 : "HOLOCAUST"
+	]
+	
+	// Inputs
+	input TurnOn(void) : "Enable sun rendering."
+	input TurnOff(void) : "Disable sun rendering."
+	input SetColor(color255) : "Change the sun's color. Format: <Red 0-255> <Green 0-255> <Blue 0-255>"
 ]
 
 @PointClass base(Item) studio("models/healthvial.mdl") = item_stim : "Stimulant" []

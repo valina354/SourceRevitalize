@@ -1,6 +1,6 @@
 "GaussianY"
 {
-	"$FBTEXTURE"	"_rt_FullFrameFB"
+	"$FBTEXTURE"	"_rt_VanceHDR"
 	"$BLURSIZE"	"1.0"
 	"$RESDIVISOR"	"2"
 	"$ignorez"	1

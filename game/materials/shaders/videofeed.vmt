@@ -1,0 +1,5 @@
+"editor_shader"
+{
+	"$shadername"	"postproc_videofeed"
+	"$MUTABLE_01" "1"
+}

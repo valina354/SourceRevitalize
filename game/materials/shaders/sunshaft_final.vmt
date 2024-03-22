@@ -1,6 +1,6 @@
-"UnlitGeneric"
+"ss_sunrays"
 {
-	"$basetexture"		"_rt_SmallFB0"
-	"$additive"		1
-	"$ignorez"		1
+	"$fbtexture" "_rt_FullFrameFB" 
+                 "$basetexture" "_rt_FullFrameFB" 
 }
+

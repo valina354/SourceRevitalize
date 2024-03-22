@@ -1,0 +1,7 @@
+"LightmappedPBR"
+{
+  "$basetexture" "pbrtest\pebbles01_diff"
+  "$normalmap" "pbrtest\pebbles01_norm"
+  "$roughness" "pbrtest\pebbles01_rough"
+  "$ao" "pbrtest\pebbles01_ao"
+}

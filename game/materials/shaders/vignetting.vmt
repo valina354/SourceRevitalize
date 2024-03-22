@@ -1,4 +1,4 @@
 "vignetting"
 {
-	"$fbtexture" "_rt_FullFrameFB"
+	"$fbtexture" "_rt_VanceHDR"
 }

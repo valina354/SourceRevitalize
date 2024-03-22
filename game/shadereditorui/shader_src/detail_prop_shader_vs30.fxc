@@ -24,7 +24,7 @@ float3 triangle( float3 a )
 }
 
 // User code - function bodies
-void UserFunction_2349( in float3 var_00, out float3 var_01 )
+void UserFunction_384( in float3 var_00, out float3 var_01 )
 {
 	var_01 = triangle( var_00 );
 
@@ -97,7 +97,7 @@ VS_OUTPUT main( const VS_INPUT In )
 	_var25 = _var25 * float( 0.005000 );
 	_var25 = _var25 + _var11;
 	float3 _var26 = (float3)0;
-	UserFunction_2349( _var25, _var26 );
+	UserFunction_384( _var25, _var26 );
 	float3 _var27 = sin( _var25 );
 	float3 _var28 = abs( _var26 );
 	float3 _var29 = sign( _var26 );

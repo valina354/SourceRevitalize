@@ -392,7 +392,7 @@ void CViewRender::Init( void )
 	g_pScreenSpaceEffects->EnableScreenSpaceEffect("vance_unsharp");
 	g_pScreenSpaceEffects->EnableScreenSpaceEffect("vance_fxaa");
 	g_pScreenSpaceEffects->EnableScreenSpaceEffect("vance_waterfx");
-	g_pScreenSpaceEffects->EnableScreenSpaceEffect("vance_bloom");
+	g_pScreenSpaceEffects->EnableScreenSpaceEffect( "vance_bloom" );
 	g_pScreenSpaceEffects->EnableScreenSpaceEffect("vance_tonemap");
 	g_pScreenSpaceEffects->EnableScreenSpaceEffect("vance_ssao");
 	g_pScreenSpaceEffects->EnableScreenSpaceEffect("vance_ssr");
@@ -444,7 +444,7 @@ void CViewRender::Shutdown( void )
 	g_pScreenSpaceEffects->DisableScreenSpaceEffect( "vance_unsharp" );
 	g_pScreenSpaceEffects->DisableScreenSpaceEffect("vance_fxaa");
 	g_pScreenSpaceEffects->DisableScreenSpaceEffect("vance_waterfx");
-	g_pScreenSpaceEffects->DisableScreenSpaceEffect("vance_bloom");
+	g_pScreenSpaceEffects->DisableScreenSpaceEffect( "vance_bloom" );
 	g_pScreenSpaceEffects->DisableScreenSpaceEffect("vance_tonemap");
 	g_pScreenSpaceEffects->DisableScreenSpaceEffect("vance_ssao");
 	g_pScreenSpaceEffects->DisableScreenSpaceEffect("vance_ssr");

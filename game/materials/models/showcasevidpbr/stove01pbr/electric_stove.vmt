@@ -1,0 +1,7 @@
+"VertexLitPBR"
+{
+  "$basetexture" "showcasevidpbr\stove01\stove01pbr_diff"
+  "$normalmap" "showcasevidpbr\stove01\stove01pbr_norm"
+  "$roughness" "showcasevidpbr\stove01\stove01pbr_rough"
+  "$metallic" "showcasevidpbr\stove01\stove01pbr_metal"
+}

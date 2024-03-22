@@ -1,0 +1,7 @@
+"LightmappedPBR"
+{
+  "$basetexture" "showcasevidpbr\wood\laminatefloor01_diff"
+  "$normalmap" "showcasevidpbr\wood\laminatefloor01_norm"
+  "$roughness" "showcasevidpbr\wood\laminatefloor01_rough"
+  "$ao" "showcasevidpbr\wood\laminatefloor01_ao"
+}

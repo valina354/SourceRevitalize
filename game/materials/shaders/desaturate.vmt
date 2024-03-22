@@ -1,6 +1,6 @@
 "desaturate"
 {
-	"$FBTEXTURE"		"_rt_FullFrameFB" 
+	"$FBTEXTURE"		"_rt_VanceHDR" 
 	"$STRENGTH"		"1.0"
 	"$ignorez"		1
 }

@@ -5,5 +5,5 @@
  "$metalness" "pbrprops\utilitybox01_pbr_metal"
  "$normalmap" "pbrprops\utilitybox01_pbr_bump"
  
- //"$envmap" "env_cubemap"
+ "$envmap" "env_cubemap"
 }

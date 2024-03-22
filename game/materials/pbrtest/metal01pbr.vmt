@@ -1,0 +1,10 @@
+"LightmappedPBR"
+{
+    "$basetexture" "pbrtest\metal01pbr_diff"
+	"$normalmap" "pbrtest\metal01pbr_normal"
+	"$roughness" "pbrtest\metal01pbr_rough"
+	"$metallic" "pbrtest\metal01pbr_metal"
+	"$ENVMAPPARALLAX" "1"
+	
+	"$envmap" "env_cubemap"
+}

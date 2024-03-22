@@ -1,5 +1,5 @@
 "negative"
 {
-	"$FBTEXTURE"		"_rt_FullFrameFB" 
+	"$FBTEXTURE"		"_rt_VanceHDR" 
 	"$ignorez"		1
 }

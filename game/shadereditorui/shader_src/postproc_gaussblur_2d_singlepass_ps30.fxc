@@ -20,7 +20,7 @@ sampler _Sampler_00		: register( s0 );
 const float2 _g_TexelSize		: register( c16 );
 
 // Arrays
-static const float g_cArray_3160[13][13] =
+static const float g_cArray_27[13][13] =
 {
 	float( 0.000013f ),float( 0.000043f ),float( 0.000117f ),float( 0.000252f ),float( 0.000436f ),float( 0.000607f ),float( 0.000677f ),float( 0.000607f ),float( 0.000436f ),float( 0.000252f ),float( 0.000117f ),float( 0.000043f ),float( 0.000013f ),
 	float( 0.000043f ),float( 0.000145f ),float( 0.000391f ),float( 0.000843f ),float( 0.001461f ),float( 0.002031f ),float( 0.002267f ),float( 0.002031f ),float( 0.001461f ),float( 0.000843f ),float( 0.000391f ),float( 0.000145f ),float( 0.000043f ),
@@ -71,7 +71,7 @@ PS_OUTPUT main( const PS_INPUT In )
 			_var8 = _var8 + _var6;
 			_var10 = _var10 + _var8;
 			float4 _var11 = tex2D( _Sampler_00, _var10 ).rgba;
-			_var11 = _var11 * g_cArray_3160[_var9][_var7];
+			_var11 = _var11 * g_cArray_27[_var9][_var7];
 			_var0 = _var0 + _var11;
 		}
 	}

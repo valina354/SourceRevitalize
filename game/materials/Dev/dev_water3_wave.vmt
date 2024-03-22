@@ -37,6 +37,8 @@
 	"$fogcolor" "{22 20 10}"
 	"$fogstart" 1.00
 	"$fogend" 30.00
+	
+
 
 	"Proxies"
 	{

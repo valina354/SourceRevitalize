@@ -20,7 +20,7 @@ sampler _Sampler_00		: register( s0 );
 const float2 _g_TexelSize		: register( c16 );
 
 // Arrays
-static const float g_cArray_2466[7] =
+static const float g_cArray_501[7] =
 {
 	float( 0.167839f ),
 	float( 0.684901f ),
@@ -60,7 +60,7 @@ PS_OUTPUT main( const PS_INPUT In )
 		_var6 = ceil( _var6 );
 		float4 _var7 = float4( _var5, _var6 );
 		_var3 = _var3 + _var6;
-		_var7 = _var7 * g_cArray_2466[_var4];
+		_var7 = _var7 * g_cArray_501[_var4];
 		_var0 = _var0 + _var7;
 	}
 	float3 _var8 = _var0.xyz;

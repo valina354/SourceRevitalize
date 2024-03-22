@@ -1,0 +1,45 @@
+// *********************************
+// ** auto generated vertexshader **
+// *********************************
+
+#define SHADER_EDITOR_2013_COMPILE
+
+
+// Includes
+#include "common_vs_fxc.h"
+
+
+// Constants
+const float _g_Time		: register( c48 );
+const float2 _g_TexelSize		: register( c49 );
+
+// Semantic structures
+struct VS_INPUT
+{
+	float3 vPos					:	POSITION;
+	float2 vTexCoord_0			:	TEXCOORD0;
+};
+
+struct VS_OUTPUT
+{
+	float4 vProjPos				:	POSITION;
+	float2 vTexCoord_0			:	TEXCOORD0;
+	float2 vTexCoord_1			:	TEXCOORD1;
+	float2 vTexCoord_2			:	TEXCOORD2;
+};
+
+// Entry point
+VS_OUTPUT main( const VS_INPUT In )
+{
+	VS_OUTPUT Out;
+	float4 _var0 = float4( In.vPos.x, In.vPos.y, In.vPos.z, 1.000000 );
+	float _var1 = _g_Time * float( 1.000000 );
+	float2 _var2 = float( 1.000000 ) / _g_TexelSize;
+	float2 _var3 = float2( _var1.x, 0.000000 );
+	_var2 = _var2 / float( 64.000000 );
+	Out.vProjPos = _var0;
+	Out.vTexCoord_0 = In.vTexCoord_0;
+	Out.vTexCoord_1 = _var3;
+	Out.vTexCoord_2 = _var2;
+	return Out;
+}

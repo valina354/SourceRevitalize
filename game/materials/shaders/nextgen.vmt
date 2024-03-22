@@ -1,5 +1,5 @@
 "sepia" //THE MOST IMPORTANT SHADER IN THE UNIVERSE. MIND. WILL. BE. BLOWN.
 {
-	"$FBTEXTURE"			"_rt_FullFrameFB" 
+	"$FBTEXTURE"			"_rt_VanceHDR" 
 	"$ignorez"			1
 }

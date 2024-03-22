@@ -1,6 +1,5 @@
-"editor_shader"
+"ss_sunrays"
 {
-	"$shadername"	"ppe_sunrays"
-	"$skymask"	"_rt_SEdit_Skymask"
-	"$depthbuffer"	"_rt_FullFrameDepth_Alt"
+	"$fbtexture" "_rt_FullFrameFB" 
+                 "$basetexture" "_rt_FullFrameFB" 
 }

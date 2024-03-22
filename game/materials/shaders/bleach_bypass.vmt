@@ -1,6 +1,6 @@
 "bleach_bypass"
 {
-	"$FBTEXTURE"		"_rt_FullFrameFB" 
+	"$FBTEXTURE"		"_rt_VanceHDR" 
 	"$OPACITY"		"1.0"
 	"$ignorez"		1
 }

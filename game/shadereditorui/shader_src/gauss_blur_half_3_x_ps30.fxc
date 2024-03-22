@@ -20,7 +20,7 @@ sampler _Sampler_00		: register( s0 );
 const float2 _g_TexelSize		: register( c16 );
 
 // Arrays
-static const float g_cArray_2524[3] =
+static const float g_cArray_559[3] =
 {
 	float( 0.196842f ),
 	float( 0.606316f ),
@@ -50,7 +50,7 @@ PS_OUTPUT main( const PS_INPUT In )
 	{
 		_var1 = _var1 + _var2;
 		float4 _var4 = tex2D( _Sampler_00, _var1 ).rgba;
-		_var4 = _var4 * g_cArray_2524[_var3];
+		_var4 = _var4 * g_cArray_559[_var3];
 		_var0 = _var0 + _var4;
 	}
 	Out.vColor_0 = _var0;

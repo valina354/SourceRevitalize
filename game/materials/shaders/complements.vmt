@@ -1,6 +1,6 @@
 "complements"
 {
-	"$FBTEXTURE"		"_rt_FullFrameFB" 
+	"$FBTEXTURE"		"_rt_VanceHDR" 
 	"$GUIDEHUE"		"[1 1 1]"
 	"$AMOUNT"		"1.0"
 	"$CONCENTRATE"	"1.0"
