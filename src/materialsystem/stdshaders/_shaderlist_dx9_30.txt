@@ -147,6 +147,9 @@ eye_adaption_ps30.fxc
 screenblood_ps30.fxc
 screenblood_vs20.fxc
 
+//dithering shader
+dithering_ps30.fxc
+
 //example_model_ps20b.fxc
 //example_model_vs20.fxc
 

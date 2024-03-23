@@ -1,0 +1,53 @@
+#define HDRTYPE HDR_TYPE_NONE
+#include "common_ps_fxc.h"
+
+sampler FBSampler : register(s0);
+
+struct PS_INPUT
+{
+    float2 texCoord : TEXCOORD0;
+};
+
+// Function to simulate randomness
+float hash(float2 p)
+{
+    return frac(sin(dot(p, float2(12.9898, 78.233))) * 43758.5453);
+}
+
+// Function to introduce errors in pixel colors
+float4 introduceErrors(float4 color, float2 texCoord, float frameOffset)
+{
+    // Generate random values
+    float2 randomValues = float2(hash(texCoord), hash(texCoord * 2.0));
+
+    // Generate random offset for this frame
+    float2 frameRandomOffset = hash(texCoord + frameOffset);
+
+    // Apply random offset to random values
+    randomValues += frameRandomOffset * 2.0 - 1.0; // Scale to [-1, 1] range
+
+    // Adjust brightness randomly
+    color.rgb *= (0.8 + 0.4 * randomValues.x);
+
+    // Randomly darken or brighten the color
+    color.rgb += 0.1 * (randomValues.y - 0.5);
+
+    // Randomly change the color
+    color.rgb += 0.1 * (float3(randomValues, hash(texCoord * 3.0)) - 0.5);
+
+    return color;
+}
+
+float4 main(PS_INPUT i) : COLOR
+{
+    // Generate a random frame offset
+    float frameOffset = hash(i.texCoord);
+
+    // Fetch color from texture
+    float4 texColor = tex2D(FBSampler, i.texCoord);
+
+    // Introduce errors using frame offset
+    texColor = introduceErrors(texColor, i.texCoord, frameOffset);
+
+    return texColor;
+}

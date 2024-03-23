@@ -58,6 +58,8 @@ $Project "Shaders (VANCE)"
 			$File	"ss_sunrays.cpp"
 			$File	"skymask.cpp"
 			$File	"screenblood.cpp"
+			$File	"dithering.cpp"
+			$File	"eye_adaption.cpp"
 		}
 		
 		$Folder "PBR"

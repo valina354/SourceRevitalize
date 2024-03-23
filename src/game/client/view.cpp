@@ -402,6 +402,7 @@ void CViewRender::Init( void )
 	g_pScreenSpaceEffects->EnableScreenSpaceEffect( "c17_colorcorrection" );
 	g_pScreenSpaceEffects->EnableScreenSpaceEffect( "c17_sunshaft" );
 	g_pScreenSpaceEffects->EnableScreenSpaceEffect( "eye_adaption" );
+	g_pScreenSpaceEffects->EnableScreenSpaceEffect( "dithering" );
 
 	materials->EndRenderTargetAllocation();
 }
@@ -454,6 +455,7 @@ void CViewRender::Shutdown( void )
 	g_pScreenSpaceEffects->DisableScreenSpaceEffect( "c17_colorcorrection" );
 	g_pScreenSpaceEffects->DisableScreenSpaceEffect( "c17_sunshaft" );
 	g_pScreenSpaceEffects->DisableScreenSpaceEffect( "eye_adaption" );
+	g_pScreenSpaceEffects->DisableScreenSpaceEffect( "dithering" );
 
 	m_TranslucentSingleColor.Shutdown( );
 	m_ModulateSingleColor.Shutdown( );

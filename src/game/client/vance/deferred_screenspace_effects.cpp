@@ -127,7 +127,7 @@ private:
 	CMaterialReference m_EyeAdaption;
 };
 
-// Tonemap
+// Eye adaption
 ADD_SCREENSPACE_EFFECT( CEyeAdaption, Eye_Adaption );
 
 void CEyeAdaption::Init( void )
@@ -151,6 +151,57 @@ void CEyeAdaption::Render( int x, int y, int w, int h )
 		return;
 
 	DrawScreenEffectMaterial( m_EyeAdaption, x, y, w, h );
+}
+
+class CDithering : public IScreenSpaceEffect
+{
+public:
+	CDithering( void ){};
+
+	virtual void Init( void );
+	virtual void Shutdown( void );
+	virtual void SetParameters( KeyValues *params ){};
+	virtual void Enable( bool bEnable )
+	{
+		m_bEnabled = bEnable;
+	}
+	virtual bool IsEnabled()
+	{
+		return m_bEnabled;
+	}
+
+	virtual void Render( int x, int y, int w, int h );
+
+private:
+	bool m_bEnabled;
+
+	CMaterialReference m_Dithering;
+};
+
+// Dithering
+ADD_SCREENSPACE_EFFECT( CDithering, Dithering );
+
+void CDithering::Init( void )
+{
+	PrecacheMaterial( "shaders/dithering" );
+
+	m_Dithering.Init( materials->FindMaterial( "shaders/dithering", TEXTURE_GROUP_PIXEL_SHADERS, true ) );
+}
+
+void CDithering::Shutdown( void )
+{
+	m_Dithering.Shutdown();
+}
+
+ConVar r_post_dithering( "r_post_dithering", "0", FCVAR_ARCHIVE );
+void CDithering::Render( int x, int y, int w, int h )
+{
+	VPROF( "CDITHERING::Render" );
+
+	if ( !r_post_dithering.GetBool() || ( IsEnabled() == false ) )
+		return;
+
+	DrawScreenEffectMaterial( m_Dithering, x, y, w, h );
 }
 
 void CSSAO::Init(void)
@@ -745,6 +796,7 @@ ConVar r_post_ssgieffect( "r_post_ssgieffect", "1", FCVAR_ARCHIVE );
 //------------------------------------------------------------------------------
 void CSSGIEffect::Init()
 {
+	PrecacheMaterial( "shaders/ssgi0" );
 	m_SSGIMat.Init( materials->FindMaterial( "shaders/ssgi0", TEXTURE_GROUP_PIXEL_SHADERS, true ) );
 }
 
@@ -764,7 +816,7 @@ void CSSGIEffect::Render( int x, int y, int w, int h )
 	if ( !r_post_ssgieffect.GetBool() || ( IsEnabled() == false ) )
 		return;
 
-
+	DrawScreenEffectMaterial( m_SSGIMat, x, y, w, h );
 }
 
 class CColorCorrectionEffect : public IScreenSpaceEffect

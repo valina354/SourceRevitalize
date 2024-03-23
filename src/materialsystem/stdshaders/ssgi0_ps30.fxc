@@ -1,22 +1,82 @@
-// Pixel Shader
-float4 main(float2 texCoord : TEXCOORD0, uniform sampler2D TextureSampler : register(s0)) : SV_TARGET {
-    // Sample the scene texture
-    float4 color = tex2D(TextureSampler, texCoord);
+// STATIC: "CONVERT_TO_SRGB" "0..1"    [ps20b][= g_pHardwareConfig->NeedsShaderSRGBConversion()] [PC]
+// STATIC: "CONVERT_TO_SRGB" "0..0"    [= 0] [XBOX]
 
-    // Simple screen-space global illumination calculation
-    // You may need more sophisticated methods for better results
-    float3 ssgi = float3(0.0, 0.0, 0.0);
-    for (int x = -1; x <= 1; x++) {
-        for (int y = -1; y <= 1; y++) {
-            float4 neighborColor = tex2D(TextureSampler, texCoord + float2(x, y) * 0.5);
-            ssgi += neighborColor.rgb - color.rgb;
-        }
+#define HDRTYPE HDR_TYPE_NONE
+#include "common_ps_fxc.h"
+
+// Samplers for deferred textures
+sampler FBSampler : register(s0); // Framebuffer sampler
+sampler DepthSampler : register(s1);
+sampler MRAOSampler : register(s2);
+sampler NormalSampler : register(s3);
+sampler AlbedoSampler : register(s4);
+
+//This is the PS_INPUT that inputs the data
+struct PS_INPUT
+{
+    float2 texCoord : TEXCOORD0;
+};
+
+// Sample hemisphere function for ray direction
+float2 SampleHemisphere(float3 normal, float t)
+{
+    float theta = 2 * 3.141592653589793238 * t;
+    float r = sqrt(max(0.0, 1.0 - normal.z * normal.z));
+    float3 tangent = normalize(float3(-normal.y, normal.x, 0));
+    float3 bitangent = cross(normal, tangent);
+    return float2(cos(theta) * r, sin(theta) * r);
+}
+
+// Implement SSGI calculation function
+float3 CalculateSSGI(float depth, float mrao, float3 normals, float3 albedo, float2 texCoord)
+{
+    // Sample count and step size for raymarching
+    int sampleCount = 128.0;
+    float stepSize = 0.1;
+
+    // Accumulate SSGI contribution
+    float3 ssgi = 0;
+
+    // Raymarch through neighboring pixels in screen space
+    for (int i = 0; i < sampleCount; ++i)
+    {
+        // Calculate ray direction based on normals
+        float2 rayDir = SampleHemisphere(normalize(normals), i / float(sampleCount));
+
+        // Sample neighbor pixel in screen space
+        float3 neighborPos = tex2D(FBSampler, texCoord + rayDir * stepSize * float(i)).rgb;
+
+        // Accumulate SSGI contribution based on neighbor pixel color
+        ssgi += neighborPos;
     }
-    ssgi /= 9.0; // Normalize by the number of samples
 
-    // Combine with original color
-    float3 finalColor = color.rgb + ssgi * 0.5; // Adjust the strength as needed
+    // Average SSGI contribution
+    ssgi /= float(sampleCount);
+	
+	// Multiply SSGI contribution by 10000 to exaggerate the effect
+    ssgi *= 10000.0;
 
-    // Output the final color
+
+    return ssgi;
+}
+
+//This is the main function
+float4 main(PS_INPUT i) : COLOR
+{
+    // Sample the framebuffer texture
+    float4 fbColor = tex2D(FBSampler, i.texCoord);
+
+    // Sample the depth, MRAO, normals, and albedo from their respective textures
+    float depth = tex2D(DepthSampler, i.texCoord).r;
+    float mrao = tex2D(MRAOSampler, i.texCoord).r;
+    float3 normals = normalize(tex2D(NormalSampler, i.texCoord).rgb * 2.0 - 1.0); // Convert from [0,1] to [-1,1] range
+    float3 albedo = tex2D(AlbedoSampler, i.texCoord).rgb;
+
+    // Calculate SSGI based on the sampled information
+    float3 ssgi = CalculateSSGI(depth, mrao, normals, albedo, i.texCoord); // Pass texCoord to CalculateSSGI function
+
+    // Combine framebuffer color with SSGI
+    float3 finalColor = fbColor.rgb + ssgi;
+
     return float4(finalColor, 1.0);
 }

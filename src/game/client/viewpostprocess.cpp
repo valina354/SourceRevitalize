@@ -3096,7 +3096,7 @@ const Vector &CurrentViewOrigin();
 const Vector &CurrentViewForward();
 
 ConVar r_suneffects( "r_suneffects", "1", FCVAR_ARCHIVE );
-ConVar r_suneffects_blur( "r_suneffects_blur", "1", FCVAR_ARCHIVE );
+ConVar r_suneffects_blur( "r_suneffects_blur", "0", FCVAR_ARCHIVE );
 
 static CMaterialReference s_pSunRaysMaterial;
 
@@ -3123,9 +3123,9 @@ bool DoSunAndGlowEffects( int x, int y, int w, int h )
 	if ( C_Sun::Get() /*&& engine->IsSkyboxVisibleFromPoint(CurrentViewOrigin())*/ )
 	{
 		//these 4 lookups are common, you know, I could just make all of this static...
-		IMaterial *xblurMat = materials->FindMaterial( "dev/sunrayblurx", TEXTURE_GROUP_OTHER, true );
-		IMaterial *yblurMat = materials->FindMaterial( "dev/sunrayblury", TEXTURE_GROUP_OTHER, true );
-		IMaterial *sunToScreen = materials->FindMaterial( "dev/sunrays_to_screen", TEXTURE_GROUP_OTHER, true );
+		IMaterial *xblurMat = materials->FindMaterial( "shaders/sunrayblurx", TEXTURE_GROUP_OTHER, true );
+		IMaterial *yblurMat = materials->FindMaterial( "shaders/sunrayblury", TEXTURE_GROUP_OTHER, true );
+		IMaterial *sunToScreen = materials->FindMaterial( "shaders/sunrays_to_screen", TEXTURE_GROUP_OTHER, true );
 
 		ITexture *dest_rt0 = GetSmallBuffer0();
 		ITexture *dest_rt1 = GetSmallBuffer1();
@@ -3170,6 +3170,7 @@ bool DoSunAndGlowEffects( int x, int y, int w, int h )
 		// dest_rt0 is
 		pRenderContext->DrawScreenSpaceRectangle( s_pSunRaysMaterial, 0, 0, nMaskWidth, nMaskHeight, 0, 0, dest_rt0->GetActualWidth() - 1,
 												  dest_rt0->GetActualHeight() - 1, dest_rt0->GetActualWidth(), dest_rt0->GetActualHeight() );
+
 		if ( r_suneffects_blur.GetBool() )
 		{
 			//Gaussian blur x srt0 to srt1
@@ -3190,12 +3191,24 @@ bool DoSunAndGlowEffects( int x, int y, int w, int h )
 		pRenderContext->DrawScreenSpaceRectangle( sunToScreen, 0, 0, w, h, 0.0f, -0.5f, dest_rt0->GetActualWidth() - 1,
 												  dest_rt0->GetActualHeight() - 1, dest_rt0->GetActualWidth(), dest_rt0->GetActualHeight() );
 
+
 		return true; //we rendered.
 	}
 	return false;
 }
 
+void CC_DoSunAndGlowEffects( const CCommand &args )
+{
+	// Example usage: "dosunandgloweffects 0 0"
+	int x = 480;
+	int y = 240;
+	int w = 480; // Set width to 480
+	int h = 240; // Set height to 240
 
+	DoSunAndGlowEffects( x, y, w, h );
+}
+
+static ConCommand dosunandgloweffects( "dosunandgloweffects", CC_DoSunAndGlowEffects, "Run the DoSunAndGlowEffects function with width 480 and height 240", FCVAR_CLIENTDLL );
 
 #ifdef VANCE
 extern ConVar mat_object_motion_blur_enable;

@@ -181,6 +181,8 @@ extern vgui::IInputInternal *g_InputInternal;
 #include "sixense/in_sixense.h"
 #endif
 
+#include "downfall/df_view_scene.h"
+
 #if defined( GAMEPADUI )
 #include "../gamepadui/igamepadui.h"
 #endif // GAMEPADUI
@@ -309,6 +311,7 @@ CGlobalVarsBase *gpGlobals = &dummyvars;
 class CHudChat;
 class CViewRender;
 extern CViewRender g_DefaultViewRender;
+extern CDFViewRender g_ViewRender;
 
 extern void StopAllRumbleEffects( void );
 
