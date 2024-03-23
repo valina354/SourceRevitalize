@@ -102,7 +102,6 @@ sampler AOSampler				: register( s9 );	// AO
 sampler EmissiveSampler			: register( s10 );	// Emissive map
 sampler LightmapSampler			: register( s11 );	// Lightmap texture from the engine
 
-
 // Compute the matrix used to transform tangent space normals to world space
 // This expects DirectX normal maps in Mikk Tangent Space http://www.mikktspace.com
 float3x3 compute_tangent_frame(float3 N, float3 P, float2 uv, out float3 T, out float3 B, out float sign_det)
@@ -140,7 +139,7 @@ float3 ParallaxOcclusionMapping(float2 texCoords, float3 viewDir) {
     float prevDepth = 0.0;
     float brightnessFactor = 1.0; // Default brightness factor
 
-    #define numSteps 8
+    #define numSteps 4
     #define BRIGHTNESS_FACTOR_SCALE 0.15
 
     // Perform ray marching to find intersection with the surface
@@ -458,16 +457,16 @@ float3 worldPos = i.worldPos_projPosZ.xyz;
 	bool bBumpmap = BUMPMAP ? true : false;
 	bool bCubemap = (CUBEMAP) ? true : false;
 #if SMOOTHNESS == 0
-	float  roughnessMap = tex2D( RoughnessSampler, offsetCoords.xy );
+	float  roughnessMap = tex2D( RoughnessSampler, UV.xy );
 #else
-	float  roughnessMap = 1.0f - tex2D( RoughnessSampler, offsetCoords.xy );
+	float  roughnessMap = 1.0f - tex2D( RoughnessSampler, UV.xy );
 #endif
-	float  metallicMap = tex2D( MetallicSampler, offsetCoords.xy );
-	float  AOSample = tex2D( AOSampler, offsetCoords.xy );
-	float3  EmissiveSample = tex2D( EmissiveSampler, offsetCoords.xy );
+	float  metallicMap = tex2D( MetallicSampler, UV.xy );
+	float  AOSample = tex2D( AOSampler, UV.xy );
+	float3  EmissiveSample = tex2D( EmissiveSampler, UV.xy );
     float4 baseColor = tex2D(BaseTextureSampler, offsetCoords.xy);
     float4 baseColor2 = 0.0f.xxxx;
-    float4 normalTexel = tex2D(BumpmapSampler, offsetCoords.xy);
+    float4 normalTexel = tex2D(BumpmapSampler, UV.xy);
 	GetBaseTextureAndNormal( BaseTextureSampler, BaseTextureSampler, BumpmapSampler, false, bBumpmap, 
 		offsetCoords, i.vertexColor.rgb, baseColor, baseColor2, normalTexel);
 
