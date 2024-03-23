@@ -1,8 +1,10 @@
 Source Revitalize a project aimed at turning source 1 into source 2 partily, based on vance source code
 
-Credits: Vance: (page was taken down  by new owners of vance but heres backup: https://archive.org/details/vance-src-master) For most of the graphical features like csm,pbr and more
+         Credits: 
 
          City 17 Episode One: (https://github.com/KyleGospo/City-17-Episode-One-Source) For some of the postprocessing effects like Vignetting,Chromatic Aberation, etc
+
+         Vance: (page was taken down  by new owners of vance but heres backup: https://archive.org/details/vance-src-master) For most of the graphical features like csm,pbr and more
          
          Downfall: (https://github.com/DownFall-Team/DownFall) for Sunrays (Doesnt work yet) and some other things from their repo
          
