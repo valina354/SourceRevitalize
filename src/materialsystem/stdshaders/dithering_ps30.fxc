@@ -2,6 +2,10 @@
 #include "common_ps_fxc.h"
 
 sampler FBSampler : register(s0);
+float g_Time : register(c0); // Constant register for time
+float g_DistortAmount : register(c1); // Constant register for distortion amount
+float g_ErrorAmount : register(c2); // Constant register for error amount
+float g_GrainAmount : register(c3); // Constant register for grain amount
 
 struct PS_INPUT
 {
@@ -9,45 +13,89 @@ struct PS_INPUT
 };
 
 // Function to simulate randomness
-float hash(float2 p)
+float hash(float2 p, float time)
 {
-    return frac(sin(dot(p, float2(12.9898, 78.233))) * 43758.5453);
+    return frac(sin(dot(p, float2(12.9898, 78.233) + time)) * 43758.5453);
+}
+
+// Function to introduce slight distortion
+float2 distort(float2 p, float time)
+{
+    float distortionAmount = g_DistortAmount; // Adjust as needed for desired intensity
+    float distortionSpeed = 1.0;   // Adjust as needed for desired speed
+
+    float xOffset = sin(p.y * distortionSpeed + g_Time) * distortionAmount;
+    float yOffset = cos(p.x * distortionSpeed + g_Time) * distortionAmount;
+
+    return p + float2(xOffset, yOffset);
 }
 
 // Function to introduce errors in pixel colors
-float4 introduceErrors(float4 color, float2 texCoord, float frameOffset)
+float4 introduceErrors(float4 color, float2 randomOffset)
 {
-    // Generate random values
-    float2 randomValues = float2(hash(texCoord), hash(texCoord * 2.0));
+    // Apply random offset to color
+    float2 randomValues = float2(hash(randomOffset, g_Time), hash(randomOffset * 2.0, g_Time));
 
-    // Generate random offset for this frame
-    float2 frameRandomOffset = hash(texCoord + frameOffset);
+    // If error amount is nonzero, apply random adjustments
+    if (g_ErrorAmount > 0.0)
+    {
+        // Adjust brightness randomly
+        color.rgb *= (0.8 + 0.4 * randomValues.x);
 
-    // Apply random offset to random values
-    randomValues += frameRandomOffset * 2.0 - 1.0; // Scale to [-1, 1] range
+        // Randomly darken or brighten the color
+        color.rgb += g_ErrorAmount * (randomValues.y - 0.5);
 
-    // Adjust brightness randomly
-    color.rgb *= (0.8 + 0.4 * randomValues.x);
-
-    // Randomly darken or brighten the color
-    color.rgb += 0.1 * (randomValues.y - 0.5);
-
-    // Randomly change the color
-    color.rgb += 0.1 * (float3(randomValues, hash(texCoord * 3.0)) - 0.5);
+        // Randomly change the color
+        color.rgb += g_ErrorAmount * (float3(randomValues, hash(randomOffset * 3.0, g_Time)) - 0.5);
+    }
 
     return color;
 }
 
+
+// Function to introduce grain
+float4 addGrain(float4 color)
+{
+    float grainStrength = g_GrainAmount; // Adjust as needed for desired grain intensity
+
+    // If grain amount is 0, return the original color without adding grain
+    if (grainStrength == 0.0)
+    {
+        return color;
+    }
+
+    // Generate random grain color
+    float grainValue = hash(color.xy, g_Time);
+    float3 grainColor = grainStrength * grainValue;
+
+    // Add grain to the color
+    color.rgb += grainColor;
+
+    return color;
+}
+
+
 float4 main(PS_INPUT i) : COLOR
 {
-    // Generate a random frame offset
-    float frameOffset = hash(i.texCoord);
+    // Apply slight distortion to texture coordinates
+    float2 distortedTexCoord = distort(i.texCoord, g_Time);
+
+    // Generate random offset for this pixel
+    float2 pixelRandomOffset = hash(distortedTexCoord, g_Time);
 
     // Fetch color from texture
-    float4 texColor = tex2D(FBSampler, i.texCoord);
+    float4 texColor = tex2D(FBSampler, distortedTexCoord);
 
-    // Introduce errors using frame offset
-    texColor = introduceErrors(texColor, i.texCoord, frameOffset);
+    // Introduce errors using pixel offset
+    texColor = introduceErrors(texColor, pixelRandomOffset);
+
+    // Check if grain amount is nonzero before adding grain
+    if (g_GrainAmount > 0.0)
+    {
+        // Add grain to the color
+        texColor = addGrain(texColor);
+    }
 
     return texColor;
 }
+
