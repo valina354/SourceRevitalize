@@ -204,6 +204,57 @@ void CDithering::Render( int x, int y, int w, int h )
 	DrawScreenEffectMaterial( m_Dithering, x, y, w, h );
 }
 
+class CToon : public IScreenSpaceEffect
+{
+public:
+	CToon( void ){};
+
+	virtual void Init( void );
+	virtual void Shutdown( void );
+	virtual void SetParameters( KeyValues *params ){};
+	virtual void Enable( bool bEnable )
+	{
+		m_bEnabled = bEnable;
+	}
+	virtual bool IsEnabled()
+	{
+		return m_bEnabled;
+	}
+
+	virtual void Render( int x, int y, int w, int h );
+
+private:
+	bool m_bEnabled;
+
+	CMaterialReference m_Toon;
+};
+
+// Toon shading
+ADD_SCREENSPACE_EFFECT( CToon, Toon );
+
+void CToon::Init( void )
+{
+	PrecacheMaterial( "shaders/toon" );
+
+	m_Toon.Init( materials->FindMaterial( "shaders/toon", TEXTURE_GROUP_PIXEL_SHADERS, true ) );
+}
+
+void CToon::Shutdown( void )
+{
+	m_Toon.Shutdown();
+}
+
+ConVar r_post_toonshade( "r_post_toonshade", "0", FCVAR_ARCHIVE );
+void CToon::Render( int x, int y, int w, int h )
+{
+	VPROF( "CTOON::Render" );
+
+	if ( !r_post_toonshade.GetBool() || ( IsEnabled() == false ) )
+		return;
+
+	DrawScreenEffectMaterial( m_Toon, x, y, w, h );
+}
+
 void CSSAO::Init(void)
 {
 	PrecacheMaterial("shaders/ssgi");
