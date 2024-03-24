@@ -104,6 +104,7 @@ sampler AOSampler				: register( s9 );	// AO
 sampler EmissiveSampler			: register( s10 );	// Emissive map
 sampler LightmapSampler			: register( s11 );	// Lightmap texture from the engine
 sampler DetailTexture : register(s12); // Detail texture
+sampler HeightTexture : register(s13); // Height Map For Parallax
 
 // Compute the matrix used to transform tangent space normals to world space
 // This expects DirectX normal maps in Mikk Tangent Space http://www.mikktspace.com
@@ -125,7 +126,7 @@ float3x3 compute_tangent_frame(float3 N, float3 P, float2 uv, out float3 T, out 
 
 // Parallax Occlusion Mapping function
 float3 ParallaxOcclusionMapping(float2 texCoords, float3 viewDir) {
-    float height = tex2D(BumpmapSampler, texCoords).a * PARALLAX_HEIGHT_SCALE; // Using alpha channel for height
+    float height = tex2D(HeightTexture, texCoords).rgb * PARALLAX_HEIGHT_SCALE; // Using alpha channel for height
     float3 viewDirXY = normalize(float3(viewDir.xy, 0.0));
     
     // Compute tangent frame
@@ -151,7 +152,7 @@ float3 ParallaxOcclusionMapping(float2 texCoords, float3 viewDir) {
         currentUV -= currentDepth * rayDirTS.xy * PARALLAX_STEP_SCALE;
 
         // Sample height map
-        float sampleDepth = tex2D(BumpmapSampler, currentUV).a * PARALLAX_HEIGHT_SCALE;
+        float sampleDepth = tex2D(HeightTexture, currentUV).rgb * PARALLAX_HEIGHT_SCALE;
 
         // Smooth transition between samples
         float transitionFactor = smoothstep(0.0, 1.0, abs(currentDepth - prevDepth));

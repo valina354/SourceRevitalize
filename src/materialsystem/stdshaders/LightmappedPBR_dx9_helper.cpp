@@ -99,6 +99,10 @@ void InitLightmappedPBR_DX9( CBaseVSShader *pShader, IMaterialVar **params, Ligh
 	{
 		pShader->LoadTexture( info.m_nDetail );
 	}
+	if ( info.ParallaxMap != -1 && params[info.ParallaxMap]->IsDefined() )
+	{
+		pShader->LoadTexture( info.ParallaxMap );
+	}
 	if ( info.m_nBRDF != -1 && params[info.m_nBRDF]->IsDefined() )
 	{
 		pShader->LoadTexture( info.m_nBRDF );
@@ -151,6 +155,7 @@ static void DrawLightmappedPBR_DX9_Internal( CBaseVSShader *pShader, IMaterialVa
 	bool bHasAO = ( info.m_nAO != -1 ) && params[info.m_nAO]->IsTexture();
 	bool bHasEmissive = ( info.m_nEmissive != -1 ) && params[info.m_nEmissive]->IsTexture();
 	bool bHasDetail = ( info.m_nDetail != -1 ) && params[info.m_nDetail]->IsTexture();
+	bool bHasParallaxmap = ( info.ParallaxMap != -1 ) && params[info.ParallaxMap]->IsTexture();
 	bool bIsAlphaTested = IS_FLAG_SET( MATERIAL_VAR_ALPHATEST ) != 0;
 	bool bHasEnvmap = ( info.m_nEnvmap != -1 ) && params[info.m_nEnvmap]->IsTexture();
 	bool bHasLegacyEnvSphereMap = bHasEnvmap && IS_FLAG_SET( MATERIAL_VAR_ENVMAPSPHERE );
@@ -253,6 +258,7 @@ static void DrawLightmappedPBR_DX9_Internal( CBaseVSShader *pShader, IMaterialVa
 		pShaderShadow->EnableTexture( SHADER_SAMPLER10, true ); // Emissive map
 		pShaderShadow->EnableTexture( SHADER_SAMPLER11, true ); // Lightmap
 		pShaderShadow->EnableTexture( SHADER_SAMPLER12, true ); // Detail texture
+		pShaderShadow->EnableTexture( SHADER_SAMPLER13, true ); // Height map
 
 		// Always enable, since flat normal will be bound
 		pShaderShadow->EnableTexture( SHADER_SAMPLER3, true ); // Normal map
@@ -342,6 +348,11 @@ static void DrawLightmappedPBR_DX9_Internal( CBaseVSShader *pShader, IMaterialVa
 
 		if ( bHasDetail )
 			pShader->BindTexture( SHADER_SAMPLER12, info.m_nDetail );
+		else
+			pShaderAPI->BindStandardTexture( SHADER_SAMPLER12, TEXTURE_BLACK );
+
+		if ( bHasParallaxmap )
+			pShader->BindTexture( SHADER_SAMPLER13, info.ParallaxMap );
 		else
 			pShaderAPI->BindStandardTexture( SHADER_SAMPLER12, TEXTURE_BLACK );
 
