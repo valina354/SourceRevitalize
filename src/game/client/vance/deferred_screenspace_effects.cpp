@@ -255,6 +255,57 @@ void CToon::Render( int x, int y, int w, int h )
 	DrawScreenEffectMaterial( m_Toon, x, y, w, h );
 }
 
+class CHeathaze : public IScreenSpaceEffect
+{
+public:
+	CHeathaze( void ){};
+
+	virtual void Init( void );
+	virtual void Shutdown( void );
+	virtual void SetParameters( KeyValues *params ){};
+	virtual void Enable( bool bEnable )
+	{
+		m_bEnabled = bEnable;
+	}
+	virtual bool IsEnabled()
+	{
+		return m_bEnabled;
+	}
+
+	virtual void Render( int x, int y, int w, int h );
+
+private:
+	bool m_bEnabled;
+
+	CMaterialReference m_Heathaze;
+};
+
+// Toon shading
+ADD_SCREENSPACE_EFFECT( CHeathaze, heathaze );
+
+void CHeathaze::Init( void )
+{
+	PrecacheMaterial( "shaders/heathaze" );
+
+	m_Heathaze.Init( materials->FindMaterial( "shaders/heathaze", TEXTURE_GROUP_PIXEL_SHADERS, true ) );
+}
+
+void CHeathaze::Shutdown( void )
+{
+	m_Heathaze.Shutdown();
+}
+
+ConVar r_post_heathaze( "r_post_heathaze", "0", FCVAR_ARCHIVE );
+void CHeathaze::Render( int x, int y, int w, int h )
+{
+	VPROF( "CHEATHAZE::Render" );
+
+	if ( !r_post_heathaze.GetBool() || ( IsEnabled() == false ) )
+		return;
+
+	DrawScreenEffectMaterial( m_Heathaze, x, y, w, h );
+}
+
 void CSSAO::Init(void)
 {
 	PrecacheMaterial("shaders/ssgi");

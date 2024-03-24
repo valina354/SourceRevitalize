@@ -77,23 +77,10 @@ struct PS_INPUT
 float DepthFeathering_New(sampler DepthSampler, const float2 vScreenPos, float fProjZ, float fProjW, float4 vDepthBlendConstants)
 {
 	{
-       /* float flFeatheredAlpha;
-        float2 flDepths;
-        float flSceneDepth = flDepths.x;
-        float flSpriteDepth = flDepths.y;
-
-		{
-			flSceneDepth = tex2D(DepthSampler, vScreenPos).x;
-			flSpriteDepth = SoftParticleDepth(fProjZ);
-
-            flFeatheredAlpha = abs(flSceneDepth - flSpriteDepth) * vDepthBlendConstants.x;
-            flFeatheredAlpha = max(smoothstep(0.75f, 1.0f, flSceneDepth), flFeatheredAlpha); //as the sprite approaches the edge of our compressed depth space, the math stops working. So as the sprite approaches the far depth, smoothly remove feathering.
-            flFeatheredAlpha = saturate(flFeatheredAlpha);
-        }*/
 		
         float flSceneDepth = tex2D(DepthSampler, vScreenPos).x;
         float flSpriteDepth = (fProjZ) / g_zViewFar;
-        float flFeatheredAlpha = 1.0f - saturate((flSceneDepth - flSpriteDepth * 2));
+        float flFeatheredAlpha = 1.0f - saturate((flSceneDepth - flSpriteDepth * 0));
 
         return flFeatheredAlpha;
     }
@@ -108,7 +95,7 @@ float4 main( PS_INPUT i ) : COLOR
 	float attn = 1.0f - UVZ.z;
 	float depthBlend = 1.0f;
 	
-	float2 screenUVs = i.vProjPos.xy / i.vProjPos.w * float2(0.5f, -0.5f) + 0.5f;
+	float2 screenUVs = i.vProjPos.xy / i.vProjPos.w * float2(0.0f, -0.0f) + 0.0f;
     depthBlend *= DepthFeathering_New(FramebufferSampler, screenUVs, i.vProjPos.z, i.vProjPos.w, g_DepthBlendConstants);
 	
 	color *= g_FlashlightColor.rgb;

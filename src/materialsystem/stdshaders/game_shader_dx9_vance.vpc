@@ -61,6 +61,7 @@ $Project "Shaders (VANCE)"
 			$File	"dithering.cpp"
 			$File	"eye_adaption.cpp"
 			$File	"toon.cpp"
+			$File	"heathaze.cpp"
 		}
 		
 		$Folder "PBR"

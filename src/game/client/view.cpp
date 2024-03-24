@@ -404,6 +404,7 @@ void CViewRender::Init( void )
 	g_pScreenSpaceEffects->EnableScreenSpaceEffect( "eye_adaption" );
 	g_pScreenSpaceEffects->EnableScreenSpaceEffect( "dithering" );
 	g_pScreenSpaceEffects->EnableScreenSpaceEffect( "toon" );
+	g_pScreenSpaceEffects->EnableScreenSpaceEffect( "heathaze" );
 
 	materials->EndRenderTargetAllocation();
 }
@@ -458,6 +459,7 @@ void CViewRender::Shutdown( void )
 	g_pScreenSpaceEffects->DisableScreenSpaceEffect( "eye_adaption" );
 	g_pScreenSpaceEffects->DisableScreenSpaceEffect( "dithering" );
 	g_pScreenSpaceEffects->DisableScreenSpaceEffect( "toon" );
+	g_pScreenSpaceEffects->DisableScreenSpaceEffect( "heathaze" );
 
 	m_TranslucentSingleColor.Shutdown( );
 	m_ModulateSingleColor.Shutdown( );

@@ -1,0 +1,76 @@
+#define HDRTYPE HDR_TYPE_NONE
+#include "common_ps_fxc.h"
+
+sampler FBSampler : register(s0);
+// Constants
+uniform float4 c0 : register(c0); // Constant register for time
+uniform float4 c1 : register(c1); // Constant register for distortion amount
+uniform float4 c2 : register(c2); // Constant register for wind speed
+uniform float4 c3 : register(c3); // Constant register for blur strength
+
+struct PS_INPUT
+{
+    float2 texCoord : TEXCOORD0;
+};
+
+// Function to sample the framebuffer texture
+float4 SampleFramebuffer(float2 uv)
+{
+    return tex2D(FBSampler, uv);
+}
+
+// Function to apply wavy heat haze distortion
+float2 HeatHazeDistortion(float2 uv, float distortionAmount, float windSpeed, float time)
+{
+    // Calculate distortion based on UV coordinates, time, and wind speed
+    float distortionX = sin(uv.y * 10 + time * windSpeed) * distortionAmount;
+    float distortionY = cos(uv.x * 10 + time * windSpeed) * distortionAmount;
+    return float2(uv.x + distortionX, uv.y + distortionY); // Adding distortion to UV coordinates
+}
+
+// Function to apply Gaussian blur in one direction (horizontal or vertical)
+float4 GaussianBlur(float2 uv, float sigma, float direction)
+{
+    float4 color = 0;
+
+    // Gaussian weights
+    float weights[5] = {0.2270270270, 0.1945945946, 0.1216216216, 0.0540540541, 0.0162162162};
+    
+    // Sample and accumulate neighboring pixels with Gaussian weights
+    for (int i = -2; i <= 2; i++)
+    {
+        float offset = float(i) * direction;
+        color += SampleFramebuffer(uv + offset) * weights[i + 2];
+    }
+
+    return color;
+}
+
+float4 main(PS_INPUT i) : COLOR
+{
+    // Sample the framebuffer texture
+    float4 currentView = SampleFramebuffer(i.texCoord);
+
+    // Constants for distortion, wind speed, and blur strength
+    float distortionAmount = c1.x; // Adjust as needed
+    float windSpeed = c2.x; // Adjust as needed
+    float blurStrength = c3.x; // Adjust as needed
+
+    // Get current time from constant register
+    float time = c0.x;
+
+    // Apply wavy heat haze distortion
+    float2 distortedUV = HeatHazeDistortion(i.texCoord, distortionAmount, windSpeed, time);
+    
+    // Apply Gaussian blur in the horizontal direction
+    float4 blurredView = GaussianBlur(distortedUV, 1.0, 1.0); // Sigma = 1.0, direction = 1.0 (horizontal)
+
+    // Apply Gaussian blur in the vertical direction
+    blurredView = GaussianBlur(blurredView, 1.0, -1.0); // Sigma = 1.0, direction = -1.0 (vertical)
+
+    // Optionally blend the blurred view with the original view
+    float blendFactor = 0.5; // Adjust as needed
+    float4 finalColor = lerp(currentView, blurredView, blendFactor);
+
+    return finalColor;
+}
