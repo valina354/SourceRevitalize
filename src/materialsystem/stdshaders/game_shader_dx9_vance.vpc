@@ -64,6 +64,7 @@ $Project "Shaders (VANCE)"
 			$File	"heathaze.cpp"
 			$File	"blindness.cpp"
 			$File	"radialblur.cpp"
+			$File	"ascii.cpp"
 		}
 		
 		$Folder "PBR"

@@ -162,6 +162,9 @@ blindness_ps30.fxc
 //radial blur
 radialblur_ps30.fxc
 
+/ascii shader
+ascii_ps30.fxc
+
 //example_model_ps20b.fxc
 //example_model_vs20.fxc
 

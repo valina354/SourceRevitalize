@@ -407,6 +407,7 @@ void CViewRender::Init( void )
 	g_pScreenSpaceEffects->EnableScreenSpaceEffect( "heathaze" );
 	g_pScreenSpaceEffects->EnableScreenSpaceEffect( "blindness" );
 	g_pScreenSpaceEffects->EnableScreenSpaceEffect( "radialblur" );
+	g_pScreenSpaceEffects->EnableScreenSpaceEffect( "ascii" );
 
 	materials->EndRenderTargetAllocation();
 }
@@ -464,6 +465,7 @@ void CViewRender::Shutdown( void )
 	g_pScreenSpaceEffects->DisableScreenSpaceEffect( "heathaze" );
 	g_pScreenSpaceEffects->DisableScreenSpaceEffect( "blindness" );
 	g_pScreenSpaceEffects->DisableScreenSpaceEffect( "radialblur" );
+	g_pScreenSpaceEffects->DisableScreenSpaceEffect( "ascii" );
 
 	m_TranslucentSingleColor.Shutdown( );
 	m_ModulateSingleColor.Shutdown( );

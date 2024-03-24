@@ -306,6 +306,57 @@ void CRADIALBLUR::Render( int x, int y, int w, int h )
 	DrawScreenEffectMaterial( m_Radialblur, x, y, w, h );
 }
 
+class CASCII : public IScreenSpaceEffect
+{
+public:
+	CASCII( void ){};
+
+	virtual void Init( void );
+	virtual void Shutdown( void );
+	virtual void SetParameters( KeyValues *params ){};
+	virtual void Enable( bool bEnable )
+	{
+		m_bEnabled = bEnable;
+	}
+	virtual bool IsEnabled()
+	{
+		return m_bEnabled;
+	}
+
+	virtual void Render( int x, int y, int w, int h );
+
+private:
+	bool m_bEnabled;
+
+	CMaterialReference m_Ascii;
+};
+
+// Ascii
+ADD_SCREENSPACE_EFFECT( CASCII, Ascii );
+
+void CASCII::Init( void )
+{
+	PrecacheMaterial( "shaders/ascii" );
+
+	m_Ascii.Init( materials->FindMaterial( "shaders/ascii", TEXTURE_GROUP_PIXEL_SHADERS, true ) );
+}
+
+void CASCII::Shutdown( void )
+{
+	m_Ascii.Shutdown();
+}
+
+ConVar r_post_ascii( "r_post_ascii", "0", FCVAR_ARCHIVE );
+void CASCII::Render( int x, int y, int w, int h )
+{
+	VPROF( "CASCII::Render" );
+
+	if ( !r_post_ascii.GetBool() || ( IsEnabled() == false ) )
+		return;
+
+	DrawScreenEffectMaterial( m_Ascii, x, y, w, h );
+}
+
 class CHeathaze : public IScreenSpaceEffect
 {
 public:

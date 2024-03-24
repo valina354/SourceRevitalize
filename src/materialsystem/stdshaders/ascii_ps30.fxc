@@ -1,0 +1,42 @@
+#define HDRTYPE HDR_TYPE_NONE
+#include "common_ps_fxc.h"
+
+sampler FBSampler : register(s0);
+
+struct PS_INPUT
+{
+    float2 texCoord : TEXCOORD0;
+};
+
+float4 main(PS_INPUT i) : COLOR
+{
+    // Sample the scene texture
+    float4 sceneColor = tex2D(FBSampler, i.texCoord);
+
+    // Convert color to grayscale (using luminance)
+    float brightness = dot(sceneColor.rgb, float3(0.299, 0.587, 0.114));
+
+    // Define ASCII characters and their corresponding brightness levels
+    const float4 asciiChars[] = {
+        float4(0.0, 0.0, 0.0, 1.0),   // '@'
+        float4(0.1, 0.1, 0.1, 1.0),   // '%'
+        float4(0.2, 0.2, 0.2, 1.0),   // '#'
+        float4(0.3, 0.3, 0.3, 1.0),   // '*'
+        float4(0.4, 0.4, 0.4, 1.0),   // '+'
+        float4(0.5, 0.5, 0.5, 1.0),   // '='
+        float4(0.6, 0.6, 0.6, 1.0),   // '-'
+        float4(0.7, 0.7, 0.7, 1.0),   // ':'
+        float4(0.8, 0.8, 0.8, 1.0),   // '.'
+        float4(0.9, 0.9, 0.9, 1.0)    // ' '
+    };
+
+    // Define the brightness range for each ASCII character
+    const float brightnessStep = 0.1;
+    const int numChars = 10; // Number of ASCII characters
+
+    // Quantize brightness to select the appropriate ASCII character
+    int charIndex = min(int(brightness / brightnessStep), numChars - 1);
+
+    // Output the corresponding ASCII character color
+    return asciiChars[charIndex];
+}
