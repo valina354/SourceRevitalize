@@ -1,8 +1,8 @@
 "config"
 {
 	"preview_visible"		"1"
-	"p_x"		"1244"
-	"p_y"		"467"
+	"p_x"		"1069"
+	"p_y"		"375"
 	"p_sx"		"440"
 	"p_sy"		"466"
 	"draw_datatypes"		"1"

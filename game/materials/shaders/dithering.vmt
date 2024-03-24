@@ -1,0 +1,4 @@
+"dithering"
+{
+  $FBTEXTURE _rt_VanceHDR
+}

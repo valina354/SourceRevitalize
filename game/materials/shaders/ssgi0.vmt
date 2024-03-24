@@ -1,3 +1,8 @@
 "SSGI0"
 {
+  $FBTEXTURE _rt_vanceHDR
+  $DEPTHTEXTURE _rt_depthbuffer
+  $MRAOTEXTURE _rt_mrao
+  $NORMALTEXTURE _rt_normals
+  $ALBEDOTEXTURE _rt_albedo
 }
