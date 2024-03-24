@@ -30,6 +30,8 @@ SHADER_PARAM(ROUGHNESS, SHADER_PARAM_TYPE_TEXTURE, "", "")
 SHADER_PARAM(METALLIC, SHADER_PARAM_TYPE_TEXTURE, "", "")
 SHADER_PARAM(AO, SHADER_PARAM_TYPE_TEXTURE, "", "")
 SHADER_PARAM(EMISSIVE, SHADER_PARAM_TYPE_TEXTURE, "", "")
+SHADER_PARAM( DETAIL, SHADER_PARAM_TYPE_TEXTURE, "", "" )
+SHADER_PARAM( DETAILSTRENGTH, SHADER_PARAM_TYPE_TEXTURE, "", "" )
 SHADER_PARAM(LIGHTMAP, SHADER_PARAM_TYPE_TEXTURE, "shadertest/BaseTexture", "lightmap texture--will be bound by the engine")
 
 SHADER_PARAM(USESMOOTHNESS, SHADER_PARAM_TYPE_BOOL, "0", "Invert roughness")
@@ -46,6 +48,8 @@ void SetupVars(VertexLitPBR_DX9_Vars_t& info)
 	info.m_nMetallic = METALLIC;
 	info.m_nAO = AO;
 	info.m_nEmissive = EMISSIVE;
+	info.m_nDetail = DETAIL;
+	info.m_nDetailStrength = DETAILSTRENGTH;
 	info.m_nEnvmap = ENVMAP;
 	info.m_nBumpmap = NORMALMAP;
 	info.m_nFlashlightTexture = FLASHLIGHTTEXTURE;

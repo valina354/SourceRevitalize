@@ -82,6 +82,8 @@ PixelShaderLightInfo cLightInfo[3]			: register( PSREG_LIGHT_INFO_ARRAY );				//
 
 #define g_FlashlightPos					g_FlashlightPos_RimBoost.xyz
 
+const float4 g_DetailStrength : register(c42);
+
 sampler BaseTextureSampler		: register( s0 );	// Base map, selfillum in alpha
 sampler RoughnessSampler		: register( s1 );	// Roughness
 sampler MetallicSampler			: register( s2 );	// Metallic
@@ -94,6 +96,7 @@ sampler BRDFSampler				: register( s8 );	// for IBL
 sampler AOSampler				: register( s9 );	// AO
 sampler EmissiveSampler			: register( s10 );	// Emissive map
 sampler LightmapSampler			: register( s11 );	// Lightmap texture from the engine
+sampler DetailTexture : register(s12); // Detail texture
 
 //DoPBRLight(float3 vWorldPos, float3 vWorldNormal, float3 albedo, float3 vPosition, float3 vColor, float3 vEye, float atten_radius, float3 metallic, float3 roughness)
 float3 DoPBRLights(float3 vEye, float3 vWorldNormal, float3 vWorldPos, float4 albedo, float4 atten, float3 lightmap, float metallic, float roughness)
@@ -402,21 +405,30 @@ PS_OUTPUT main(PS_INPUT i) : COLOR
 #endif
 {
 	float2 UV = i.baseTexCoord;
+	// Sample the detail texture
+    float4 detailColor = tex2D(DetailTexture, UV.xy);
 	float2 screenUV = i.projPos.xy / i.projPos.w;
 	screenUV = screenUV * 0.5f + 0.5f;
-	float4 baseColor = tex2D(BaseTextureSampler, UV);
-    float4 normalTexel = tex2D(BumpmapSampler, UV);
+	float4 baseColorOld = tex2D(BaseTextureSampler, UV);
+	float4 baseColor = baseColorOld + float4(detailColor.rgb * g_DetailStrength, 0.0f);
+    float4 normalTexelOld = tex2D(BumpmapSampler, UV);
+	float4 normalTexel = normalTexelOld + float4(detailColor.rgb * g_DetailStrength, 0.0f);
 
 
 #if SMOOTHNESS
-	float roughnessMap = 1.0f - tex2D( RoughnessSampler, UV.xy );
+	float roughnessMapOld = 1.0f - tex2D( RoughnessSampler, UV.xy );
+	float roughnessMap = roughnessMapOld + float4(detailColor.rgb * g_DetailStrength, 0.0f);
 #else
-    float roughnessMap = tex2D(RoughnessSampler, UV.xy);
+    float roughnessMapOld = tex2D(RoughnessSampler, UV.xy);
+	float roughnessMap = roughnessMapOld + float4(detailColor.rgb * g_DetailStrength, 0.0f);
 #endif
 
-	float  metallicMap = tex2D( MetallicSampler, UV );
-	float  AOSample = tex2D( AOSampler, UV );
-	float3  EmissiveSample = tex2D( EmissiveSampler, UV );
+	float  metallicMapOld = tex2D( MetallicSampler, UV );
+	float  metallicMap = metallicMapOld + float4(detailColor.rgb * g_DetailStrength, 0.0f);
+	float  AOSampleOld = tex2D( AOSampler, UV );
+	float  AOSample = AOSampleOld + float4(detailColor.rgb * g_DetailStrength, 0.0f);
+	float3  EmissiveSampleOld = tex2D( EmissiveSampler, UV );
+	float3  EmissiveSample = EmissiveSampleOld + float4(detailColor.rgb * g_DetailStrength, 0.0f);
 	float3 lightmapTexel = GammaToLinear( 2.0f * tex2D( LightmapSampler, UV ).rgb );
 
 	float3 worldPos = i.worldPos;
