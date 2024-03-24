@@ -13,6 +13,7 @@
 BEGIN_VS_SHADER_FLAGS( ASCII, "Help for Bloom", SHADER_NOT_EDITABLE )
 BEGIN_SHADER_PARAMS
 SHADER_PARAM( FBTEXTURE, SHADER_PARAM_TYPE_TEXTURE, "_rt_VanceHDR", "" )
+SHADER_PARAM( ASCIITEXTURE, SHADER_PARAM_TYPE_TEXTURE, "", "" )
 END_SHADER_PARAMS
 
 SHADER_INIT
@@ -20,6 +21,10 @@ SHADER_INIT
 	if ( params[FBTEXTURE]->IsDefined() )
 	{
 		LoadTexture( FBTEXTURE );
+	}
+	if ( params[ASCIITEXTURE]->IsDefined() )
+	{
+		LoadTexture( ASCIITEXTURE );
 	}
 }
 
@@ -59,6 +64,7 @@ SHADER_DRAW
 	DYNAMIC_STATE
 	{
 		BindTexture( SHADER_SAMPLER0, FBTEXTURE, -1 );
+		BindTexture( SHADER_SAMPLER1, ASCIITEXTURE, -1 );
 
 		//if( g_pHardwareConfig->SupportsPixelShaders_2_b() )
 		{

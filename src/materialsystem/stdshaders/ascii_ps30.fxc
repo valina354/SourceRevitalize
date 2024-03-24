@@ -2,6 +2,10 @@
 #include "common_ps_fxc.h"
 
 sampler FBSampler : register(s0);
+sampler ASCIISampler : register(s1);
+
+#define ASCII_TEXTURE_WIDTH 256 // Width of the ASCII texture
+#define ASCII_TEXTURE_HEIGHT 512 // Height of the ASCII texture
 
 struct PS_INPUT
 {
@@ -16,27 +20,16 @@ float4 main(PS_INPUT i) : COLOR
     // Convert color to grayscale (using luminance)
     float brightness = dot(sceneColor.rgb, float3(0.299, 0.587, 0.114));
 
-    // Define ASCII characters and their corresponding brightness levels
-    const float4 asciiChars[] = {
-        float4(0.0, 0.0, 0.0, 1.0),   // '@'
-        float4(0.1, 0.1, 0.1, 1.0),   // '%'
-        float4(0.2, 0.2, 0.2, 1.0),   // '#'
-        float4(0.3, 0.3, 0.3, 1.0),   // '*'
-        float4(0.4, 0.4, 0.4, 1.0),   // '+'
-        float4(0.5, 0.5, 0.5, 1.0),   // '='
-        float4(0.6, 0.6, 0.6, 1.0),   // '-'
-        float4(0.7, 0.7, 0.7, 1.0),   // ':'
-        float4(0.8, 0.8, 0.8, 1.0),   // '.'
-        float4(0.9, 0.9, 0.9, 1.0)    // ' '
-    };
+    // Determine the ASCII character index based on brightness
+    float asciiIndex = brightness * (ASCII_TEXTURE_WIDTH - 1);
 
-    // Define the brightness range for each ASCII character
-    const float brightnessStep = 0.1;
-    const int numChars = 10; // Number of ASCII characters
+    // Calculate UV coordinates for sampling from the ASCII texture
+    float2 asciiUV = float2(asciiIndex, 0.5); // Adjust Y coordinate as needed
+    asciiUV /= float2(ASCII_TEXTURE_WIDTH, ASCII_TEXTURE_HEIGHT);
 
-    // Quantize brightness to select the appropriate ASCII character
-    int charIndex = min(int(brightness / brightnessStep), numChars - 1);
+    // Sample from the ASCII texture to get the corresponding character
+    float4 asciiColor = tex2D(ASCIISampler, asciiUV);
 
-    // Output the corresponding ASCII character color
-    return asciiChars[charIndex];
+    // Output the ASCII character color
+    return asciiColor;
 }
