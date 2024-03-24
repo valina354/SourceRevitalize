@@ -95,6 +95,10 @@ void InitLightmappedPBR_DX9( CBaseVSShader *pShader, IMaterialVar **params, Ligh
 	{
 		pShader->LoadTexture( info.m_nEmissive );
 	}
+	if ( info.m_nDetail != -1 && params[info.m_nDetail]->IsDefined() )
+	{
+		pShader->LoadTexture( info.m_nDetail );
+	}
 	if ( info.m_nBRDF != -1 && params[info.m_nBRDF]->IsDefined() )
 	{
 		pShader->LoadTexture( info.m_nBRDF );
@@ -146,6 +150,7 @@ static void DrawLightmappedPBR_DX9_Internal( CBaseVSShader *pShader, IMaterialVa
 	bool bHasMetallic = ( info.m_nMetallic != -1 ) && params[info.m_nMetallic]->IsTexture();
 	bool bHasAO = ( info.m_nAO != -1 ) && params[info.m_nAO]->IsTexture();
 	bool bHasEmissive = ( info.m_nEmissive != -1 ) && params[info.m_nEmissive]->IsTexture();
+	bool bHasDetail = ( info.m_nDetail != -1 ) && params[info.m_nDetail]->IsTexture();
 	bool bIsAlphaTested = IS_FLAG_SET( MATERIAL_VAR_ALPHATEST ) != 0;
 	bool bHasEnvmap = ( info.m_nEnvmap != -1 ) && params[info.m_nEnvmap]->IsTexture();
 	bool bHasLegacyEnvSphereMap = bHasEnvmap && IS_FLAG_SET( MATERIAL_VAR_ENVMAPSPHERE );
@@ -247,6 +252,7 @@ static void DrawLightmappedPBR_DX9_Internal( CBaseVSShader *pShader, IMaterialVa
 		pShaderShadow->EnableTexture( SHADER_SAMPLER9, true );	// Ambient Occlusion
 		pShaderShadow->EnableTexture( SHADER_SAMPLER10, true ); // Emissive map
 		pShaderShadow->EnableTexture( SHADER_SAMPLER11, true ); // Lightmap
+		pShaderShadow->EnableTexture( SHADER_SAMPLER12, true ); // Detail texture
 
 		// Always enable, since flat normal will be bound
 		pShaderShadow->EnableTexture( SHADER_SAMPLER3, true ); // Normal map
@@ -333,6 +339,11 @@ static void DrawLightmappedPBR_DX9_Internal( CBaseVSShader *pShader, IMaterialVa
 			pShader->BindTexture( SHADER_SAMPLER10, info.m_nEmissive );
 		else
 			pShaderAPI->BindStandardTexture( SHADER_SAMPLER10, TEXTURE_BLACK );
+
+		if ( bHasDetail )
+			pShader->BindTexture( SHADER_SAMPLER12, info.m_nDetail );
+		else
+			pShaderAPI->BindStandardTexture( SHADER_SAMPLER12, TEXTURE_BLACK );
 
 		pShaderAPI->BindStandardTexture( SHADER_SAMPLER11, TEXTURE_LIGHTMAP );
 
@@ -467,6 +478,8 @@ static void DrawLightmappedPBR_DX9_Internal( CBaseVSShader *pShader, IMaterialVa
 			matrix[3][3] = 1;
 			pShaderAPI->SetPixelShaderConstant( 35, &matrix[0][0], 4 );
 		}
+
+		pShaderAPI->SetPixelShaderConstant( 39, params[info.m_nDetailStrength]->GetVecValue() );
 
 		if ( bHasFlashlight )
 		{

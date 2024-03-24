@@ -92,6 +92,8 @@ const float4 g_ParallaxParms : register(c34);
 #define PARALLAX_OFFSET_SCALE g_ParallaxParms.g
 #define PARALLAX_STEP_SCALE g_ParallaxParms.b
 
+const float4 g_DetailStrength : register(c39);
+
 sampler BaseTextureSampler		: register( s0 );	// Base map, selfillum in alpha
 sampler RoughnessSampler		: register( s1 );	// Roughness
 sampler MetallicSampler			: register( s2 );	// Metallic
@@ -101,6 +103,7 @@ sampler BRDFSampler				: register( s8 );	// for IBL
 sampler AOSampler				: register( s9 );	// AO
 sampler EmissiveSampler			: register( s10 );	// Emissive map
 sampler LightmapSampler			: register( s11 );	// Lightmap texture from the engine
+sampler DetailTexture : register(s12); // Detail texture
 
 // Compute the matrix used to transform tangent space normals to world space
 // This expects DirectX normal maps in Mikk Tangent Space http://www.mikktspace.com
@@ -453,20 +456,28 @@ float3 worldPos = i.worldPos_projPosZ.xyz;
 #else
     UV = i.SeamlessTexCoord;
 #endif
+    // Sample the detail texture
+    float4 detailColor = tex2D(DetailTexture, UV.xy);
     float3 offsetCoords = ParallaxOcclusionMapping(UV.xy, normalize(i.worldPos_projPosZ.xyz - g_EyePos.xyz));
 	bool bBumpmap = BUMPMAP ? true : false;
 	bool bCubemap = (CUBEMAP) ? true : false;
 #if SMOOTHNESS == 0
-	float  roughnessMap = tex2D( RoughnessSampler, UV.xy );
+	float  roughnessMapOld = tex2D( RoughnessSampler, offsetCoords.xy );
+	float  roughnessMap = roughnessMapOld + float4(detailColor.rgb * g_DetailStrength, 0.0f);
 #else
-	float  roughnessMap = 1.0f - tex2D( RoughnessSampler, UV.xy );
+	float  roughnessMapOld = 1.0f - tex2D( RoughnessSampler, offsetCoords.xy );
+	float  roughnessMap = roughnessMapOld + float4(detailColor.rgb * g_DetailStrength, 0.0f);
 #endif
-	float  metallicMap = tex2D( MetallicSampler, UV.xy );
-	float  AOSample = tex2D( AOSampler, UV.xy );
-	float3  EmissiveSample = tex2D( EmissiveSampler, UV.xy );
-    float4 baseColor = tex2D(BaseTextureSampler, offsetCoords.xy);
+	float  metallicMapOld = tex2D( MetallicSampler, offsetCoords.xy );
+	float  metallicMap = metallicMapOld + float4(detailColor.rgb * g_DetailStrength, 0.0f);
+	float  AOSampleOld = tex2D( AOSampler, offsetCoords.xy );
+	float  AOSample = AOSampleOld + float4(detailColor.rgb * g_DetailStrength, 0.0f);
+	float3  EmissiveSample = tex2D( EmissiveSampler, offsetCoords.xy );
+    float4 baseColorOld = tex2D(BaseTextureSampler, offsetCoords.xy);
+    float4 baseColor = baseColorOld + float4(detailColor.rgb * g_DetailStrength, 0.0f);
     float4 baseColor2 = 0.0f.xxxx;
-    float4 normalTexel = tex2D(BumpmapSampler, UV.xy);
+    float4 normalTexelOld = tex2D(BumpmapSampler, offsetCoords.xy);
+	float4 normalTexel = normalTexelOld + float4(detailColor.rgb * g_DetailStrength, 0.0f);
 	GetBaseTextureAndNormal( BaseTextureSampler, BaseTextureSampler, BumpmapSampler, false, bBumpmap, 
 		offsetCoords, i.vertexColor.rgb, baseColor, baseColor2, normalTexel);
 

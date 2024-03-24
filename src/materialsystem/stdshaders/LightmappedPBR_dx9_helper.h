@@ -35,6 +35,8 @@ struct LightmappedPBR_DX9_Vars_t
 	int m_nMetallic;
 	int m_nAO;
 	int m_nEmissive;
+	int m_nDetail;
+	int m_nDetailStrength;
 	int m_nEnvmap;
 	int m_nBumpmap;
 	int m_nFlashlightTexture;
