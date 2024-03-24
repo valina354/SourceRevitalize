@@ -161,7 +161,7 @@ static void DrawVertexLitPBR_DX9_Internal( CBaseVSShader *pShader, IMaterialVar*
 	bool bHasLegacyEnvSphereMap = bHasEnvmap && IS_FLAG_SET(MATERIAL_VAR_ENVMAPSPHERE);
 	bool bHasBump = IsTextureSet(info.m_nBumpmap, params);
 	bool bBumpAlphaSmoothness =
-		bHasBump && info.m_nBumpAlphaSmoothness != -1 && params[info.m_nBumpAlphaSmoothness]->GetIntValue() == 1;
+		false;
 	bool bUseSmoothness =
 		!bBumpAlphaSmoothness && info.m_nUseSmoothness != -1 && params[info.m_nUseSmoothness]->GetIntValue() == 1;
 	bool bHasLightmap = (info.m_nLightmap != -1) && params[info.m_nLightmap]->IsTexture();
@@ -226,8 +226,7 @@ static void DrawVertexLitPBR_DX9_Internal( CBaseVSShader *pShader, IMaterialVar*
 		pShaderShadow->EnableTexture( SHADER_SAMPLER0, true );		// Base (albedo) map
 		pShaderShadow->EnableSRGBRead( SHADER_SAMPLER0, true );
 
-		if ( !bBumpAlphaSmoothness )
-			pShaderShadow->EnableTexture( SHADER_SAMPLER1, true ); // Roughness map
+		pShaderShadow->EnableTexture( SHADER_SAMPLER1, true ); // Roughness map
 		pShaderShadow->EnableTexture(SHADER_SAMPLER2, true);		// Metallic map
 
 		if (bHasEnvmap)
@@ -314,13 +313,10 @@ static void DrawVertexLitPBR_DX9_Internal( CBaseVSShader *pShader, IMaterialVar*
 		else
 			pShaderAPI->BindStandardTexture( SHADER_SAMPLER0, TEXTURE_WHITE );
 
-		if ( !bBumpAlphaSmoothness )
-		{
 			if ( bHasRoughness )
 				pShader->BindTexture( SHADER_SAMPLER1, info.m_nRoughness );
 			else
 				pShaderAPI->BindStandardTexture( SHADER_SAMPLER1, TEXTURE_WHITE );
-		}
 
 		if (bHasMetallic)
 			pShader->BindTexture(SHADER_SAMPLER2, info.m_nMetallic);

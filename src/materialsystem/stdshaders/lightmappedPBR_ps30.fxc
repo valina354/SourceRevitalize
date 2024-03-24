@@ -37,7 +37,6 @@
 // both cant exist at the same time
 // SKIP: ( $FLASHLIGHT == 1) && ( $CSM == 1)
 
-// SKIP: ($BUMPALPHASMOOTHNESS == 1) && ($SMOOTHNESS == 1)
 
 // SKIP: $CUBEMAP_SPHERE_LEGACY && ($CUBEMAP == 0)
 
