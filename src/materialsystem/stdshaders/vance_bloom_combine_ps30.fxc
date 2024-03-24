@@ -28,5 +28,5 @@ float4 main( PS_INPUT i ) : COLOR
 
 	float3 bloomSample = bloomSample0 + bloomSample1 + bloomSample2 + bloomSample3;
 
-	return FinalOutput( float4( fbSample + (bloomSample * m_flAmount), 1.0f ), 0, PIXEL_FOG_TYPE_NONE, TONEMAP_SCALE_NONE );
+	return FinalOutput( float4( fbSample + (bloomSample * m_flAmount), 1.0f ), 0, PIXEL_FOG_TYPE_NONE, TONEMAP_SCALE_LINEAR );
 }

@@ -1,0 +1,7 @@
+D:/sourcesdk/SourceRevitaliz/src/imgui/thirdparty/glfw/build/CMakeFiles/uninstall.dir
+D:/sourcesdk/SourceRevitaliz/src/imgui/thirdparty/glfw/build/CMakeFiles/INSTALL.dir
+D:/sourcesdk/SourceRevitaliz/src/imgui/thirdparty/glfw/build/CMakeFiles/ALL_BUILD.dir
+D:/sourcesdk/SourceRevitaliz/src/imgui/thirdparty/glfw/build/CMakeFiles/ZERO_CHECK.dir
+D:/sourcesdk/SourceRevitaliz/src/imgui/thirdparty/glfw/build/src/CMakeFiles/glfw.dir
+D:/sourcesdk/SourceRevitaliz/src/imgui/thirdparty/glfw/build/src/CMakeFiles/update_mappings.dir
+D:/sourcesdk/SourceRevitaliz/src/imgui/thirdparty/glfw/build/src/CMakeFiles/INSTALL.dir

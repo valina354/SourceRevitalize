@@ -153,3 +153,8 @@ $Project "video_services"
 {
     "video_services/video_services/video_services.vpc"
 }
+
+$Project "imgui"
+{
+    "imgui/app.vpc"
+}
