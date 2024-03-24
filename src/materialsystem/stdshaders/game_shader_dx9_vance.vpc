@@ -62,6 +62,8 @@ $Project "Shaders (VANCE)"
 			$File	"eye_adaption.cpp"
 			$File	"toon.cpp"
 			$File	"heathaze.cpp"
+			$File	"blindness.cpp"
+			$File	"radialblur.cpp"
 		}
 		
 		$Folder "PBR"

@@ -1,0 +1,44 @@
+#define HDRTYPE HDR_TYPE_NONE
+#include "common_ps_fxc.h"
+
+sampler FBSampler : register(s0);
+
+float g_Left : register(c0);  // Whether to render the left eye
+float g_Right : register(c1); // Whether to render the right eye
+
+struct PS_INPUT
+{
+    float2 texCoord : TEXCOORD0;
+};
+
+// Function to simulate blindness
+float4 BlindnessEffect(float4 color, float2 texCoord)
+{
+    // Calculate distance from center
+    float2 center = float2(0.5, 0.5);
+    float dist = distance(texCoord, center);
+    
+    // Scale distance for smoother transition
+    dist = smoothstep(0.48, 0.52, dist); // Adjust the smoothstep range for transition sharpness
+    
+    // Blend color based on distance
+    color.rgb = lerp(color.rgb, float3(0, 0, 0), dist);
+    
+    return color;
+}
+
+float4 main(PS_INPUT i) : COLOR
+{
+    float4 color = tex2D(FBSampler, i.texCoord);
+    
+    // Apply blindness effect
+    color = BlindnessEffect(color, i.texCoord);
+    
+    // Determine which eye to render
+    if (g_Left == 0 && i.texCoord.x < 0.5)
+        color.a = 0; // Set alpha to 0 for left eye
+    if (g_Right == 0 && i.texCoord.x >= 0.5)
+        color.a = 0; // Set alpha to 0 for right eye
+    
+    return color;
+}

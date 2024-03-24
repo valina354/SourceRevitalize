@@ -67,6 +67,8 @@ screenblood_vs20.fxc-----screenblood_vs30
 dithering_ps30.fxc-----dithering_ps30
 toon_shading_ps30.fxc-----toon_shading_ps30
 heathaze_ps30.fxc-----heathaze_ps30
+blindness_ps30.fxc-----blindness_ps30
+radialblur_ps30.fxc-----radialblur_ps30
 lightpass_ps30.fxc-----lightpass_ps30
 lightpass_vs30.fxc-----lightpass_vs30
 deferred_pointlights_ps30.fxc-----deferred_pointlights_ps30

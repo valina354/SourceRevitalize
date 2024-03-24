@@ -255,6 +255,57 @@ void CToon::Render( int x, int y, int w, int h )
 	DrawScreenEffectMaterial( m_Toon, x, y, w, h );
 }
 
+class CRADIALBLUR : public IScreenSpaceEffect
+{
+public:
+	CRADIALBLUR( void ){};
+
+	virtual void Init( void );
+	virtual void Shutdown( void );
+	virtual void SetParameters( KeyValues *params ){};
+	virtual void Enable( bool bEnable )
+	{
+		m_bEnabled = bEnable;
+	}
+	virtual bool IsEnabled()
+	{
+		return m_bEnabled;
+	}
+
+	virtual void Render( int x, int y, int w, int h );
+
+private:
+	bool m_bEnabled;
+
+	CMaterialReference m_Radialblur;
+};
+
+// Toon shading
+ADD_SCREENSPACE_EFFECT( CRADIALBLUR, Radialblur );
+
+void CRADIALBLUR::Init( void )
+{
+	PrecacheMaterial( "shaders/radialblur" );
+
+	m_Radialblur.Init( materials->FindMaterial( "shaders/radialblur", TEXTURE_GROUP_PIXEL_SHADERS, true ) );
+}
+
+void CRADIALBLUR::Shutdown( void )
+{
+	m_Radialblur.Shutdown();
+}
+
+ConVar r_post_radialblur( "r_post_radialblur", "0", FCVAR_ARCHIVE );
+void CRADIALBLUR::Render( int x, int y, int w, int h )
+{
+	VPROF( "CRADIALBLUR::Render" );
+
+	if ( !r_post_radialblur.GetBool() || ( IsEnabled() == false ) )
+		return;
+
+	DrawScreenEffectMaterial( m_Radialblur, x, y, w, h );
+}
+
 class CHeathaze : public IScreenSpaceEffect
 {
 public:
@@ -280,7 +331,7 @@ private:
 	CMaterialReference m_Heathaze;
 };
 
-// Toon shading
+// Heat Haze
 ADD_SCREENSPACE_EFFECT( CHeathaze, heathaze );
 
 void CHeathaze::Init( void )
@@ -304,6 +355,57 @@ void CHeathaze::Render( int x, int y, int w, int h )
 		return;
 
 	DrawScreenEffectMaterial( m_Heathaze, x, y, w, h );
+}
+
+class CBlindness : public IScreenSpaceEffect
+{
+public:
+	CBlindness( void ){};
+
+	virtual void Init( void );
+	virtual void Shutdown( void );
+	virtual void SetParameters( KeyValues *params ){};
+	virtual void Enable( bool bEnable )
+	{
+		m_bEnabled = bEnable;
+	}
+	virtual bool IsEnabled()
+	{
+		return m_bEnabled;
+	}
+
+	virtual void Render( int x, int y, int w, int h );
+
+private:
+	bool m_bEnabled;
+
+	CMaterialReference m_Blindness;
+};
+
+// Heat Haze
+ADD_SCREENSPACE_EFFECT( CBlindness, blindness );
+
+void CBlindness::Init( void )
+{
+	PrecacheMaterial( "shaders/blindness" );
+
+	m_Blindness.Init( materials->FindMaterial( "shaders/heathaze", TEXTURE_GROUP_PIXEL_SHADERS, true ) );
+}
+
+void CBlindness::Shutdown( void )
+{
+	m_Blindness.Shutdown();
+}
+
+ConVar r_post_blindness( "r_post_blindness", "0", FCVAR_ARCHIVE );
+void CBlindness::Render( int x, int y, int w, int h )
+{
+	VPROF( "CBLINDESS::Render" );
+
+	if ( !r_post_blindness.GetBool() || ( IsEnabled() == false ) )
+		return;
+
+	DrawScreenEffectMaterial( m_Blindness, x, y, w, h );
 }
 
 void CSSAO::Init(void)

@@ -1,0 +1,46 @@
+#define HDRTYPE HDR_TYPE_NONE
+#include "common_ps_fxc.h"
+
+sampler FBSampler : register(s0);
+float4 g_blurstrength : register(c0); // BlurStrength
+float4 g_bluramount : register(c1); // BlurAmount
+
+struct PS_INPUT
+{
+    float2 texCoord : TEXCOORD0;
+};
+
+float2 CenterPoint = float2(0.5, 0.5); // Center point of the radial blur (normalized coordinates)
+
+float4 main(PS_INPUT i) : COLOR
+{
+    // Calculate the distance from the current pixel to the center point
+    float2 delta = i.texCoord - CenterPoint;
+    float distance = length(delta);
+
+    // Calculate the blur amount based on the distance
+    float blurFactor = smoothstep(0.0, g_blurstrength.x, distance);
+
+    // Limit blur amount to avoid excessive loop iterations
+    float blurRange = min(g_bluramount.x, 16.0);
+
+    // Apply the blur effect
+    float4 finalColor = float4(0.0, 0.0, 0.0, 0.0);
+    float totalWeight = 0.0;
+    for (int j = -16; j <= 16; j++) // Loop over a fixed range
+    {
+        for (int k = -16; k <= 16; k++)
+        {
+            // Sample the texture at offset coordinates
+            float2 offsetTexCoord = i.texCoord + float2(j, k) * blurFactor;
+            float weight = 1.0 - (length(float2(j, k)) / blurRange); // Weight based on distance from center
+            finalColor += tex2D(FBSampler, offsetTexCoord) * weight;
+            totalWeight += weight;
+        }
+    }
+    
+    // Normalize the final color
+    finalColor /= totalWeight;
+
+    return finalColor;
+}
