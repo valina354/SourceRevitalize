@@ -31,7 +31,7 @@ SHADER_PARAM( DETAIL, SHADER_PARAM_TYPE_TEXTURE, "", "" )
 SHADER_PARAM( DETAILSCALE, SHADER_PARAM_TYPE_TEXTURE, "", "" )
 SHADER_PARAM( USESMOOTHNESS, SHADER_PARAM_TYPE_BOOL, "0", "Invert roughness" )
 
-SHADER_PARAM( PARALLAXMAP, SHADER_PARAM_TYPE_TEXTURE, "0", "The Path to the Parallax Map" )
+
 SHADER_PARAM( PARALLAXDEPTH, SHADER_PARAM_TYPE_FLOAT, "0", "Depth of the Parallax Map" );
 SHADER_PARAM( PARALLAXSCALING, SHADER_PARAM_TYPE_FLOAT, "0", "Scaling of the Parallax Map" );
 SHADER_PARAM( PARALLAXSTEP, SHADER_PARAM_TYPE_FLOAT, "0", "Step Scalling of the Parallax Map" );
@@ -63,7 +63,6 @@ void SetupVars( LightmappedPBR_DX9_Vars_t &info )
 	info.m_nBRDF = BRDF;
 	info.m_nUseSmoothness = USESMOOTHNESS;
 	info.m_nSeamlessMappingScale = SEAMLESS_SCALE;
-	info.ParallaxMap = PARALLAXMAP;
 	info.ParallaxDepth = PARALLAXDEPTH;
 	info.ParallaxScaling = PARALLAXSCALING;
 	info.ParallaxStep = PARALLAXSTEP;

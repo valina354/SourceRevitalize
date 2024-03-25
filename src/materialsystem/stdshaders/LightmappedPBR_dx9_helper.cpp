@@ -19,7 +19,6 @@
 #include "tier0/memdbgon.h"
 
 static ConVar mat_fullbright( "mat_fullbright", "0", FCVAR_CHEAT );
-static ConVar mat_pbr_parallaxmap( "mat_pbr_parallaxmap", "1" );
 
 extern ConVar r_csm_bias;
 extern ConVar r_csm_slopescalebias;
@@ -100,10 +99,6 @@ void InitLightmappedPBR_DX9( CBaseVSShader *pShader, IMaterialVar **params, Ligh
 	{
 		pShader->LoadTexture( info.m_nDetail );
 	}
-	if ( info.ParallaxMap != -1 && params[info.ParallaxMap]->IsDefined() )
-	{
-		pShader->LoadTexture( info.ParallaxMap );
-	}
 	if ( info.m_nBRDF != -1 && params[info.m_nBRDF]->IsDefined() )
 	{
 		pShader->LoadTexture( info.m_nBRDF );
@@ -156,7 +151,6 @@ static void DrawLightmappedPBR_DX9_Internal( CBaseVSShader *pShader, IMaterialVa
 	bool bHasAO = ( info.m_nAO != -1 ) && params[info.m_nAO]->IsTexture();
 	bool bHasEmissive = ( info.m_nEmissive != -1 ) && params[info.m_nEmissive]->IsTexture();
 	bool bHasDetail = ( info.m_nDetail != -1 );
-	bool bHasParallaxmap = ( info.ParallaxMap != -1 ) && params[info.ParallaxMap]->IsTexture();
 	bool bIsAlphaTested = IS_FLAG_SET( MATERIAL_VAR_ALPHATEST ) != 0;
 	bool bHasEnvmap = ( info.m_nEnvmap != -1 ) && params[info.m_nEnvmap]->IsTexture();
 	bool bHasLegacyEnvSphereMap = bHasEnvmap && IS_FLAG_SET( MATERIAL_VAR_ENVMAPSPHERE );
@@ -273,10 +267,7 @@ static void DrawLightmappedPBR_DX9_Internal( CBaseVSShader *pShader, IMaterialVa
 
 		pShaderShadow->VertexShaderVertexFormat( flags, numTexCoords, 0, 0 );
 
-		if ( !mat_pbr_parallaxmap.GetBool() )
-		{
-			bHasParallaxmap = false;
-		}
+
 
 		DECLARE_STATIC_VERTEX_SHADER( lightmappedpbr_vs30 );
 		SET_STATIC_VERTEX_SHADER_COMBO( VERTEXCOLOR, bHasVertexColor || bHasVertexAlpha );
@@ -357,10 +348,7 @@ static void DrawLightmappedPBR_DX9_Internal( CBaseVSShader *pShader, IMaterialVa
 		else
 			pShaderAPI->BindStandardTexture( SHADER_SAMPLER12, TEXTURE_BLACK );
 
-		if ( bHasParallaxmap )
-			pShader->BindTexture( SHADER_SAMPLER13, info.ParallaxMap );
-		else
-			pShaderAPI->BindStandardTexture( SHADER_SAMPLER12, TEXTURE_BLACK );
+
 
 		pShaderAPI->BindStandardTexture( SHADER_SAMPLER11, TEXTURE_LIGHTMAP );
 
@@ -462,8 +450,6 @@ static void DrawLightmappedPBR_DX9_Internal( CBaseVSShader *pShader, IMaterialVa
 		vEyePos_SpecExponent[3] = 0.0f;
 		pShaderAPI->SetPixelShaderConstant( PSREG_EYEPOS_SPEC_EXPONENT, vEyePos_SpecExponent, 1 );
 
-		if  (bHasParallaxmap)
-		{
 			float flParams[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
 			// Parallax Depth (the strength of the effect)
 			flParams[0] = GetFloatParam( info.ParallaxDepth, params, 3.0f );
@@ -473,7 +459,6 @@ static void DrawLightmappedPBR_DX9_Internal( CBaseVSShader *pShader, IMaterialVa
 			flParams[2] = GetFloatParam( info.ParallaxStep, params, 3.0f );
 
 			pShaderAPI->SetPixelShaderConstant( 34, flParams, 1 );
-		}
 
 		// Parallax cubemaps
 		if ( hasParallaxCorrection )

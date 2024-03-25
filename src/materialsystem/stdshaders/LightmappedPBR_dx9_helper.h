@@ -44,7 +44,6 @@ struct LightmappedPBR_DX9_Vars_t
 	int m_nBRDF;
 	int m_nUseSmoothness;
 	int m_nSeamlessMappingScale;
-	int ParallaxMap;
 	int ParallaxDepth;
 	int ParallaxScaling;
 	int ParallaxStep;
