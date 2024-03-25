@@ -1,4 +1,4 @@
-#define PI 3.1415926
+#define PI 3.14159265359
 float luminance(float3 rgb)
 {
     const float3 W = float3(0.5125, 0.7154, 0.7121);
