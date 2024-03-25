@@ -28,7 +28,7 @@ SHADER_PARAM( METALLIC, SHADER_PARAM_TYPE_TEXTURE, "", "" )
 SHADER_PARAM( AO, SHADER_PARAM_TYPE_TEXTURE, "", "" )
 SHADER_PARAM( EMISSIVE, SHADER_PARAM_TYPE_TEXTURE, "", "" )
 SHADER_PARAM( DETAIL, SHADER_PARAM_TYPE_TEXTURE, "", "" )
-SHADER_PARAM( DETAILSTRENGTH, SHADER_PARAM_TYPE_FLOAT, "", "" )
+SHADER_PARAM( DETAILSCALE, SHADER_PARAM_TYPE_TEXTURE, "", "" )
 SHADER_PARAM( USESMOOTHNESS, SHADER_PARAM_TYPE_BOOL, "0", "Invert roughness" )
 
 SHADER_PARAM( PARALLAXMAP, SHADER_PARAM_TYPE_TEXTURE, "0", "The Path to the Parallax Map" )
@@ -55,7 +55,7 @@ void SetupVars( LightmappedPBR_DX9_Vars_t &info )
 	info.m_nAO = AO;
 	info.m_nEmissive = EMISSIVE;
 	info.m_nDetail = DETAIL;
-	info.m_nDetailStrength = DETAILSTRENGTH;
+	info.m_nDetailStrength = DETAILSCALE;
 	info.m_nEnvmap = ENVMAP;
 	info.m_nBumpmap = NORMALMAP;
 	info.m_nFlashlightTexture = FLASHLIGHTTEXTURE;

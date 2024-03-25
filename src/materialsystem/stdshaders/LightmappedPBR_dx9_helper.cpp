@@ -19,6 +19,7 @@
 #include "tier0/memdbgon.h"
 
 static ConVar mat_fullbright( "mat_fullbright", "0", FCVAR_CHEAT );
+static ConVar mat_pbr_parallaxmap( "mat_pbr_parallaxmap", "1" );
 
 extern ConVar r_csm_bias;
 extern ConVar r_csm_slopescalebias;
@@ -154,7 +155,7 @@ static void DrawLightmappedPBR_DX9_Internal( CBaseVSShader *pShader, IMaterialVa
 	bool bHasMetallic = ( info.m_nMetallic != -1 ) && params[info.m_nMetallic]->IsTexture();
 	bool bHasAO = ( info.m_nAO != -1 ) && params[info.m_nAO]->IsTexture();
 	bool bHasEmissive = ( info.m_nEmissive != -1 ) && params[info.m_nEmissive]->IsTexture();
-	bool bHasDetail = ( info.m_nDetail != -1 ) && params[info.m_nDetail]->IsTexture();
+	bool bHasDetail = ( info.m_nDetail != -1 );
 	bool bHasParallaxmap = ( info.ParallaxMap != -1 ) && params[info.ParallaxMap]->IsTexture();
 	bool bIsAlphaTested = IS_FLAG_SET( MATERIAL_VAR_ALPHATEST ) != 0;
 	bool bHasEnvmap = ( info.m_nEnvmap != -1 ) && params[info.m_nEnvmap]->IsTexture();
@@ -271,6 +272,11 @@ static void DrawLightmappedPBR_DX9_Internal( CBaseVSShader *pShader, IMaterialVa
 		int numTexCoords = 3;
 
 		pShaderShadow->VertexShaderVertexFormat( flags, numTexCoords, 0, 0 );
+
+		if ( !mat_pbr_parallaxmap.GetBool() )
+		{
+			bHasParallaxmap = false;
+		}
 
 		DECLARE_STATIC_VERTEX_SHADER( lightmappedpbr_vs30 );
 		SET_STATIC_VERTEX_SHADER_COMBO( VERTEXCOLOR, bHasVertexColor || bHasVertexAlpha );
@@ -456,15 +462,18 @@ static void DrawLightmappedPBR_DX9_Internal( CBaseVSShader *pShader, IMaterialVa
 		vEyePos_SpecExponent[3] = 0.0f;
 		pShaderAPI->SetPixelShaderConstant( PSREG_EYEPOS_SPEC_EXPONENT, vEyePos_SpecExponent, 1 );
 
-		float flParams[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
-		// Parallax Depth (the strength of the effect)
-		flParams[0] = GetFloatParam( info.ParallaxDepth, params, 3.0f );
-		// Parallax scaling
-		flParams[1] = GetFloatParam( info.ParallaxScaling, params, 3.0f );
-		// Parallax step
-		flParams[2] = GetFloatParam( info.ParallaxStep, params, 3.0f );
+		if  (bHasParallaxmap)
+		{
+			float flParams[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
+			// Parallax Depth (the strength of the effect)
+			flParams[0] = GetFloatParam( info.ParallaxDepth, params, 3.0f );
+			// Parallax scaling
+			flParams[1] = GetFloatParam( info.ParallaxScaling, params, 3.0f );
+			// Parallax step
+			flParams[2] = GetFloatParam( info.ParallaxStep, params, 3.0f );
 
-		pShaderAPI->SetPixelShaderConstant( 34, flParams, 1 );
+			pShaderAPI->SetPixelShaderConstant( 34, flParams, 1 );
+		}
 
 		// Parallax cubemaps
 		if ( hasParallaxCorrection )
