@@ -349,6 +349,8 @@ private:
 	void InputSetLightingOrigin( inputdata_t &inputdata );
 	void InputSetModelScale( inputdata_t &inputdata );
 
+	void InputSetRenderInSunShafts( inputdata_t &inputdata );
+
 	bool CanSkipAnimation( void );
 
 public:
@@ -437,6 +439,8 @@ private:
 	CStudioHdr			*m_pStudioHdr;
 	CThreadFastMutex	m_StudioHdrInitLock;
 	CThreadFastMutex	m_BoneSetupMutex;
+
+	CNetworkVar( bool, m_bRenderInSunShafts );
 
 // FIXME: necessary so that cyclers can hack m_bSequenceFinished
 friend class CFlexCycler;

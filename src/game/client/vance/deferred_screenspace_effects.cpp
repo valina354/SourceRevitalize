@@ -255,6 +255,108 @@ void CToon::Render( int x, int y, int w, int h )
 	DrawScreenEffectMaterial( m_Toon, x, y, w, h );
 }
 
+class CMainSunshaft: public IScreenSpaceEffect
+{
+public:
+	CMainSunshaft( void ){};
+
+	virtual void Init( void );
+	virtual void Shutdown( void );
+	virtual void SetParameters( KeyValues *params ){};
+	virtual void Enable( bool bEnable )
+	{
+		m_bEnabled = bEnable;
+	}
+	virtual bool IsEnabled()
+	{
+		return m_bEnabled;
+	}
+
+	virtual void Render( int x, int y, int w, int h );
+
+private:
+	bool m_bEnabled;
+
+	CMaterialReference m_Mainsunshaft;
+};
+
+// Sunshaft
+ADD_SCREENSPACE_EFFECT( CMainSunshaft, Mainsunshaft );
+
+void CMainSunshaft::Init( void )
+{
+	PrecacheMaterial( "shaders/mainsunshaft" );
+
+	m_Mainsunshaft.Init( materials->FindMaterial( "shaders/mainsunshaft", TEXTURE_GROUP_PIXEL_SHADERS, true ) );
+}
+
+void CMainSunshaft::Shutdown( void )
+{
+	m_Mainsunshaft.Shutdown();
+}
+
+ConVar r_post_mainsunshaft( "r_post_mainsunshaft", "0", FCVAR_ARCHIVE );
+void CMainSunshaft::Render( int x, int y, int w, int h )
+{
+	VPROF( "CMAINSUNSHAFT::Render" );
+
+	if ( !r_post_mainsunshaft.GetBool() || ( IsEnabled() == false ) )
+		return;
+
+	DrawScreenEffectMaterial( m_Mainsunshaft, x, y, w, h );
+}
+
+class CBARRELDIS : public IScreenSpaceEffect
+{
+public:
+	CBARRELDIS( void ){};
+
+	virtual void Init( void );
+	virtual void Shutdown( void );
+	virtual void SetParameters( KeyValues *params ){};
+	virtual void Enable( bool bEnable )
+	{
+		m_bEnabled = bEnable;
+	}
+	virtual bool IsEnabled()
+	{
+		return m_bEnabled;
+	}
+
+	virtual void Render( int x, int y, int w, int h );
+
+private:
+	bool m_bEnabled;
+
+	CMaterialReference m_Barreldis;
+};
+
+// Barrel distortion
+ADD_SCREENSPACE_EFFECT( CBARRELDIS, Barreldistortion );
+
+void CBARRELDIS::Init( void )
+{
+	PrecacheMaterial( "shaders/barreldistortion" );
+
+	m_Barreldis.Init( materials->FindMaterial( "shaders/barreldistortion", TEXTURE_GROUP_PIXEL_SHADERS, true ) );
+}
+
+void CBARRELDIS::Shutdown( void )
+{
+	m_Barreldis.Shutdown();
+}
+
+ConVar r_post_barreldistortion( "r_post_barreldistortion", "0", FCVAR_ARCHIVE );
+void CBARRELDIS::Render( int x, int y, int w, int h )
+{
+	VPROF( "CBARRELDISTORTION::Render" );
+
+	if ( !r_post_barreldistortion.GetBool() || ( IsEnabled() == false ) )
+		return;
+
+	DrawScreenEffectMaterial( m_Barreldis, x, y, w, h );
+}
+
 class CRADIALBLUR : public IScreenSpaceEffect
 {
 public:
@@ -1278,148 +1380,3 @@ void CColorCorrectionEffect::Render( int x, int y, int w, int h )
 
 	
 }
-
-class CSunShaftEffect : public IScreenSpaceEffect
-{
-public:
-	CSunShaftEffect( void ){};
-
-	virtual void Init( void );
-	virtual void Shutdown( void );
-	virtual void SetParameters( KeyValues *params ){};
-	virtual void Enable( bool bEnable )
-	{
-		m_bEnabled = bEnable;
-	}
-
-	virtual bool IsEnabled()
-	{
-		return m_bEnabled;
-	}
-	virtual bool ShaftsRendering( void );
-
-	virtual void Render( int x, int y, int w, int h );
-
-private:
-	bool m_bEnabled;
-
-	CMaterialReference m_SunShaft_BlurX;
-	CMaterialReference m_SunShaft_BlurY;
-
-	CMaterialReference m_SunShaftBlendMat;
-	CMaterialReference m_SunShaftMask;
-	CMaterialReference m_SunShaftDebug;
-};
-
-ConVar r_post_sunshaft_blur( "r_post_sunshaft_blur", "1", FCVAR_ARCHIVE );
-ConVar r_post_sunshaft_blur_amount( "r_post_sunshaft_blur_amount", "0.5", FCVAR_CHEAT );
-void CSunShaftEffect::Init( void )
-{
-	PrecacheMaterial( "shaders/blurx" );
-	PrecacheMaterial( "shaders/blury" );
-	PrecacheMaterial( "shaders/sunshaft_base" );
-	PrecacheMaterial( "shaders/sunshaft_final" );
-
-	m_SunShaft_BlurX.Init( materials->FindMaterial( "shaders/blurx", TEXTURE_GROUP_PIXEL_SHADERS, true ) );
-	m_SunShaft_BlurY.Init( materials->FindMaterial( "shaders/blury", TEXTURE_GROUP_PIXEL_SHADERS, true ) );
-
-	m_SunShaftBlendMat.Init( materials->FindMaterial( "shaders/sunshaft_final", TEXTURE_GROUP_CLIENT_EFFECTS, true ) );
-	m_SunShaftMask.Init( materials->FindMaterial( "shaders/sunshaft_base", TEXTURE_GROUP_PIXEL_SHADERS, true ) );
-	m_SunShaftDebug.Init( materials->FindMaterial( "shaders/sunshaft_base", TEXTURE_GROUP_CLIENT_EFFECTS, true ) );
-}
-
-void CSunShaftEffect::Shutdown( void )
-{
-	m_SunShaft_BlurX.Shutdown();
-	m_SunShaft_BlurY.Shutdown();
-
-	m_SunShaftBlendMat.Shutdown();
-
-	m_SunShaftMask.Shutdown();
-	m_SunShaftDebug.Shutdown();
-}
-
-extern ConVar r_post_sunshaft;
-ConVar r_post_sunshaft_debug( "r_post_sunshaft_debug", "0", FCVAR_CHEAT );
-
-bool CSunShaftEffect::ShaftsRendering( void )
-{
-	return ( r_post_sunshaft.GetBool() /*&& engine->IsSkyboxVisibleFromPoint(CurrentViewOrigin())*/ && IsEnabled() );
-}
-
-void CSunShaftEffect::Render( int x, int y, int w, int h )
-{
-	VPROF( "CSunShaftEffect::Render" );
-
-	if ( !ShaftsRendering() )
-		return;
-
-	if ( r_post_sunshaft_debug.GetInt() == 1 )
-	{
-		DrawScreenEffectMaterial( m_SunShaftMask, x, y, w, h );
-		return;
-	}
-
-	IMaterialVar *var;
-	CMatRenderContextPtr pRenderContext( materials );
-
-	pRenderContext->PushRenderTargetAndViewport();
-
-	ITexture *dest_rt0 = materials->FindTexture( "_rt_SmallFB0", TEXTURE_GROUP_RENDER_TARGET );
-	ITexture *dest_rt1 = materials->FindTexture( "_rt_SmallFB1", TEXTURE_GROUP_RENDER_TARGET );
-
-	SetRenderTargetAndViewPort( dest_rt0 );
-
-	pRenderContext->DrawScreenSpaceRectangle( m_SunShaftMask, 0, 0, w / 4, h / 4, 0, 0, w / 4 - 1, h / 4 - 1, w / 4, h / 4 );
-
-	if ( IsX360() )
-	{
-		pRenderContext->CopyRenderTargetToTextureEx( dest_rt0, 0, NULL, NULL );
-	}
-
-	//Render the gaussian blur pass over our shafts.
-	if ( r_post_sunshaft_blur.GetBool() )
-	{
-		var = m_SunShaft_BlurX->FindVar( "$fbtexture", NULL );
-		var->SetTextureValue( dest_rt0 );
-		var = m_SunShaft_BlurX->FindVar( "$resdivisor", NULL );
-		var->SetIntValue( 4 );
-		var = m_SunShaft_BlurX->FindVar( "$blursize", NULL );
-		var->SetFloatValue( r_post_sunshaft_blur_amount.GetFloat() );
-
-		SetRenderTargetAndViewPort( dest_rt1 );
-		pRenderContext->DrawScreenSpaceRectangle( m_SunShaft_BlurX, 0, 0, w / 4, h / 4, 0, 0, w / 4 - 1, h / 4 - 1, w / 4, h / 4 );
-		if ( IsX360() )
-		{
-			pRenderContext->CopyRenderTargetToTextureEx( dest_rt1, 0, NULL, NULL );
-		}
-
-		var = m_SunShaft_BlurY->FindVar( "$fbtexture", NULL );
-		var->SetTextureValue( dest_rt1 );
-		var = m_SunShaft_BlurY->FindVar( "$resdivisor", NULL );
-		var->SetIntValue( 4 );
-		var = m_SunShaft_BlurY->FindVar( "$blursize", NULL );
-		var->SetFloatValue( r_post_sunshaft_blur_amount.GetFloat() );
-
-		SetRenderTargetAndViewPort( dest_rt0 );
-		pRenderContext->DrawScreenSpaceRectangle( m_SunShaft_BlurY, 0, 0, w / 4, h / 4, 0, 0, w / 4 - 1, h / 4 - 1, w / 4, h / 4 );
-		if ( IsX360() )
-		{
-			pRenderContext->CopyRenderTargetToTextureEx( dest_rt0, 0, NULL, NULL );
-		}
-	}
-
-	pRenderContext->PopRenderTargetAndViewport();
-
-	if ( r_post_sunshaft_debug.GetInt() == 2 )
-	{
-		pRenderContext->DrawScreenSpaceRectangle( m_SunShaftDebug, 0, 0, w, h, 0, 0, w - 1, h - 1, w, h );
-		return;
-	}
-
-	//Render our sun to the screen additively.
-	DrawScreenEffectMaterial( m_SunShaftBlendMat, x, y, w, h );
-}
-
-// Sun Shafts
-ADD_SCREENSPACE_EFFECT(CSunShaftEffect, c17_sunshaft);

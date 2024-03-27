@@ -45,22 +45,16 @@ ITexture* CBaseClientRenderTargets::CreateCameraTexture( IMaterialSystem* pMater
 		CREATERENDERTARGETFLAGS_HDR );
 }
 
-ITexture *CBaseClientRenderTargets::InitViewMask( IMaterialSystem *pMaterialSystem, const char *szName )
+ITexture *CBaseClientRenderTargets::CreateSunTexture( IMaterialSystem *pMaterialSystem, int iSize )
 {
-	/*return materials->CreateNamedRenderTargetTextureEx( szName,
-		128, 128,
-		RT_SIZE_HDR,
-		pMaterialSystem->GetBackBufferFormat(),
-		MATERIAL_RT_DEPTH_NONE,
-		TEXTUREFLAGS_NOMIP | TEXTUREFLAGS_NOLOD | TEXTUREFLAGS_RENDERTARGET | TEXTUREFLAGS_NODEPTHBUFFER | TEXTUREFLAGS_CLAMPS | TEXTUREFLAGS_CLAMPT, 0 );*/
-
 	return pMaterialSystem->CreateNamedRenderTargetTextureEx2(
-		szName,
-		128, 128, RT_SIZE_HDR,
+		"_rt_SunShaftBlack",
+		iSize, iSize, RT_SIZE_HDR,
 		pMaterialSystem->GetBackBufferFormat(),
 		MATERIAL_RT_DEPTH_SHARED,
-		TEXTUREFLAGS_CLAMPS | TEXTUREFLAGS_CLAMPT,
-		CREATERENDERTARGETFLAGS_HDR);
+		TEXTUREFLAGS_CLAMPS | TEXTUREFLAGS_CLAMPT | TEXTUREFLAGS_NOMIP | TEXTUREFLAGS_NOLOD,
+		CREATERENDERTARGETFLAGS_HDR );
+
 }
 
 //-----------------------------------------------------------------------------
@@ -76,11 +70,10 @@ void CBaseClientRenderTargets::InitClientRenderTargets( IMaterialSystem* pMateri
 	m_WaterReflectionTexture.Init( CreateWaterReflectionTexture( pMaterialSystem, iWaterTextureSize ) );
 	m_WaterRefractionTexture.Init( CreateWaterRefractionTexture( pMaterialSystem, iWaterTextureSize ) );
 
+	m_SunShaftBlackTexture.Init( CreateSunTexture( pMaterialSystem ) );
+
 	// Monitors
 	m_CameraTexture.Init( CreateCameraTexture( pMaterialSystem, iCameraTextureSize ) );
-
-	m_ViewMask[0].Init( InitViewMask( pMaterialSystem, "_rt_SkyMask" ) );
-	m_ViewMask[1].Init( InitViewMask( pMaterialSystem, "_rt_ViewmodelMask" ) );
 }
 
 //-----------------------------------------------------------------------------
@@ -94,9 +87,8 @@ void CBaseClientRenderTargets::ShutdownClientRenderTargets()
 	m_WaterReflectionTexture.Shutdown();
 	m_WaterRefractionTexture.Shutdown();
 
+	m_SunShaftBlackTexture.Shutdown();
+
 	// Monitors
 	m_CameraTexture.Shutdown();
-
-	m_ViewMask[0].Shutdown();
-	m_ViewMask[1].Shutdown();
 }

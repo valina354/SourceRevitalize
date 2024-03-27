@@ -220,6 +220,9 @@ BEGIN_DATADESC( CBaseAnimating )
 
 	DEFINE_FIELD( m_fBoneCacheFlags, FIELD_SHORT ),
 
+	DEFINE_KEYFIELD( m_bRenderInSunShafts, FIELD_BOOLEAN, "RenderInSunShafts" ),
+	DEFINE_INPUTFUNC( FIELD_BOOLEAN, "SetRenderInSunShafts", InputSetRenderInSunShafts ),
+
 	END_DATADESC()
 
 // Sendtable for fields we don't want to send to clientside animating entities
@@ -266,6 +269,8 @@ IMPLEMENT_SERVERCLASS_ST(CBaseAnimating, DT_BaseAnimating)
 	SendPropFloat( SENDINFO( m_fadeMaxDist ), 0, SPROP_NOSCALE ),
 	SendPropFloat( SENDINFO( m_flFadeScale ), 0, SPROP_NOSCALE ),
 
+	SendPropBool( SENDINFO( m_bRenderInSunShafts ) ),
+
 END_SEND_TABLE()
 
 
@@ -293,6 +298,7 @@ CBaseAnimating::CBaseAnimating()
 	m_fadeMaxDist = 0;
 	m_flFadeScale = 0.0f;
 	m_fBoneCacheFlags = 0;
+	m_bRenderInSunShafts = true;
 }
 
 CBaseAnimating::~CBaseAnimating()
@@ -613,6 +619,11 @@ void CBaseAnimating::InputSetLightingOrigin( inputdata_t &inputdata )
 	// Find our specified target
 	string_t strLightingOrigin = MAKE_STRING( inputdata.value.String() );
 	SetLightingOrigin( strLightingOrigin );
+}
+
+void CBaseAnimating::InputSetRenderInSunShafts( inputdata_t &inputdata )
+{
+	m_bRenderInSunShafts = inputdata.value.Bool();
 }
 
 //-----------------------------------------------------------------------------

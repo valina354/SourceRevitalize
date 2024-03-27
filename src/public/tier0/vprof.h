@@ -130,6 +130,7 @@
 #define VPROF_BUDGETGROUP_SHADOW_DEPTH_TEXTURING	_T("Flashlight Shadows")
 #define VPROF_BUDGETGROUP_CLIENT_SIM				_T("Client Simulation") // think functions, tempents, etc.
 #define VPROF_BUDGETGROUP_STEAM						_T("Steam") 
+#define VPROF_BUDGETGROUP_SUNSHAFT					_T("Sun Shaft Occlusion")
 #define VPROF_BUDGETGROUP_CVAR_FIND					_T("Cvar_Find") 
 #define VPROF_BUDGETGROUP_CLIENTLEAFSYSTEM			_T("ClientLeafSystem")
 #define VPROF_BUDGETGROUP_JOBS_COROUTINES			_T("Jobs/Coroutines")

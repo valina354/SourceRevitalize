@@ -103,6 +103,7 @@ static ConVar r_visocclusion( "r_visocclusion", "0", FCVAR_CHEAT );
 extern ConVar r_flashlightdepthtexture;
 extern ConVar vcollide_wireframe;
 extern ConVar mat_motion_blur_enabled;
+extern ConVar r_post_sunshaft;
 extern ConVar r_depthoverlay;
 extern ConVar mat_viewportscale;
 extern ConVar mat_viewportupscale;
@@ -114,8 +115,6 @@ extern bool g_bDumpRenderTargets;
 static ConVar cl_maxrenderable_dist("cl_maxrenderable_dist", "3000", FCVAR_CHEAT, "Max distance from the camera at which things will be rendered" );
 
 ConVar r_entityclips( "r_entityclips", "1" ); //FIXME: Nvidia drivers before 81.94 on cards that support user clip planes will have problems with this, require driver update? Detect and disable?
-
-ConVar r_post_sunshaft( "r_post_sunshaft", "0", FCVAR_ARCHIVE );
 
 // Matches the version in the engine
 static ConVar r_drawopaqueworld( "r_drawopaqueworld", "1", FCVAR_CHEAT );
@@ -152,8 +151,6 @@ static ConVar fog_colorskybox( "fog_colorskybox", "-1 -1 -1", FCVAR_CHEAT );
 static ConVar fog_enableskybox( "fog_enableskybox", "1", FCVAR_CHEAT );
 static ConVar fog_maxdensity( "fog_maxdensity", "-1", FCVAR_CHEAT );
 
-extern void UpdateViewMask(const CViewSetup &view, bool VIEWMODEL, bool combine);
-
 //-----------------------------------------------------------------------------
 // Water-related convars
 //-----------------------------------------------------------------------------
@@ -186,6 +183,8 @@ static ConVar pyro_dof( "pyro_dof", "1", FCVAR_ARCHIVE );
 #endif
 
 extern ConVar cl_leveloverview;
+
+ConVar r_post_sunshaft( "r_post_sunshaft", "0", FCVAR_ARCHIVE);
 
 extern ConVar localplayer_visionflags;
 
@@ -869,10 +868,6 @@ CLIENTEFFECT_REGISTER_BEGIN( PrecachePostProcessingEffects )
 	CLIENTEFFECT_MATERIAL( "dev/blurgaussian_3x3" )
 	CLIENTEFFECT_MATERIAL( "dev/motion_blur" )
 	CLIENTEFFECT_MATERIAL( "dev/upscale" )
-
-	CLIENTEFFECT_MATERIAL( "shaders/sunrays_to_screen" )
-	CLIENTEFFECT_MATERIAL( "shaders/sunrayblurx" )
-	CLIENTEFFECT_MATERIAL( "shaders/sunrayblury" )
 
 
 #ifdef TF_CLIENT_DLL
@@ -2294,6 +2289,11 @@ void CViewRender::RenderView( const CViewSetup &viewIn, int nClearFlags, int wha
 
 		g_pClientShadowMgr->AdvanceFrame();
 
+		if ( g_pMaterialSystemHardwareConfig->SupportsShaderModel_3_0() )
+		{
+			DrawSunShaftBlack( view );
+		}
+
 	#ifdef USE_MONITORS
 		if ( cl_drawmonitors.GetBool() && 
 			( g_pMaterialSystemHardwareConfig->GetDXSupportLevel() >= 70 ) &&
@@ -2357,9 +2357,6 @@ void CViewRender::RenderView( const CViewSetup &viewIn, int nClearFlags, int wha
 		if ((bDrew3dSkybox = pSkyView->Setup(view, &nClearFlags, &nSkyboxVisible)) != false)
 		{
 			AddViewToScene(pSkyView);
-			VPROF_SCOPE_BEGIN( "UpdateViewMask::SkyMask[0]" );
-			UpdateViewMask( view, false, false ); //UPDATE SKY MASK
-			VPROF_SCOPE_END();
 			g_ShaderEditorSystem->UpdateSkymask( false, view.x, view.y, view.width, view.height );
 		}
 		SafeRelease(pSkyView);
@@ -2452,22 +2449,8 @@ void CViewRender::RenderView( const CViewSetup &viewIn, int nClearFlags, int wha
 		pRenderContext->CopyRenderTargetToTextureEx(GetScopeTexture(), 0, &srcRect);
 		pRenderContext.SafeRelease(); // don't want to hold for long periods in case in a locking active share thread mode
 
-
-		// steve - do we even need the viewmask stuff anymore when rendering with depth?
-		// Steve - the viewmask is perf poopy, needs a rewrite
-		VPROF_SCOPE_BEGIN( "UpdateViewMask::ViewModel[0]" );
-		UpdateViewMask( view, true, false );
-		VPROF_SCOPE_END();
-
 		// Now actually draw the viewmodel
 		DrawViewModels( view, whatToDraw & RENDERVIEW_DRAWVIEWMODEL );
-
-		VPROF_SCOPE_BEGIN( "UpdateViewMask::SkyMask[1]" );
-		UpdateViewMask( view, false, bDrew3dSkybox ); //COMBINE SKY MASK
-		VPROF_SCOPE_END();
-		VPROF_SCOPE_BEGIN( "UpdateViewMask::ViewModel[1]" );
-		UpdateViewMask( view, true, true );
-		VPROF_SCOPE_END();
 
 		g_ShaderEditorSystem->UpdateSkymask( bDrew3dSkybox, view.x, view.y, view.width, view.height );
 
@@ -2509,13 +2492,6 @@ void CViewRender::RenderView( const CViewSetup &viewIn, int nClearFlags, int wha
 			}
 			pRenderContext.SafeRelease();
 		}
-
-		// Steve - custom effects here.
-		if ( !building_cubemaps.GetBool() && view.m_bDoBloomAndToneMapping )
-			DoCustomPostProcessing( view );
-
-		// Prevent sound stutter if going slow
-		engine->Sound_ExtraUpdate();
 
 		g_ShaderEditorSystem->CustomPostRender();
 
@@ -3781,6 +3757,122 @@ void CViewRender::DrawScope( const CViewSetup &viewSet )
 	ViewDrawScene( false, SKYBOX_3DSKYBOX_VISIBLE, scopeView, VIEW_CLEAR_DEPTH, VIEW_MONITOR );
 
 	render->PopView( m_Frustum );
+}
+
+//-----------------------------------------------------------------------------
+//
+//-----------------------------------------------------------------------------
+void CViewRender::DrawSunShaftBlack( const CViewSetup &viewSet )
+{
+	VPROF( "CViewRender::DrawSunShaftBlack" );
+
+	if ( !r_post_sunshaft.GetBool() )
+		return;
+
+	C_BasePlayer *localPlayer = C_BasePlayer::GetLocalPlayer();
+	if ( !localPlayer )
+		return;
+
+	CPlayerLocalData *local = &localPlayer->m_Local;
+	if ( !local )
+		return;
+
+	//Copy our current View.
+	CViewSetup sunshaftView = viewSet;
+
+	//Get our camera render target.
+	ITexture *pRenderTarget = GetSunShaftBlackTexture();
+
+	if ( pRenderTarget == NULL )
+		return;
+
+	if ( !pRenderTarget->IsRenderTarget() )
+		DevMsg( "DrawSunShaftBlack: Not a render target.\n" );
+
+	// Save our old fog data.
+	fogparams_t oldFogParams;
+	fogparams_t *pFogParams = localPlayer->GetFogParams();
+	oldFogParams = *pFogParams;
+
+	bool bSkyEnabled = local->m_skybox3d.fog.enable;
+	bool bSkyBlend = local->m_skybox3d.fog.blend;
+	float fSkyStart = local->m_skybox3d.fog.start;
+	float fSkyEnd = local->m_skybox3d.fog.end;
+	float fSkyDensity = local->m_skybox3d.fog.maxdensity;
+	float fSkyFarz = local->m_skybox3d.fog.farz;
+	float colorprim[3] = { local->m_skybox3d.fog.colorPrimary.GetR(), local->m_skybox3d.fog.colorPrimary.GetG(),
+						   local->m_skybox3d.fog.colorPrimary.GetB() };
+	float colorsec[3] = { local->m_skybox3d.fog.colorSecondary.GetR(), local->m_skybox3d.fog.colorSecondary.GetG(),
+						  local->m_skybox3d.fog.colorSecondary.GetB() };
+
+	// Set up our lovely black fog.
+	pFogParams->enable = true;
+	pFogParams->blend = false;
+	pFogParams->start = 0.0f;
+	pFogParams->end = 0.0f;
+	pFogParams->maxdensity = 1.0f;
+	pFogParams->farz = 4096;
+	pFogParams->colorPrimary.SetR( 0 );
+	pFogParams->colorPrimary.SetG( 0 );
+	pFogParams->colorPrimary.SetB( 0 );
+	pFogParams->colorSecondary.SetR( 0 );
+	pFogParams->colorSecondary.SetG( 0 );
+	pFogParams->colorSecondary.SetB( 0 );
+	local->m_skybox3d.fog.enable = true;
+	local->m_skybox3d.fog.blend = false;
+	local->m_skybox3d.fog.start = 0.0f;
+	local->m_skybox3d.fog.end = 0.0f;
+	local->m_skybox3d.fog.maxdensity = 1.0f;
+	local->m_skybox3d.fog.farz = 4096;
+	local->m_skybox3d.fog.colorPrimary.SetR( 0 );
+	local->m_skybox3d.fog.colorPrimary.SetG( 0 );
+	local->m_skybox3d.fog.colorPrimary.SetB( 0 );
+	local->m_skybox3d.fog.colorSecondary.SetR( 0 );
+	local->m_skybox3d.fog.colorSecondary.SetG( 0 );
+	local->m_skybox3d.fog.colorSecondary.SetB( 0 );
+
+	// Set up view information, so we get the same render settings as the main screen.
+	sunshaftView.width = pRenderTarget->GetActualWidth();
+	sunshaftView.height = pRenderTarget->GetActualHeight();
+	sunshaftView.x = 0;
+	sunshaftView.y = 0;
+	sunshaftView.zFar = 4096;
+	sunshaftView.m_bOrtho = false;
+	sunshaftView.m_flAspectRatio = engine->GetScreenAspectRatio();
+
+	// Render the world and 3D Skybox.
+	render->Push3DView( sunshaftView, VIEW_CLEAR_DEPTH | VIEW_CLEAR_COLOR, pRenderTarget, GetFrustum() );
+
+	SkyboxVisibility_t nSkyboxVisible = SKYBOX_NOT_VISIBLE;
+	int ClearFlags = 0;
+	CSkyboxView *pSkyView = new CSkyboxView( this );
+	if ( pSkyView->Setup( sunshaftView, &ClearFlags, &nSkyboxVisible ) != false )
+		AddViewToScene( pSkyView );
+	SafeRelease( pSkyView );
+
+	ViewDrawScene( false, SKYBOX_3DSKYBOX_VISIBLE, sunshaftView, VIEW_CLEAR_DEPTH, VIEW_SHADOW_DEPTH_TEXTURE );
+
+	// Now actually draw the viewmodel
+	modelrender->ForcedMaterialOverride( materials->FindMaterial( "tools/toolsblack", TEXTURE_GROUP_CLIENT_EFFECTS ) );
+	DrawViewModels( sunshaftView, true );
+	modelrender->ForcedMaterialOverride( 0 );
+
+	render->PopView( m_Frustum );
+
+	// Reset the fog back to it's original values.
+	*pFogParams = oldFogParams;
+	local->m_skybox3d.fog.enable = bSkyEnabled;
+	local->m_skybox3d.fog.blend = bSkyBlend;
+	local->m_skybox3d.fog.start = fSkyStart;
+	local->m_skybox3d.fog.end = fSkyEnd;
+	local->m_skybox3d.fog.maxdensity = fSkyDensity;
+	local->m_skybox3d.fog.farz = fSkyFarz;
+	local->m_skybox3d.fog.colorPrimary.SetR( colorprim[0] );
+	local->m_skybox3d.fog.colorPrimary.SetG( colorprim[1] );
+	local->m_skybox3d.fog.colorPrimary.SetB( colorprim[2] );
+	local->m_skybox3d.fog.colorSecondary.SetR( colorsec[0] );
+	local->m_skybox3d.fog.colorSecondary.SetG( colorsec[1] );
+	local->m_skybox3d.fog.colorSecondary.SetB( colorsec[2] );
 }
 
 //-----------------------------------------------------------------------------
@@ -5230,6 +5322,18 @@ void CRendering3dView::EnableWorldFog( void )
 {
 	VPROF("CViewRender::EnableWorldFog");
 	CMatRenderContextPtr pRenderContext( materials );
+
+	if ( CurrentViewID() == VIEW_SUN_SHAFTS )
+	{
+		CMatRenderContextPtr pRenderContext( materials );
+		pRenderContext->FogMode( MATERIAL_FOG_LINEAR );
+		float fogColor[3] = { 0, 0, 0 };
+		pRenderContext->FogColor3fv( fogColor );
+		pRenderContext->FogStart( 0.0f );
+		pRenderContext->FogEnd( 0.0f );
+		pRenderContext->FogMaxDensity( 1.0f );
+		return;
+	}
 
 	fogparams_t *pFogParams = NULL;
 	C_BasePlayer *pbp = C_BasePlayer::GetLocalPlayer();

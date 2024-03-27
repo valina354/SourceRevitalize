@@ -32,6 +32,8 @@ LINK_ENTITY_TO_CLASS( env_sprite, CSprite );
 LINK_ENTITY_TO_CLASS( env_sprite_oriented, CSpriteOriented );
 #if !defined( CLIENT_DLL )
 LINK_ENTITY_TO_CLASS( env_glow, CSprite ); // For backwards compatibility, remove when no longer needed.
+#else
+extern ConVar r_post_sunshaft;
 #endif
 
 #if !defined( CLIENT_DLL )
@@ -49,6 +51,7 @@ BEGIN_DATADESC( CSprite )
 	DEFINE_KEYFIELD( m_flSpriteScale, FIELD_FLOAT, "scale" ),
 	DEFINE_KEYFIELD( m_flSpriteFramerate, FIELD_FLOAT, "framerate" ),
 	DEFINE_KEYFIELD( m_flFrame, FIELD_FLOAT, "frame" ),
+	DEFINE_KEYFIELD( m_bDrawWithSunShafts, FIELD_BOOLEAN, "DrawWithSunShafts" ),
 #ifdef PORTAL
 	DEFINE_FIELD( m_bDrawInMainRender, FIELD_BOOLEAN ),
 	DEFINE_FIELD( m_bDrawInPortalRender, FIELD_BOOLEAN ),
@@ -101,6 +104,8 @@ BEGIN_PREDICTION_DATA( CSprite )
 	DEFINE_PRED_FIELD( m_flBrightnessTime, FIELD_FLOAT, FTYPEDESC_INSENDTABLE ),
 	DEFINE_PRED_FIELD( m_nBrightness, FIELD_INTEGER, FTYPEDESC_INSENDTABLE ),
 
+	DEFINE_FIELD( m_bDrawWithSunShafts, FIELD_BOOLEAN ),
+
 	DEFINE_FIELD( m_flLastTime, FIELD_FLOAT ),
 	DEFINE_FIELD( m_flMaxFrame, FIELD_FLOAT ),
 	DEFINE_FIELD( m_flDieTime, FIELD_FLOAT ),
@@ -149,6 +154,7 @@ BEGIN_NETWORK_TABLE( CSprite, DT_Sprite )
 	SendPropBool( SENDINFO(m_bDrawInMainRender) ),
 	SendPropBool( SENDINFO(m_bDrawInPortalRender) ),
 #endif //#ifdef PORTAL
+	SendPropBool( SENDINFO( m_bDrawWithSunShafts ) ),
 	SendPropFloat( SENDINFO(m_flBrightnessTime ), 0,	SPROP_NOSCALE ),
 	SendPropInt( SENDINFO(m_nBrightness), 8, SPROP_UNSIGNED ),
 	SendPropBool( SENDINFO(m_bWorldSpaceScale) ),
@@ -167,6 +173,7 @@ BEGIN_NETWORK_TABLE( CSprite, DT_Sprite )
 	RecvPropBool( RECVINFO(m_bDrawInMainRender) ),
 	RecvPropBool( RECVINFO(m_bDrawInPortalRender) ),
 #endif //#ifdef PORTAL
+	RecvPropBool( RECVINFO( m_bDrawWithSunShafts ) ),
 	RecvPropFloat(RECVINFO(m_flBrightnessTime)),
 	RecvPropInt(RECVINFO(m_nBrightness)),
 	RecvPropBool( RECVINFO(m_bWorldSpaceScale) ),
@@ -183,6 +190,7 @@ CSprite::CSprite()
 	m_bDrawInMainRender = true;
 	m_bDrawInPortalRender = true;
 #endif
+	m_bDrawWithSunShafts = true;
 }
 //-----------------------------------------------------------------------------
 // Purpose: 
@@ -752,6 +760,9 @@ int CSprite::DrawModel( int flags )
 	VPROF_BUDGET( "CSprite::DrawModel", VPROF_BUDGETGROUP_PARTICLE_RENDERING );
 	//See if we should draw
 	if ( !IsVisible() || ( m_bReadyToDraw == false ) )
+		return 0;
+
+	if ( !m_bDrawWithSunShafts && r_post_sunshaft.GetBool() )
 		return 0;
 
 #ifdef PORTAL

@@ -36,6 +36,7 @@ extern ConVar r_updaterefracttexture;
 extern int g_viewscene_refractUpdateFrame;
 extern bool g_bAllowMultipleRefractUpdatesPerScenePerFrame;
 bool DrawingShadowDepthView( void );
+bool DrawingSunShaftView( void );
 bool DrawingMainView();
 
 inline void UpdateRefractTexture( int x, int y, int w, int h, bool bForceUpdate = false )
@@ -174,12 +175,5 @@ inline void UpdateScreenEffectTexture( void )
 void ResetToneMapping(float value);
 
 void UpdateFullScreenDepthTexture( void );
-
-void DF_SetMaterialVarFloat( IMaterial *pMat, const char *pVarName, float flValue );
-void DF_SetMaterialVarInt( IMaterial *pMat, const char *pVarName, int iValue );
-void DF_SetMaterialVarString( IMaterial *pMat, const char *pVarName, const char *pValue );
-void DF_SetMaterialVarTexture( IMaterial *pMat, const char *pVarName, ITexture *pValue );
-void DF_SetMaterialVarVector( IMaterial *pMat, const char *pVarName, const Vector &vValue );
-void DF_SetMaterialVarVector4D( IMaterial *pMat, const char *pVarName, const Vector4D &vValue );
 
 #endif // VIEW_SCENE_H

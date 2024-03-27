@@ -48,7 +48,11 @@ entity_t	*face_entity[MAX_MAP_FACES];
 Vector		face_offset[MAX_MAP_FACES];		// for rotating bmodels
 int			fakeplanes;
 
-unsigned	numbounce = 250; // 25; /* Originally this was 8 */
+#ifdef ULTRA_VRAD
+unsigned	numbounce = 750; // 25; /* Originally this was 8 */
+#else
+unsigned numbounce = 250; // 25; /* Originally this was 8 */
+#endif
 
 float		maxchop = 4; // coarsest allowed number of luxel widths for a patch
 float		minchop = 4; // "-chop" tightest number of luxel widths for a patch, used on edges
@@ -2806,7 +2810,11 @@ void PrintUsage( int argc, char **argv )
 		"Common options:\n"
 		"\n"
 		"  -v (or -verbose): Turn on verbose output (also shows more command\n"
-		"  -bounce #       : Set max number of bounces (default: 250).\n"
+#ifdef ULTRA_VRAD
+		"  -bounce #       : Set max number of bounces (default: 750).\n"
+		#else
+			 "  -bounce #       : Set max number of bounces (default: 250).\n"
+		#endif
 		"  -fast           : Quick and dirty lighting.\n"
 		"  -fastambient    : Per-leaf ambient sampling is lower quality to save compute time.\n"
 		"  -final          : High quality processing. equivalent to -extrasky 16.\n"

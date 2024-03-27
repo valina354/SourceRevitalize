@@ -1,0 +1,38 @@
+#define HDRTYPE HDR_TYPE_NONE
+#define HDRTYPE HDR_TYPE_NONE
+#include "common_ps_fxc.h"
+
+float4 distortionParams : register(c0);
+sampler FBSampler : register(s0);
+
+struct PS_INPUT
+{
+    float2 texCoord : TEXCOORD0;
+};
+
+float4 main(PS_INPUT i) : COLOR
+{
+    // Center of the screen (assumed to be at (0.5, 0.5))
+    float2 center = float2(0.5, 0.5);
+    
+    // Normalize texture coordinates to range [0,1]
+    float2 normalizedTexCoord = i.texCoord.xy / float2(1.0, 1.0);
+    
+    // Calculate the vector from the center to the current texture coordinate
+    float2 fromCenter = normalizedTexCoord - center;
+    
+    // Calculate the distance from the center
+    float distance = length(fromCenter);
+    
+    // Retrieve distortion amount from constant register
+    float distortionAmount = distortionParams.x;
+    
+    // Apply barrel distortion equation
+    float barrelDistortion = distance * distortionAmount;
+    float2 distortedTexCoord = center + normalize(fromCenter) * barrelDistortion;
+    
+    // Sample the texture using the distorted texture coordinates
+    float4 color = tex2D(FBSampler, distortedTexCoord);
+    
+    return color;
+}

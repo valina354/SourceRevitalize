@@ -637,6 +637,7 @@ private:
 	mutable CStudioHdr				*m_pStudioHdr;
 	mutable MDLHandle_t				m_hStudioHdr;
 	CThreadFastMutex				m_StudioHdrInitLock;
+	CNetworkVar( bool, m_bRenderInSunShafts );
 };
 
 enum 

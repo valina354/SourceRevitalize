@@ -79,6 +79,7 @@ enum view_id_t
 	VIEW_SHADOW_DEPTH_TEXTURE = 7,
 	VIEW_SSAO = 8,
 	VIEW_VOLUMETRICS = 9,
+	VIEW_SUN_SHAFTS = 10,
 	VIEW_ID_COUNT
 };
 view_id_t CurrentViewID();
@@ -440,12 +441,6 @@ public:
 
 	void			PushGBufferRT(bool firstPush = false);
 
-protected:
-	void PerformScreenSpaceEffects( int x, int y, int w, int h );
-	virtual void DoCustomPostProcessing( const CViewSetup &view )
-	{
-	}
-
 private:
 	int				m_BuildWorldListsNumber;
 
@@ -457,11 +452,12 @@ private:
 	void			DrawMonitors( const CViewSetup &cameraView );
 
 	void DrawScope( const CViewSetup &cameraView );
+	void DrawSunShaftBlack( const CViewSetup &cameraView );
 
 	bool			DrawOneMonitor( ITexture *pRenderTarget, int cameraNum, C_PointCamera *pCameraEnt, const CViewSetup &cameraView, C_BasePlayer *localPlayer, 
 						int x, int y, int width, int height );
 
-	//void			PerformScreenSpaceEffects( int x, int y, int w, int h );
+	void			PerformScreenSpaceEffects( int x, int y, int w, int h );
 
 	// Overlays
 	void			SetScreenOverlayMaterial( IMaterial *pMaterial );
