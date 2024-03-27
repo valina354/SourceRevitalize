@@ -66,6 +66,7 @@ $Project "Shaders (VANCE)"
 			$File	"radialblur.cpp"
 			$File	"barreldistortion.cpp"
 			$File	"sun_shafts.cpp"
+			$File	"mainsunshaft.cpp"
 		}
 		
 		$Folder "PBR"
