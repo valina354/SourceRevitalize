@@ -12,7 +12,6 @@ extern ConVar r_csm_performance;
 BEGIN_VS_SHADER( light_volumetrics, "" )
 
 	BEGIN_SHADER_PARAMS
-	SHADER_PARAM(ISCSM, SHADER_PARAM_TYPE_BOOL, "0", "use CSM Light")
 	SHADER_PARAM(DEPTHBUFFER, SHADER_PARAM_TYPE_TEXTURE, "_rt_DepthBuffer", "")
 	END_SHADER_PARAMS
 
@@ -93,32 +92,6 @@ BEGIN_VS_SHADER( light_volumetrics, "" )
 			pShaderAPI->SetDepthFeatheringPixelShaderConstant( 1, 50.0f );
 			pShaderAPI->SetDepthFeatheringPixelShaderConstant( 2, GetDeferredExt()->GetZDistNear());
 			pShaderAPI->SetDepthFeatheringPixelShaderConstant( 3, GetDeferredExt()->GetZDistFar());
-			if (params[ISCSM]->GetIntValue() > 0)
-			{
-				ITexture* pCascadedDepthTexture = (ITexture*)pShaderAPI->GetIntRenderingParameter(INT_RENDERPARM_CASCADED_DEPTHTEXTURE);
-				if (!pCascadedDepthTexture)
-				{
-					Draw(false);
-					return;
-				}
-
-				if (pCascadedDepthTexture)
-				{
-					BindTexture(SHADER_SAMPLER1, pCascadedDepthTexture, -1);
-					VMatrix* worldToTexture0 = (VMatrix*)pShaderAPI->GetIntRenderingParameter(INT_RENDERPARM_CASCADED_MATRIX_ADDRESS_0);
-					pShaderAPI->SetPixelShaderConstant(6, worldToTexture0->Base(), 4);
-				}
-
-				lightData_Global_t csmData = GetDeferredExt()->GetLightData_Global();
-
-				Vector csmLight = csmData.light.AsVector3D();
-				pShaderAPI->SetPixelShaderConstant(10, csmLight.Base());
-
-				float textureSize[2] = { pCascadedDepthTexture->GetMappingHeight() * 4.0f, pCascadedDepthTexture->GetMappingHeight() };
-				pShaderAPI->SetPixelShaderConstant(11, textureSize);
-
-				pShaderAPI->SetPixelShaderConstant(12, GetDeferredExt()->GetLightData_Global().sizes.Base());
-			}
 		}
 
 		Draw();
