@@ -76,8 +76,6 @@ BEGIN_VS_SHADER( light_volumetrics, "" )
 			SET_DYNAMIC_VERTEX_SHADER( light_volumetrics_vs30 );
 
 			DECLARE_DYNAMIC_PIXEL_SHADER( light_volumetrics_ps30 );
-			SET_DYNAMIC_PIXEL_SHADER_COMBO( CSM, params[ISCSM]->GetIntValue() == 1);
-			SET_DYNAMIC_PIXEL_SHADER_COMBO( PERF, MAX(0, MIN(r_csm_performance.GetInt(), 2)));
 			SET_DYNAMIC_PIXEL_SHADER( light_volumetrics_ps30 );
 
 			VMatrix worldToTexture;
