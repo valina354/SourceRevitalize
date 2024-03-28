@@ -15,9 +15,6 @@
 #include "view.h"
 
 ConVar cl_viewpunch_power("cl_viewpunch_power", "0.4", 0, "", true, 0.0f, true, 1.0f);
-ConVar cl_viewbob_enabled( "cl_viewbob_enabled", "0" );
-ConVar cl_viewbob_speed( "cl_viewbob_speed", "10" );
-ConVar cl_viewbob_height("cl_viewbob_height", "5");
 ConVar cl_viewbob_viewmodel_add("cl_viewbob_viewmodel_add", "0.1");
 ConVar cl_view_landing_timedown("cl_view_landing_timedown", "0.08");
 ConVar cl_view_landing_timeup("cl_view_landing_timeup", "0.3");
@@ -325,30 +322,6 @@ void C_VancePlayer::AddViewSlide(Vector& eyeOrigin, QAngle& eyeAngles)
 
 void C_VancePlayer::AddViewBob(Vector& eyeOrigin, QAngle& eyeAngles, bool calculate)
 {
-	if (cl_viewbob_enabled.GetBool())
-	{
-		float cycle;
-
-		//Find the speed of the player
-		float speed = GetLocalVelocity().Length2D();
-		speed = clamp( speed, -320, 320 );
-
-		float bob_offset = 1.0f - RemapVal( speed, 0, 320, 0.0f, 1.0f );
-		bob_offset *= bob_offset;
-		bob_offset = 1.0f - bob_offset;
-
-		// since bobtime and lastbobtime are static, it will add more to the values on every function call
-		// this should prevent it
-		if ( calculate )
-		{
-			m_fBobTime += ( gpGlobals->curtime - m_fLastBobTime ) * bob_offset * cl_viewbob_speed.GetFloat();
-			m_fLastBobTime = gpGlobals->curtime;
-		}
-
-		cycle = m_fBobTime;
-
-		eyeOrigin.z += abs(sin(cycle)) * cl_viewbob_height.GetFloat() * bob_offset * m_flBobModelAmount;
-	}
 }
 
 void C_VancePlayer::CalcPlayerView(Vector& eyeOrigin, QAngle& eyeAngles, float& fov)
