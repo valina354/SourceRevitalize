@@ -12,9 +12,9 @@
 #endif
 
 #define MOD_WATERMARK_STR "Source Revitalize"
-#define MOD_VERSION_MAJOR 0
-#define MOD_VERSION_MINOR 9
-#define MOD_VERSION_PATCH 9
+#define MOD_VERSION_MAJOR 1
+#define MOD_VERSION_MINOR 0
+#define MOD_VERSION_PATCH 0
 
 #define TICK_INTERVAL			(gpGlobals->interval_per_tick)
 

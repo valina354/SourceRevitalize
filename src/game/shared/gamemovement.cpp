@@ -57,6 +57,11 @@ ConVar player_limit_jump_speed( "player_limit_jump_speed", "1", FCVAR_REPLICATED
 // If disabled, player will save his speed by bunnyjumping (its hard but possible) but will be disallowed to boost
 ConVar sv_abh( "sv_abh", "0", FCVAR_ARCHIVE | FCVAR_REPLICATED, "Accelerated back hopping (1 - on, 0 - off)" );
 
+// Camera Bob
+ConVar cl_viewbob_enabled( "cl_viewbob_enabled", "1", 0, "Oscillation Toggle" );
+ConVar cl_viewbob_timer( "cl_viewbob_timer", "10", 0, "Speed of Oscillation" );
+ConVar cl_viewbob_scale( "cl_viewbob_scale", "0.05", 0, "Magnitude of Oscillation" );
+
 // option_duck_method is a carrier convar. Its sole purpose is to serve an easy-to-flip
 // convar which is ONLY set by the X360 controller menu to tell us which way to bind the
 // duck controls. Its value is meaningless anytime we don't have the options window open.
@@ -1922,6 +1927,15 @@ void CGameMovement::WalkMove( void )
 	// Copy movement amounts
 	fmove = mv->m_flForwardMove;
 	smove = mv->m_flSideMove;
+
+	if ( cl_viewbob_enabled.GetBool() && !engine->IsPaused() )
+	{
+		float xoffset = sin( gpGlobals->curtime * cl_viewbob_timer.GetFloat() ) * player->GetAbsVelocity().Length() *
+			cl_viewbob_scale.GetFloat() / 100;
+		float yoffset = sin( 2 * gpGlobals->curtime * cl_viewbob_timer.GetFloat() ) * player->GetAbsVelocity().Length() *
+			cl_viewbob_scale.GetFloat() / 400;
+		player->ViewPunch( QAngle( xoffset, yoffset, 0 ) );
+	}
 
 	// Zero out z components of movement vectors
 	if ( g_bMovementOptimizations )
