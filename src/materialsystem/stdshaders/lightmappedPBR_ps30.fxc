@@ -102,7 +102,7 @@ sampler BRDFSampler				: register( s8 );	// for IBL
 sampler AOSampler				: register( s9 );	// AO
 sampler EmissiveSampler			: register( s10 );	// Emissive map
 sampler LightmapSampler			: register( s11 );	// Lightmap texture from the engine
-sampler DetailTexture : register(s12); // Detail texture
+sampler DetailTextureSampler : register(s12); // Detail texture
 
 // Compute the matrix used to transform tangent space normals to world space
 // This expects DirectX normal maps in Mikk Tangent Space http://www.mikktspace.com
@@ -456,7 +456,7 @@ float3 worldPos = i.worldPos_projPosZ.xyz;
     UV = i.SeamlessTexCoord;
 #endif
     // Sample the detail texture
-    float4 detailColor = tex2D(DetailTexture, UV.xy);
+    float4 detailColor = tex2D(DetailTextureSampler, UV.xy);
     float3 offsetCoords = ParallaxOcclusionMapping(UV.xy, normalize(i.worldPos_projPosZ.xyz - g_EyePos.xyz));
 	bool bBumpmap = BUMPMAP ? true : false;
 	bool bCubemap = (CUBEMAP) ? true : false;

@@ -96,7 +96,7 @@ sampler BRDFSampler				: register( s8 );	// for IBL
 sampler AOSampler				: register( s9 );	// AO
 sampler EmissiveSampler			: register( s10 );	// Emissive map
 sampler LightmapSampler			: register( s11 );	// Lightmap texture from the engine
-sampler DetailTexture : register(s12); // Detail texture
+sampler DetailTextureSampler : register(s12); // Detail texture
 
 //DoPBRLight(float3 vWorldPos, float3 vWorldNormal, float3 albedo, float3 vPosition, float3 vColor, float3 vEye, float atten_radius, float3 metallic, float3 roughness)
 float3 DoPBRLights(float3 vEye, float3 vWorldNormal, float3 vWorldPos, float4 albedo, float4 atten, float3 lightmap, float metallic, float roughness)
@@ -406,7 +406,7 @@ PS_OUTPUT main(PS_INPUT i) : COLOR
 {
 	float2 UV = i.baseTexCoord;
 	// Sample the detail texture
-    float4 detailColor = tex2D(DetailTexture, UV.xy);
+    float4 detailColor = tex2D(DetailTextureSampler, UV.xy);
 	float2 screenUV = i.projPos.xy / i.projPos.w;
 	screenUV = screenUV * 0.5f + 0.5f;
 	float4 baseColorOld = tex2D(BaseTextureSampler, UV);
