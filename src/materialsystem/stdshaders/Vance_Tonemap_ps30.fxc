@@ -12,6 +12,7 @@ sampler FBSampler : register(s0);
 float m_flOverExposure : register(c0);
 float m_flUnderExposure : register(c1);
 float m_flExposure : register(c2);
+float m_flExposureSpeed : register(c3);
 
 struct PS_INPUT
 {
@@ -74,12 +75,23 @@ float4 main(PS_INPUT i) : COLOR
     // Calculate scene brightness (luminance)
     float luminance = dot(fbSample, float3(0.2126, 0.7152, 0.0722));
 
-    // Calculate desired exposure based on scene brightness
-    float targetExposure = 1.0 / luminance;
+    // Use provided registers for auto-exposure calculation
+    float targetExposure = m_flExposure;
+    float maxChange = m_flOverExposure - m_flUnderExposure;
+    float desiredExposure = 1.0 / luminance;
 
-    // Limit the maximum change in exposure
-    float maxChange = 0.25;
-    exposure = clamp(targetExposure, m_flExposure - maxChange, m_flExposure + maxChange);
+    // Adjust exposure towards the desired exposure
+    float exposureDelta = desiredExposure - targetExposure;
+    float maxDelta = maxChange * m_flExposureSpeed; // Limit the maximum change based on speed
+    float adjustedDelta = clamp(exposureDelta, -maxDelta, maxDelta);
+    targetExposure += adjustedDelta;
+
+    // Apply tonemapping based on scene luminance and target exposure
+    fbSample *= targetExposure / m_flExposure;
+
+    // Enhance tonemapping effect by applying additional calculations
+    float tonemapIntensity = pow(m_flExposure, 2.0) * 0.5; // Complex tonemapping intensity calculation
+    fbSample = lerp(fbSample, fbSample * tonemapIntensity, tonemapIntensity);
 #endif
 
     float3 retColor = getExposure(fbSample, exposure);

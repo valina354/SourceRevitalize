@@ -15,6 +15,7 @@ ConVar r_post_tonemap_overexposure("r_post_tonemap_overexposure", "1.2");
 ConVar r_post_tonemap_exposure("r_post_tonemap_exposure", "1");
 ConVar r_post_tonemap_mode("r_post_tonemap_mode", "1");
 ConVar r_post_tonemap_autoexposure( "r_post_tonemap_autoexposure", "1" );
+ConVar r_post_tonemap_autoexposure_speed( "r_post_tonemap_autoexposure_speed", "1" );
 
 BEGIN_VS_SHADER_FLAGS(Vance_Tonemap, "Help for Bloom", SHADER_NOT_EDITABLE)
 BEGIN_SHADER_PARAMS
@@ -80,6 +81,11 @@ SHADER_DRAW
 			fExposure[0] = r_post_tonemap_exposure.GetFloat();
 			fExposure[1] = fExposure[2] = fExposure[3] = fExposure[0];
 			pShaderAPI->SetPixelShaderConstant(2, fExposure);
+
+			float fExposureSpeed[4];
+			fExposureSpeed[0] = r_post_tonemap_autoexposure_speed.GetFloat();
+			fExposureSpeed[1] = fExposureSpeed[2] = fExposureSpeed[3] = fExposureSpeed[0];
+			pShaderAPI->SetPixelShaderConstant( 3, fExposureSpeed );
 
 		DECLARE_DYNAMIC_VERTEX_SHADER(sdk_screenspaceeffect_vs30);
 		SET_DYNAMIC_VERTEX_SHADER(sdk_screenspaceeffect_vs30);

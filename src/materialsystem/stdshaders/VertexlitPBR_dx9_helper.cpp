@@ -20,6 +20,7 @@
 
 static ConVar mat_fullbright( "mat_fullbright", "0", FCVAR_CHEAT );
 static ConVar r_rimlight( "r_rimlight", "1", FCVAR_CHEAT );
+static ConVar mat_specular( "mat_specular", "1", FCVAR_CHEAT );
 
 extern ConVar r_csm_bias;
 extern ConVar r_csm_slopescalebias;
@@ -89,10 +90,6 @@ void InitVertexLitPBR_DX9( CBaseVSShader *pShader, IMaterialVar** params, Vertex
 	{
 		pShader->LoadTexture(info.m_nAO);
 	}
-	if (info.m_nEmissive != -1 && params[info.m_nEmissive]->IsDefined())
-	{
-		pShader->LoadTexture(info.m_nEmissive);
-	}
 	if ( info.m_nDetail != -1 && params[info.m_nDetail]->IsDefined() )
 	{
 		pShader->LoadTexture( info.m_nDetail );
@@ -154,7 +151,6 @@ static void DrawVertexLitPBR_DX9_Internal( CBaseVSShader *pShader, IMaterialVar*
 	bool bHasRoughness = (info.m_nRoughness != -1) && params[info.m_nRoughness]->IsTexture();
 	bool bHasMetallic = (info.m_nMetallic != -1) && params[info.m_nMetallic]->IsTexture();
 	bool bHasAO = (info.m_nAO != -1) && params[info.m_nAO]->IsTexture();
-	bool bHasEmissive = (info.m_nEmissive != -1) && params[info.m_nEmissive]->IsTexture();
 	bool bHasDetail = ( info.m_nDetail != -1 ) && params[info.m_nDetail]->IsTexture();
 	bool bIsAlphaTested = IS_FLAG_SET( MATERIAL_VAR_ALPHATEST ) != 0;
 	bool bHasEnvmap =(info.m_nEnvmap != -1) && params[info.m_nEnvmap]->IsTexture();
@@ -333,18 +329,13 @@ static void DrawVertexLitPBR_DX9_Internal( CBaseVSShader *pShader, IMaterialVar*
 		else
 			pShaderAPI->BindStandardTexture(SHADER_SAMPLER9, TEXTURE_WHITE);
 
-		if (bHasEmissive)
-			pShader->BindTexture(SHADER_SAMPLER10, info.m_nEmissive);
-		else
-			pShaderAPI->BindStandardTexture(SHADER_SAMPLER10, TEXTURE_BLACK);
-
 		if ( bHasDetail )
-			pShader->BindTexture( SHADER_SAMPLER12, info.m_nDetail );
+			pShader->BindTexture( SHADER_SAMPLER11, info.m_nDetail );
 		else
 			pShaderAPI->BindStandardTexture( SHADER_SAMPLER12, TEXTURE_BLACK );
 
 		if (bHasLightmap)
-			pShader->BindTexture(SHADER_SAMPLER11, info.m_nLightmap);
+			pShader->BindTexture(SHADER_SAMPLER10, info.m_nLightmap);
 		else
 			pShaderAPI->BindStandardTexture(SHADER_SAMPLER11, TEXTURE_WHITE);
 
@@ -442,6 +433,12 @@ static void DrawVertexLitPBR_DX9_Internal( CBaseVSShader *pShader, IMaterialVar*
 			pShaderAPI->BindStandardTexture( SHADER_SAMPLER0, TEXTURE_GREY );
 		}
 
+		// Handle mat_specular 0 (no envmap reflections)
+		if ( !mat_specular.GetBool() )
+		{
+			pShaderAPI->BindStandardTexture( SHADER_SAMPLER7, TEXTURE_BLACK ); // Envmap
+		}
+
 		pShaderAPI->SetPixelShaderFogParams( PSREG_FOG_PARAMS );
 
 		if (!bHasFlashlight)
@@ -457,6 +454,7 @@ static void DrawVertexLitPBR_DX9_Internal( CBaseVSShader *pShader, IMaterialVar*
 		pShaderAPI->SetPixelShaderConstant(PSREG_EYEPOS_SPEC_EXPONENT, vEyePos_SpecExponent, 1);
 
 		pShaderAPI->SetPixelShaderConstant( 42, params[info.m_nDetailStrength]->GetVecValue() );
+
 
 		if( bHasFlashlight )
 		{

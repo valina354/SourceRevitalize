@@ -1518,7 +1518,7 @@ void CViewRender::UpdateLighting(const CViewSetup& view)
 	Vector vecCascadeOrigin(view.origin);
 	vecCascadeOrigin -= vecFwd * 4096.0f;
 
-	float flOrthoSize = 1024.0f;
+	float flOrthoSize = 512.0f;
 
 	struct ShadowConfig_t
 	{
@@ -1567,7 +1567,7 @@ void CViewRender::UpdateLighting(const CViewSetup& view)
 		cascadedShadowView.y = 0;
 
 		cascadedShadowView.m_flAspectRatio = 1.0f;
-		cascadedShadowView.m_bDoBloomAndToneMapping = false;
+		cascadedShadowView.m_bDoBloomAndToneMapping = true;
 		cascadedShadowView.zFar = cascadedShadowView.zFarViewmodel = s_bDrawViewmodelShadow ? 4128.0f : 6144.0f;
 		cascadedShadowView.zNear = cascadedShadowView.zNearViewmodel = 128.0f;
 		cascadedShadowView.fov = cascadedShadowView.fovViewmodel = 90.0f;

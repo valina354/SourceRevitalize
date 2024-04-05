@@ -158,3 +158,69 @@ $Project "imgui"
 {
     "imgui/app.vpc"
 }
+
+$Project "appframework"
+{
+	"appframework\appframework.vpc" [$WIN32]
+}
+
+$Project "launcher"
+{
+	"launcher\launcher.vpc" [$WIN32]
+}
+
+$Project "launcher_main"
+{
+	"launcher_main\launcher_main.vpc" [$WIN32]
+}
+
+$Project "openvr"
+{
+	"sourcevr\sourcevr.vpc" [$WIN32]
+}
+
+$Project "soundemitter"
+{
+	"soundemittersystem\soundemittersystem.vpc" [$WIN32]
+}
+
+
+$Project "soundsystem"
+{
+	"soundsystem\soundsystem.vpc" [$WIN32]
+}
+
+$Project "unicode"
+{
+	"unicode\unicode.vpc" [$WIN32]
+}
+
+$Project "particles"
+{
+	"particles\particles.vpc" [$WIN32]
+}
+
+$Project "studiorender"
+{
+	"studiorender\studiorender.vpc" [$WIN32]
+}
+
+$Project "movieobjects"
+{
+	"movieobjects\movieobjects.vpc" [$WIN32]
+}
+
+$Project "tier2"
+{
+	"tier2\tier2.vpc" [$WIN32]
+}
+
+$Project "vguimatsurface"
+{
+	"vguimatsurface\vguimatsurface.vpc" [$WIN32]
+}
+
+$Project "shaderlib"
+{
+	"materialsystem\shaderlib\shaderlib.vpc" [$WIN32]
+}

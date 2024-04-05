@@ -359,6 +359,8 @@ extern	int		dlight_map;
 
 extern float	g_flMaxDispSampleSize;
 extern float	g_SunAngularExtent;
+extern float g_AoSamples;
+extern bool g_bNoAO;
 
 extern char		source[MAX_PATH];
 

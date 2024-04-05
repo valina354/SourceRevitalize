@@ -380,9 +380,9 @@ void ApplyShaderConstantHack()
 	CMaterialConfigWrapper Wrapper;
 
 	Wrapper.PrintPixelConstants();
-	Wrapper.SetNumPixelConstants( 225 );
-	Wrapper.SetNumBooleanPixelConstants( 225 );
-	Wrapper.SetNumIntegerPixelConstants( 225 );
+	Wrapper.SetNumPixelConstants( 255 );
+	Wrapper.SetNumBooleanPixelConstants( 255 );
+	Wrapper.SetNumIntegerPixelConstants( 255 );
 	Wrapper.PrintPixelConstants();
 }
 
@@ -1074,7 +1074,7 @@ int CHLClient::Init( CreateInterfaceFn appSystemFactory, CreateInterfaceFn physi
 	if (!g_pMatSystemSurface)
 		return false;
 
-	#define USE_WEBM
+	//#define USE_WEBM
 	#ifdef USE_WEBM
 	// disconnect the original video services
 	if ( g_pVideo )

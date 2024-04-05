@@ -48,11 +48,8 @@ entity_t	*face_entity[MAX_MAP_FACES];
 Vector		face_offset[MAX_MAP_FACES];		// for rotating bmodels
 int			fakeplanes;
 
-#ifdef ULTRA_VRAD
-unsigned	numbounce = 750; // 25; /* Originally this was 8 */
-#else
+
 unsigned numbounce = 250; // 25; /* Originally this was 8 */
-#endif
 
 float		maxchop = 4; // coarsest allowed number of luxel widths for a patch
 float		minchop = 4; // "-chop" tightest number of luxel widths for a patch, used on edges
@@ -89,6 +86,8 @@ IIncremental *g_pIncremental = 0;
 bool		g_bInterrupt = false;	// Wsed with background lighting in WC. Tells VRAD
 									// to stop lighting.
 float g_SunAngularExtent=0.0;
+float g_AoSamples = 32.0;
+bool g_bNoAO = false;
 
 float g_flSkySampleScale = 1.0;
 float g_flSunSampleScale = 1.0;
@@ -2319,8 +2318,8 @@ int ParseCommandLine( int argc, char **argv, bool *onlydetail )
 
 	int mapArg = -1;
 
-	// default to LDR
-	SetHDRMode( false );
+	// default to HDR
+	SetHDRMode( true );
 
 	int i;
 	for( i=1 ; i<argc ; i++ )
@@ -2389,6 +2388,10 @@ int ParseCommandLine( int argc, char **argv, bool *onlydetail )
 		{
 			g_bDumpPropLightmaps = true;
 		}
+		else if ( !Q_stricmp( argv[i], "-noao" ) )
+		{
+			g_bNoAO = true;
+		}
 		else if (!Q_stricmp(argv[i],"-bounce"))
 		{
 			if ( ++i < argc )
@@ -2404,6 +2407,24 @@ int ParseCommandLine( int argc, char **argv, bool *onlydetail )
 			else
 			{
 				Warning("Error: expected a value after '-bounce'\n" );
+				return -1;
+			}
+		}
+		else if ( !Q_stricmp( argv[i], "-aosamples" ) )
+		{
+			if ( ++i < argc )
+			{
+				int aosamplesParam = atoi( argv[i] );
+				if ( aosamplesParam < 1 )
+				{
+					Error( "Error: expected non-negative value after '-aosamples'\n" );
+					return -1;
+				}
+				g_AoSamples = (unsigned)aosamplesParam;
+			}
+			else
+			{
+				Warning( "Error: expected a value after '-aosamples'\n" );
 				return -1;
 			}
 		}
@@ -2810,11 +2831,7 @@ void PrintUsage( int argc, char **argv )
 		"Common options:\n"
 		"\n"
 		"  -v (or -verbose): Turn on verbose output (also shows more command\n"
-#ifdef ULTRA_VRAD
-		"  -bounce #       : Set max number of bounces (default: 750).\n"
-		#else
-			 "  -bounce #       : Set max number of bounces (default: 250).\n"
-		#endif
+		"  -bounce #       : Set max number of bounces (default: 250).\n"
 		"  -fast           : Quick and dirty lighting.\n"
 		"  -fastambient    : Per-leaf ambient sampling is lower quality to save compute time.\n"
 		"  -final          : High quality processing. equivalent to -extrasky 16.\n"
@@ -2874,6 +2891,8 @@ void PrintUsage( int argc, char **argv )
 		"  -textureshadows : Allows texture alpha channels to block light - rays intersecting alpha surfaces will sample the texture\n"
 		"  -noskyboxrecurse : Turn off recursion into 3d skybox (skybox shadows on world)\n"
 		"  -nossprops      : Globally disable self-shadowing on static props\n"
+		"  -aosamples      : The Sample of the baked ambient occlusion, Only for brushes\n"
+		"  -noao      : Disables Baked Ambient Occlusion Of Brushes\n"
 		"\n"
 #if 1 // Disabled for the initial SDK release with VMPI so we can get feedback from selected users.
 		);

@@ -19,6 +19,7 @@
 #include "tier0/memdbgon.h"
 
 static ConVar mat_fullbright( "mat_fullbright", "0", FCVAR_CHEAT );
+static ConVar mat_specular( "mat_specular", "1", FCVAR_CHEAT );
 
 extern ConVar r_csm_bias;
 extern ConVar r_csm_slopescalebias;
@@ -91,10 +92,6 @@ void InitLightmappedPBR_DX9( CBaseVSShader *pShader, IMaterialVar **params, Ligh
 	{
 		pShader->LoadTexture( info.m_nAO );
 	}
-	if ( info.m_nEmissive != -1 && params[info.m_nEmissive]->IsDefined() )
-	{
-		pShader->LoadTexture( info.m_nEmissive );
-	}
 	if ( info.m_nDetail != -1 && params[info.m_nDetail]->IsDefined() )
 	{
 		pShader->LoadTexture( info.m_nDetail );
@@ -149,7 +146,6 @@ static void DrawLightmappedPBR_DX9_Internal( CBaseVSShader *pShader, IMaterialVa
 	bool bHasRoughness = ( info.m_nRoughness != -1 ) && params[info.m_nRoughness]->IsTexture();
 	bool bHasMetallic = ( info.m_nMetallic != -1 ) && params[info.m_nMetallic]->IsTexture();
 	bool bHasAO = ( info.m_nAO != -1 ) && params[info.m_nAO]->IsTexture();
-	bool bHasEmissive = ( info.m_nEmissive != -1 ) && params[info.m_nEmissive]->IsTexture();
 	bool bHasDetail = ( info.m_nDetail != -1 );
 	bool bIsAlphaTested = IS_FLAG_SET( MATERIAL_VAR_ALPHATEST ) != 0;
 	bool bHasEnvmap = ( info.m_nEnvmap != -1 ) && params[info.m_nEnvmap]->IsTexture();
@@ -274,6 +270,7 @@ static void DrawLightmappedPBR_DX9_Internal( CBaseVSShader *pShader, IMaterialVa
 		SET_STATIC_VERTEX_SHADER_COMBO( BUMPMAP, bHasBump );
 		SET_STATIC_VERTEX_SHADER_COMBO( DIFFUSEBUMPMAP, bHasBump );
 		SET_STATIC_VERTEX_SHADER_COMBO( VERTEXALPHATEXBLENDFACTOR, false );
+		SET_STATIC_VERTEX_SHADER_COMBO( WVT, false );
 		SET_STATIC_VERTEX_SHADER( lightmappedpbr_vs30 );
 
 		// Assume we're only going to get in here if we support 2b
@@ -338,19 +335,14 @@ static void DrawLightmappedPBR_DX9_Internal( CBaseVSShader *pShader, IMaterialVa
 		else
 			pShaderAPI->BindStandardTexture( SHADER_SAMPLER9, TEXTURE_WHITE );
 
-		if ( bHasEmissive )
-			pShader->BindTexture( SHADER_SAMPLER10, info.m_nEmissive );
-		else
-			pShaderAPI->BindStandardTexture( SHADER_SAMPLER10, TEXTURE_BLACK );
-
 		if ( bHasDetail )
-			pShader->BindTexture( SHADER_SAMPLER12, info.m_nDetail );
+			pShader->BindTexture( SHADER_SAMPLER5, info.m_nDetail );
 		else
-			pShaderAPI->BindStandardTexture( SHADER_SAMPLER12, TEXTURE_BLACK );
+			pShaderAPI->BindStandardTexture( SHADER_SAMPLER5, TEXTURE_BLACK );
 
 
 
-		pShaderAPI->BindStandardTexture( SHADER_SAMPLER11, TEXTURE_LIGHTMAP );
+		pShaderAPI->BindStandardTexture( SHADER_SAMPLER10, TEXTURE_LIGHTMAP );
 
 		ITexture *pCascadedDepthTexture = (ITexture *)pShaderAPI->GetIntRenderingParameter( INT_RENDERPARM_CASCADED_DEPTHTEXTURE );
 		bool bUseCSM = pCascadedDepthTexture != NULL;
@@ -441,6 +433,12 @@ static void DrawLightmappedPBR_DX9_Internal( CBaseVSShader *pShader, IMaterialVa
 		if ( bLightingOnly )
 		{
 			pShaderAPI->BindStandardTexture( SHADER_SAMPLER0, TEXTURE_GREY );
+		}
+
+		// Handle mat_specular 0 (no envmap reflections)
+		if ( !mat_specular.GetBool() )
+		{
+			pShaderAPI->BindStandardTexture( SHADER_SAMPLER7, TEXTURE_BLACK ); // Envmap
 		}
 
 		pShaderAPI->SetPixelShaderFogParams( PSREG_FOG_PARAMS );

@@ -35,7 +35,6 @@ enum
 // Ambient occlusion
 //==========================================================================//
 bool g_bNoSoften = false;
-bool g_bNoAO = false;
 
 inline fltx4 AbsSIMD( const fltx4 &x )
 {
@@ -86,7 +85,7 @@ fltx4 CalculateAmbientOcclusion4( const FourVectors &position4, const FourVector
 	}
 
 	DirectionalSampler_t sampler;
-	int nSamples = 32;
+	int nSamples = g_AoSamples;
 	if ( do_fast )
 	{
 		nSamples /= 2;

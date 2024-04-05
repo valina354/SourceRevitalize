@@ -2341,7 +2341,7 @@ void DoEnginePostProcessing( int x, int y, int w, int h, bool bFlashlightIsOn, b
 
 			// bloom, software-AA and colour-correction (applied in 1 pass, after generation of the bloom texture)
 			bool bPerformSoftwareAA = IsX360() && ( engine->GetDXSupportLevel() >= 90 ) && ( flAAStrength != 0.0f );
-			bool bPerformBloom = /*!bPostVGui && ( flBloomScale > 0.0f ) && ( engine->GetDXSupportLevel() >= 90 )*/ false; // we use custom bloom now
+			bool bPerformBloom = /*!bPostVGui && ( flBloomScale > 0.0f ) && ( engine->GetDXSupportLevel() >= 90 )*/ true; // we use custom bloom now
 			bool bPerformColCorrect = !bPostVGui && ( g_pMaterialSystemHardwareConfig->GetDXSupportLevel() >= 90 ) &&
 				( g_pMaterialSystemHardwareConfig->GetHDRType() != HDR_TYPE_FLOAT ) && g_pColorCorrectionMgr->HasNonZeroColorCorrectionWeights() &&
 				mat_colorcorrection.GetInt();

@@ -104,6 +104,9 @@ enum ImageFormat
 	IMAGE_FORMAT_LE_BGRA8888,
 #endif
 
+	IMAGE_FORMAT_DXT1_RUNTIME,
+	IMAGE_FORMAT_DXT5_RUNTIME,
+
 	NUM_IMAGE_FORMATS
 };
 #ifndef SDK2013CE
@@ -229,6 +232,19 @@ struct BGRA8888_t
 	inline BGRA8888_t& operator=( const BGRA8888_t& in )
 	{
 		*( unsigned int * )this = *( unsigned int * )&in;
+		return *this;
+	}
+};
+
+struct BGRX8888_t
+{
+	unsigned char b; // change the order of names to change the
+	unsigned char g; //  order of the output ARGB or BGRA, etc...
+	unsigned char r; //  Last one is MSB, 1st is LSB.
+	unsigned char x;
+	inline BGRX8888_t &operator=( const BGRX8888_t &in )
+	{
+		*(unsigned int *)this = *(unsigned int *)&in;
 		return *this;
 	}
 };
@@ -381,6 +397,16 @@ struct ImageFormatInfo_t
 	bool m_IsCompressed;
 };
 
+//-----------------------------------------------------------------------------
+// Indicates the target console type that a given operation is for.
+// (e.g. you may be running on the PC but you're generating textures
+// for X360 or PS3, so IsPC, IsX360, etc. do not work)
+//-----------------------------------------------------------------------------
+enum VtfConsoleFormatType_t
+{
+	VTF_CONSOLE_360,
+	VTF_CONSOLE_PS3
+};
 
 //-----------------------------------------------------------------------------
 // Various methods related to pixelmaps and color formats

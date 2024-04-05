@@ -94,9 +94,8 @@ sampler BumpmapSampler			: register( s3 );	// Bump map
 sampler EnvmapSampler			: register( s7 );	// for IBL
 sampler BRDFSampler				: register( s8 );	// for IBL
 sampler AOSampler				: register( s9 );	// AO
-sampler EmissiveSampler			: register( s10 );	// Emissive map
-sampler LightmapSampler			: register( s11 );	// Lightmap texture from the engine
-sampler DetailTextureSampler : register(s12); // Detail texture
+sampler LightmapSampler			: register( s10 );	// Lightmap texture from the engine
+sampler DetailTextureSampler : register(s11); // Detail texture
 
 //DoPBRLight(float3 vWorldPos, float3 vWorldNormal, float3 albedo, float3 vPosition, float3 vColor, float3 vEye, float atten_radius, float3 metallic, float3 roughness)
 float3 DoPBRLights(float3 vEye, float3 vWorldNormal, float3 vWorldPos, float4 albedo, float4 atten, float3 lightmap, float metallic, float roughness)
@@ -355,7 +354,14 @@ float DoCSM( sampler DepthSampler, const float3 vProjCoords, float vViewDepth, f
 	}
 	else
 	{
-		return 1.0f;
+	if(vViewDepth >= 500)
+    {
+        return 0.0f;
+    }
+    else
+      {
+        return 1.0f;
+      }
 	}
 	
 }
@@ -427,8 +433,6 @@ PS_OUTPUT main(PS_INPUT i) : COLOR
 	float  metallicMap = metallicMapOld + float4(detailColor.rgb * g_DetailStrength, 0.0f);
 	float  AOSampleOld = tex2D( AOSampler, UV );
 	float  AOSample = AOSampleOld + float4(detailColor.rgb * g_DetailStrength, 0.0f);
-	float3  EmissiveSampleOld = tex2D( EmissiveSampler, UV );
-	float3  EmissiveSample = EmissiveSampleOld + float4(detailColor.rgb * g_DetailStrength, 0.0f);
 	float3 lightmapTexel = GammaToLinear( 2.0f * tex2D( LightmapSampler, UV ).rgb );
 
 	float3 worldPos = i.worldPos;
@@ -461,9 +465,9 @@ PS_OUTPUT main(PS_INPUT i) : COLOR
 #if FLASHLIGHT
 		Flashlight);
 #elif CSM == 1
-		CSMLight + Lighting + IBL * AOSample) + EmissiveSample;
+		CSMLight + Lighting + IBL * AOSample);
 #else
-		Lighting + IBL * AOSample) + EmissiveSample;
+		Lighting + IBL * AOSample);
 #endif
 	float alpha = baseColor.a * g_DiffuseModulation.a;
 
