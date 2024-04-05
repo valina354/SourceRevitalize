@@ -22,6 +22,8 @@
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
 
+static ConVar mat_specular( "mat_specular", "1", FCVAR_CHEAT );
+
 //-----------------------------------------------------------------------------
 // Specifically for Deferred lighting pass
 //-----------------------------------------------------------------------------
@@ -992,6 +994,9 @@ void CSSR::Render(int x, int y, int w, int h)
 	VPROF("CSSR::Render");
 
 	if (!r_post_ssr.GetBool() || (IsEnabled() == false))
+		return;
+
+	if ( !mat_specular.GetBool() )
 		return;
 
 	CMatRenderContextPtr pRenderContext(materials);
