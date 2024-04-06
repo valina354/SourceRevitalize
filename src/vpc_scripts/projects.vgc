@@ -215,6 +215,11 @@ $Project "tier2"
 	"tier2\tier2.vpc" [$WIN32]
 }
 
+$Project "tier3"
+{
+	"tier3\tier3.vpc" [$WIN32]
+}
+
 $Project "vguimatsurface"
 {
 	"vguimatsurface\vguimatsurface.vpc" [$WIN32]
