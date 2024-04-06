@@ -250,6 +250,11 @@ $Project "dmserializers"
 	"dmserializers\dmserializers.vpc" [$WIN32]
 }
 
+$Project "filesystem"
+{
+	"filesystem\filesystem_stdio.vpc" [$WIN32]
+}
+
 $Project "shaderlib"
 {
 	"materialsystem\shaderlib\shaderlib.vpc" [$WIN32]
