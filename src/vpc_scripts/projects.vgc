@@ -285,6 +285,32 @@ $Project "serverbrowser"
 	"serverbrowser\ServerBrowser.vpc" [$WIN32]
 }
 
+$Project "gameui"
+{
+	"gameui\GameUI.vpc" [$WIN32]
+}
+
+$Project "datacache"
+{
+	"datacache\datacache.vpc" [$WIN32]
+}
+
+$Project "dedicated_main"
+{
+	"dedicated_main\dedicated_main.vpc" [$WIN32]
+}
+
+$Project "datamodel"
+{
+	"datamodel\datamodel.vpc" [$WIN32]
+}
+
+$Project "choreoobjects"
+{
+	"choreoobjects\choreoobjects.vpc" [$WIN32]
+}
+
+
 $Project "shaderlib"
 {
 	"materialsystem\shaderlib\shaderlib.vpc" [$WIN32]
