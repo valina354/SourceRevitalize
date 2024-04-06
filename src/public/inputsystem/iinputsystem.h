@@ -1,13 +1,13 @@
 //========= Copyright Valve Corporation, All rights reserved. ============//
 //
-// Purpose: 
+// Purpose:
 //
 //===========================================================================//
 
 #ifndef IINPUTSYSTEM_H
 #define IINPUTSYSTEM_H
 #ifdef _WIN32
-#pragma once
+	#pragma once
 #endif
 
 #include "tier0/platform.h"
@@ -17,20 +17,22 @@
 #include "inputsystem/ButtonCode.h"
 #include "inputsystem/AnalogCode.h"
 
+#include "steam/isteamcontroller.h"
+
 //-----------------------------------------------------------------------------
 // Main interface for input. This is a low-level interface
 //-----------------------------------------------------------------------------
-#define INPUTSYSTEM_INTERFACE_VERSION	"InputSystemVersion001"
+#define INPUTSYSTEM_INTERFACE_VERSION "InputSystemVersion001"
 abstract_class IInputSystem : public IAppSystem
 {
 public:
 	// Attach, detach input system from a particular window
 	// This window should be the root window for the application
 	// Only 1 window should be attached at any given time.
-	virtual void AttachToWindow( void* hWnd ) = 0;
-	virtual void DetachFromWindow( ) = 0;
+	virtual void AttachToWindow( void *hWnd ) = 0;
+	virtual void DetachFromWindow() = 0;
 
-	// Enables/disables input. PollInputState will not update current 
+	// Enables/disables input. PollInputState will not update current
 	// button/analog states when it is called if the system is disabled.
 	virtual void EnableInput( bool bEnable ) = 0;
 
@@ -61,7 +63,7 @@ public:
 
 	// Returns the input events since the last poll
 	virtual int GetEventCount() const = 0;
-	virtual const InputEvent_t* GetEventData( ) const = 0;
+	virtual const InputEvent_t *GetEventData() const = 0;
 
 	// Posts a user-defined event into the event queue; this is expected
 	// to be called in overridden wndprocs connected to the root panel.
@@ -116,7 +118,11 @@ public:
 	virtual void SetNovintPure( bool bPure ) = 0;
 
 	// read and clear accumulated raw input values
-	virtual bool GetRawMouseAccumulators( int& accumX, int& accumY ) = 0;
+	virtual bool GetRawMouseAccumulators( int &accumX, int &accumY ) = 0;
+	virtual bool GetTouchAccumulators(int fingerId, float& dx, float& dy)
+	{
+		return false;
+	}
 
 	// tell the input system that we're not a game, we're console text mode.
 	// this is used for dedicated servers to not initialize joystick system.
@@ -124,7 +130,42 @@ public:
 	// some system) if you want ot prevent the joystick system from ever
 	// being initialized.
 	virtual void SetConsoleTextMode( bool bConsoleTextMode ) = 0;
-};
 
+	virtual ISteamController *SteamControllerInterface() = 0;
+	virtual uint32 GetNumSteamControllersConnected() = 0;
+	virtual bool IsSteamControllerActive() = 0;
+	virtual bool IsSteamControllerConnected() = 0;
+	virtual int GetSteamControllerIndexForSlot( int nSlot ) = 0;
+	virtual bool GetRadialMenuStickValues( int nSlot, float &fX, float &fY ) = 0;
+	virtual void ActivateSteamControllerActionSetForSlot( uint64 nSlot, GameActionSet_t eActionSet ) = 0;
+	virtual ControllerActionSetHandle_t GetActionSetHandle( GameActionSet_t eActionSet ) = 0;
+	virtual ControllerActionSetHandle_t GetActionSetHandle( const char *szActionSet ) = 0;
+
+	// Gets the action origin (i.e. which physical input) maps to the given action for the given action set
+	virtual EControllerActionOrigin GetSteamControllerActionOrigin( const char *action, GameActionSet_t action_set ) = 0;
+	virtual EControllerActionOrigin GetSteamControllerActionOrigin( const char *action, ControllerActionSetHandle_t action_set_handle ) = 0;
+
+	// Maps a Steam Controller action origin to a string (consisting of a single character) in our SC icon font
+	virtual const wchar_t *GetSteamControllerFontCharacterForActionOrigin( EControllerActionOrigin origin ) = 0;
+
+	// Maps a Steam Controller action origin to a short text string (e.g. "X", "LB", "LDOWN") describing the control.
+	// Prefer to actually use the icon font wherever possible.
+	virtual const wchar_t *GetSteamControllerDescriptionForActionOrigin( EControllerActionOrigin origin ) = 0;
+
+	// This is called with "true" by dedicated server initialization (before calling Init) in order to
+	// force us to skip initialization of Steam (which messes up dedicated servers).
+	virtual void SetSkipControllerInitialization( bool bSkip ) = 0;
+
+	// Helper - activate same action set for all controller slots.
+	void ActivateSteamControllerActionSet( GameActionSet_t eActionSet )
+	{
+		ActivateSteamControllerActionSetForSlot( 0xffffffffffffffff, eActionSet );
+	}
+
+	virtual void StartTextInput()
+	{
+
+	}
+};
 
 #endif // IINPUTSYSTEM_H

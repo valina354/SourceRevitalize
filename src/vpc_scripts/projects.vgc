@@ -220,6 +220,31 @@ $Project "vguimatsurface"
 	"vguimatsurface\vguimatsurface.vpc" [$WIN32]
 }
 
+$Project "inputsystem"
+{
+	"inputsystem\inputsystem.vpc" [$WIN32]
+}
+
+$Project "mdllib"
+{
+	"mdllib\mdllib.vpc" [$WIN32]
+}
+
+$Project "unitlib"
+{
+	"unitlib\unitlib.vpc" [$WIN32]
+}
+
+$Project "dmxloader"
+{
+	"dmxloader\dmxloader.vpc" [$WIN32]
+}
+
+$Project "dmserializers"
+{
+	"dmserializers\dmserializers.vpc" [$WIN32]
+}
+
 $Project "shaderlib"
 {
 	"materialsystem\shaderlib\shaderlib.vpc" [$WIN32]

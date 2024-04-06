@@ -869,7 +869,11 @@ void CBloom::Shutdown(void)
 ConVar r_post_bloom("r_post_bloom", "1", FCVAR_ARCHIVE);
 ConVar r_post_bloom_amount("r_post_bloom_amount", "0.2", FCVAR_ARCHIVE);
 ConVar r_post_bloom_gaussianamount("r_post_bloom_gaussianamount", "1", FCVAR_ARCHIVE);
+#ifdef DXVK
+ConVar r_post_bloom_exposure( "r_post_bloom_exposure", "0.3", FCVAR_ARCHIVE );
+#else
 ConVar r_post_bloom_exposure("r_post_bloom_exposure", "1", FCVAR_ARCHIVE);
+#endif
 void CBloom::Render(int x, int y, int w, int h)
 {
 	VPROF("CBloom::Render");
@@ -1114,6 +1118,122 @@ void CVignettingEffect::Render( int x, int y, int w, int h )
 		DrawScreenEffectMaterial( m_VignetMat, x, y, w, h );
 		if ( r_post_vignettingeffect_debug.GetBool() )
 			DevMsg( "Vignetting Amount: %.2f\n", fVignettingAmount );
+	}
+}
+
+//------------------------------------------------------------------------------
+// Health post-processing effects
+//------------------------------------------------------------------------------
+class CHealthEffects : public IScreenSpaceEffect
+{
+public:
+	CHealthEffects(){};
+	~CHealthEffects(){};
+
+	void Init();
+	void Shutdown();
+
+	void SetParameters( KeyValues *params ){};
+
+	void Render( int x, int y, int w, int h );
+
+	void Enable( bool bEnable )
+	{
+		m_bEnable = bEnable;
+	}
+	bool IsEnabled()
+	{
+		return m_bEnable;
+	}
+
+private:
+	bool m_bEnable;
+
+	float fDispersionAmount;
+	float fDispersionLerpTo;
+
+	int iLastHealth;
+	bool bDisableDispersionOneFrame;
+
+	CMaterialReference m_ChromaticDisp;
+};
+
+ADD_SCREENSPACE_EFFECT( CHealthEffects, c17_healthfx );
+
+ConVar r_post_chromatic_dispersion_offset( "r_post_chromatic_dispersion_offset", "0.2", FCVAR_CHEAT, "Controls constant chromatic dispersion strength, 0 for off." );
+ConVar r_post_chromatic_dispersion_offset_heavydamage( "r_post_chromatic_dispersion_offset_heavydamage", "1.5", FCVAR_CHEAT, "Controls constant chromatic dispersion strength when the player takes heavy damage." );
+ConVar r_post_chromatic_dispersion_offset_damage( "r_post_chromatic_dispersion_offset_damage", "8.0", FCVAR_CHEAT, "Controls constant chromatic dispersion strength when the player takes damage." );
+ConVar r_post_healtheffects_debug( "r_post_healtheffects_debug", "0", FCVAR_CHEAT );
+
+//------------------------------------------------------------------------------
+// CHealthEffects init
+//------------------------------------------------------------------------------
+void CHealthEffects::Init()
+{
+	m_ChromaticDisp.Init( materials->FindMaterial( "shaders/chromaticDisp", TEXTURE_GROUP_PIXEL_SHADERS, true ) );
+
+	fDispersionAmount = r_post_chromatic_dispersion_offset.GetFloat();
+	fDispersionLerpTo = r_post_chromatic_dispersion_offset.GetFloat();
+
+	iLastHealth = -1;
+	bDisableDispersionOneFrame = false;
+}
+
+//------------------------------------------------------------------------------
+// CHealthEffects shutdown
+//------------------------------------------------------------------------------
+void CHealthEffects::Shutdown()
+{
+	m_ChromaticDisp.Shutdown();
+}
+
+ConVar r_post_healtheffects( "r_post_healtheffects", "1", FCVAR_ARCHIVE );
+
+//------------------------------------------------------------------------------
+// CHealthEffects render
+//------------------------------------------------------------------------------
+void CHealthEffects::Render( int x, int y, int w, int h )
+{
+	if ( !r_post_healtheffects.GetBool() || ( IsEnabled() == false ) )
+		return;
+
+	C_BaseHLPlayer *pPlayer = (C_BaseHLPlayer *)C_BasePlayer::GetLocalPlayer();
+	if ( !pPlayer )
+		return;
+
+	fDispersionLerpTo = r_post_chromatic_dispersion_offset.GetFloat();
+
+	if ( iLastHealth > pPlayer->GetHealth() /*&& pPlayer->GetHealth() > 15*/ )
+	{
+		//Player took damage.
+		if ( iLastHealth - pPlayer->GetHealth() >= 20 )
+		{
+			fDispersionAmount = r_post_chromatic_dispersion_offset_heavydamage.GetFloat();
+		}
+		else
+		{
+			fDispersionAmount = r_post_chromatic_dispersion_offset_damage.GetFloat();
+		}
+		bDisableDispersionOneFrame = true;
+	}
+	iLastHealth = pPlayer->GetHealth();
+
+	if ( fDispersionAmount != fDispersionLerpTo && !bDisableDispersionOneFrame )
+		fDispersionAmount = FLerp( fDispersionAmount, fDispersionLerpTo, 0.1f );
+	else if ( bDisableDispersionOneFrame )
+		bDisableDispersionOneFrame = false;
+
+	IMaterialVar *var;
+
+	if ( fDispersionAmount >= 0.01f )
+	{
+		var = m_ChromaticDisp->FindVar( "$FOCUSOFFSET", NULL );
+		var->SetFloatValue( fDispersionAmount );
+		var = m_ChromaticDisp->FindVar( "$radial", NULL );
+		var->SetIntValue( 0 );
+		DrawScreenEffectMaterial( m_ChromaticDisp, x, y, w, h );
+		if ( r_post_healtheffects_debug.GetBool() )
+			DevMsg( "Dispersion Amount: %.2f\n", fDispersionAmount );
 	}
 }
 

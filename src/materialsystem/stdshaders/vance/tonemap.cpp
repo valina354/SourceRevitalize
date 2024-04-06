@@ -10,7 +10,11 @@
 #include "SDK_screenspaceeffect_vs30.inc"
 #include "Vance_Tonemap_ps30.inc"
 
+#ifdef DXVK
+ConVar r_post_tonemap_underexposure( "r_post_tonemap_underexposure", "0.9" );
+#else
 ConVar r_post_tonemap_underexposure("r_post_tonemap_underexposure", "0.5");
+#endif
 ConVar r_post_tonemap_overexposure("r_post_tonemap_overexposure", "1.2");
 ConVar r_post_tonemap_exposure("r_post_tonemap_exposure", "1");
 ConVar r_post_tonemap_mode("r_post_tonemap_mode", "1");

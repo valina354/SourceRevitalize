@@ -399,6 +399,7 @@ void CViewRender::Init( void )
 	g_pScreenSpaceEffects->EnableScreenSpaceEffect("vance_volumetrics");
 	g_pScreenSpaceEffects->EnableScreenSpaceEffect( "vance_ssgi" );
 	g_pScreenSpaceEffects->EnableScreenSpaceEffect( "c17_vignetting" );
+	g_pScreenSpaceEffects->EnableScreenSpaceEffect( "c17_healthfx" );
 	g_pScreenSpaceEffects->EnableScreenSpaceEffect( "c17_colorcorrection" );
 	g_pScreenSpaceEffects->EnableScreenSpaceEffect( "c17_sunshafts" );
 	g_pScreenSpaceEffects->EnableScreenSpaceEffect( "Mainsunshaft" );
@@ -458,6 +459,7 @@ void CViewRender::Shutdown( void )
 	g_pScreenSpaceEffects->DisableScreenSpaceEffect("vance_volumetrics");
 	g_pScreenSpaceEffects->DisableScreenSpaceEffect( "vance_ssgi" );
 	g_pScreenSpaceEffects->DisableScreenSpaceEffect( "c17_vignetting" );
+	g_pScreenSpaceEffects->DisableScreenSpaceEffect( "c17_healthfx" );
 	g_pScreenSpaceEffects->DisableScreenSpaceEffect( "c17_colorcorrection" );
 	g_pScreenSpaceEffects->DisableScreenSpaceEffect( "c17_sunshafts" );
 	g_pScreenSpaceEffects->DisableScreenSpaceEffect( "Mainsunshaft" );
