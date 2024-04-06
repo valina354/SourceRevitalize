@@ -255,6 +255,11 @@ $Project "filesystem"
 	"filesystem\filesystem_stdio.vpc" [$WIN32]
 }
 
+$Project "vpklib"
+{
+	"vpklib\vpklib.vpc" [$WIN32]
+}
+
 $Project "shaderlib"
 {
 	"materialsystem\shaderlib\shaderlib.vpc" [$WIN32]

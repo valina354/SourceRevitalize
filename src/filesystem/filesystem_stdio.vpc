@@ -43,7 +43,7 @@ $Configuration
 		$PreprocessorDefinitions	"$BASE;FILESYSTEM_MSVC2015_STAT_BUG_WORKAROUND" [$VS2015]
 
 		// Add VPK support
-		$PreprocessorDefinitions	"$BASE;" [!$WIN64]
+		$PreprocessorDefinitions	"$BASE;SUPPORT_PACKED_STORE" [!$WIN64]
 	}
 	$Linker
 	{
@@ -102,5 +102,6 @@ $Project "FileSystem_Stdio"
 	$Folder "Link Libraries"
 	{
 		$Lib	tier2
+		$Lib	vpklib
 	}
 }
