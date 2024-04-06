@@ -310,6 +310,10 @@ $Project "choreoobjects"
 	"choreoobjects\choreoobjects.vpc" [$WIN32]
 }
 
+$Project "vstdlib"
+{
+	"vstdlib\vstdlib.vpc" [$WIN32]
+}
 
 $Project "shaderlib"
 {
