@@ -700,7 +700,7 @@ BEGIN_VS_SHADER( SDK_Water_DX90,
 				if ( pNormalMap )
 				{
 					// Clamp this to 0 or 1 since that's how we've authored the water shader (i.e. no separate alpha map/channel)
-					nNormalDecodeMode = pNormalMap->GetNormalDecodeMode() == NORMAL_DECODE_NONE ? NORMAL_DECODE_NONE : NORMAL_DECODE_ATI2N;
+					//nNormalDecodeMode = pNormalMap->GetNormalDecodeMode() == NORMAL_DECODE_NONE ? NORMAL_DECODE_NONE
 				}
 			}
 
@@ -901,7 +901,7 @@ BEGIN_VS_SHADER( SDK_Water_DX90,
 				if ( pNormalMap )
 				{
 					// Clamp this to 0 or 1 since that's how we've authored the water shader (i.e. no separate alpha map/channel)
-					nNormalDecodeMode = pNormalMap->GetNormalDecodeMode() == NORMAL_DECODE_NONE ? NORMAL_DECODE_NONE : NORMAL_DECODE_ATI2N;
+					//nNormalDecodeMode = pNormalMap->GetNormalDecodeMode() == NORMAL_DECODE_NONE ? NORMAL_DECODE_NONE
 				}
 			}
 

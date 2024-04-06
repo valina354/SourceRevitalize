@@ -260,6 +260,31 @@ $Project "vpklib"
 	"vpklib\vpklib.vpc" [$WIN32]
 }
 
+$Project "scenefilecache"
+{
+	"scenefilecache\scenefilecache.vpc" [$WIN32]
+}
+
+$Project "sdklauncher"
+{
+	"sdklauncher\SDKLauncher.vpc" [$WIN32]
+}
+
+$Project "bitmap"
+{
+	"bitmap\bitmap.vpc" [$WIN32]
+}
+
+$Project "vtf"
+{
+	"vtf\vtf.vpc" [$WIN32]
+}
+
+$Project "serverbrowser"
+{
+	"serverbrowser\ServerBrowser.vpc" [$WIN32]
+}
+
 $Project "shaderlib"
 {
 	"materialsystem\shaderlib\shaderlib.vpc" [$WIN32]
