@@ -593,7 +593,10 @@ public:
 	virtual void AcquireThreadOwnership() = 0;
 	virtual void ReleaseThreadOwnership() = 0;
 
-	virtual bool SupportsNormalMapCompression() const = 0;
+	bool SupportsNormalMapCompression() const
+	{
+		return true;
+	}
 
 	// Only does anything on XBox360. This is useful to eliminate stalls
 	virtual void EnableBuffer2FramesAhead( bool bEnable ) = 0;
