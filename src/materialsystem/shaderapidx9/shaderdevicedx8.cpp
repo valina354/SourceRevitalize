@@ -955,9 +955,9 @@ bool CShaderDeviceMgrDx8::ComputeCapsFromD3D( HardwareCaps_t *pCaps, int nAdapte
 	pCaps->m_bFogColorSpecifiedInLinearSpace = false;
 	pCaps->m_bFogColorAlwaysLinearSpace = false;
 
-	// Assume not DX10.  Check below.
-	pCaps->m_bDX10Card = false;
-	pCaps->m_bDX10Blending = false;
+	// Assume DX10.  Check below.
+	pCaps->m_bDX10Card = true;
+	pCaps->m_bDX10Blending = true;
 
 	if ( IsOpenGL() && ( pCaps->m_VendorID == 1 ) )
 	{
@@ -1023,22 +1023,6 @@ bool CShaderDeviceMgrDx8::ComputeCapsFromD3D( HardwareCaps_t *pCaps, int nAdapte
 					pCaps->m_bFogColorSpecifiedInLinearSpace = true;
 					pCaps->m_bFogColorAlwaysLinearSpace = true;
 				}
-			}
-		}
-		else if ( pCaps->m_VendorID == VENDORID_INTEL )
-		{
-			// Intel does not have performant vertex textures
-			pCaps->m_bDX10Card = false;
-
-			// Intel supports DX10 SRGB on Broadwater and better
-			// The two checks are for devices from GMA generation (0x29A2-0x2A43) and HD graphics (0x0042-0x2500)
-			pCaps->m_bDX10Blending = ( ( pCaps->m_DeviceID >= 0x29A2 ) && ( pCaps->m_DeviceID <= 0x2A43  ) ) ||
-									 ( ( pCaps->m_DeviceID >= 0x0042 ) && ( pCaps->m_DeviceID <= 0x2500  ) );
-
-			if( pCaps->m_bDX10Blending )
-			{
-				pCaps->m_bFogColorSpecifiedInLinearSpace = true;
-				pCaps->m_bFogColorAlwaysLinearSpace = true;
 			}
 		}
 	}
