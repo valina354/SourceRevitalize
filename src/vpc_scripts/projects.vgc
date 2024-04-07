@@ -315,6 +315,11 @@ $Project "vstdlib"
 	"vstdlib\vstdlib.vpc" [$WIN32]
 }
 
+$Project "mdlobjects"
+{
+	"mdlobjects\mdlobjects.vpc" [$WIN32]
+}
+
 $Project "shaderlib"
 {
 	"materialsystem\shaderlib\shaderlib.vpc" [$WIN32]
