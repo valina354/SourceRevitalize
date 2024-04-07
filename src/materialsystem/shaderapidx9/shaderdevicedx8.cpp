@@ -670,12 +670,6 @@ bool CShaderDeviceMgrDx8::ComputeCapsFromD3D( HardwareCaps_t *pCaps, int nAdapte
 		pCaps->m_SupportsShaderModel_3_0 = false;
 	}
 
-	// Slam 3.0 shaders off for Intel
-	if ( pCaps->m_VendorID == VENDORID_INTEL )
-	{
-		pCaps->m_SupportsShaderModel_3_0 = false;
-	}
-
 	pCaps->m_MaxVertexShader30InstructionSlots = 0;
 	pCaps->m_MaxPixelShader30InstructionSlots  = 0;
 
