@@ -75,6 +75,7 @@ ascii_ps30.fxc-----ascii_ps30
 barrel_distortion_ps30.fxc-----barrel_distortion_ps30
 sun_shafts_ps30.fxc-----sun_shafts_ps30
 mainsunshaft_ps30.fxc-----mainsunshaft_ps30
+downsampling_ps30.fxc-----downsampling_ps30
 lightpass_ps30.fxc-----lightpass_ps30
 lightpass_vs30.fxc-----lightpass_vs30
 deferred_pointlights_ps30.fxc-----deferred_pointlights_ps30

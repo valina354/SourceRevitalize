@@ -8,6 +8,10 @@
 #ifndef VPROF_TELEMETRY_H
 #define VPROF_TELEMETRY_H
 
+#define TM_ZONE(...)
+#define TM_ZONE_DEFAULT(...)
+#define TM_ZONE_DEFAULT_PARAM(...)
+
 #if !defined( MAKE_VPC )
 
 #if !defined( RAD_TELEMETRY_DISABLED ) && ( defined( IS_WINDOWS_PC ) || defined( _LINUX ) )

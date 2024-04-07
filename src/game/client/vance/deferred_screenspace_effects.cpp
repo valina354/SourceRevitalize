@@ -155,6 +155,57 @@ void CEyeAdaption::Render( int x, int y, int w, int h )
 	DrawScreenEffectMaterial( m_EyeAdaption, x, y, w, h );
 }
 
+class CEyeDownsampling : public IScreenSpaceEffect
+{
+public:
+	CEyeDownsampling( void ){};
+
+	virtual void Init( void );
+	virtual void Shutdown( void );
+	virtual void SetParameters( KeyValues *params ){};
+	virtual void Enable( bool bEnable )
+	{
+		m_bEnabled = bEnable;
+	}
+	virtual bool IsEnabled()
+	{
+		return m_bEnabled;
+	}
+
+	virtual void Render( int x, int y, int w, int h );
+
+private:
+	bool m_bEnabled;
+
+	CMaterialReference m_DownSampling;
+};
+
+// Eye adaption
+ADD_SCREENSPACE_EFFECT( CEyeDownsampling, Down_Sampling );
+
+void CEyeDownsampling::Init( void )
+{
+	PrecacheMaterial( "shaders/downsampling" );
+
+	m_DownSampling.Init( materials->FindMaterial( "shaders/downsampling", TEXTURE_GROUP_PIXEL_SHADERS, true ) );
+}
+
+void CEyeDownsampling::Shutdown( void )
+{
+	m_DownSampling.Shutdown();
+}
+
+ConVar r_post_downsampling( "r_post_downsampling", "1", FCVAR_ARCHIVE );
+void CEyeDownsampling::Render( int x, int y, int w, int h )
+{
+	VPROF( "CEYEDOWNSAMPLING::Render" );
+
+	if ( !r_post_eyeadaption.GetBool() || ( IsEnabled() == false ) )
+		return;
+
+	DrawScreenEffectMaterial( m_DownSampling, x, y, w, h );
+}
+
 class CDithering : public IScreenSpaceEffect
 {
 public:

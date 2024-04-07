@@ -325,6 +325,11 @@ $Project "shaderlib"
 	"materialsystem\shaderlib\shaderlib.vpc" [$WIN32]
 }
 
+$Project "shaderapidx9"
+{
+	"materialsystem\shaderapidx9\shaderapidx9.vpc" [$WIN32]
+}
+
 $Project "shaderapiempty"
 {
 	"materialsystem\shaderapiempty\shaderapiempty.vpc" [$WIN32]

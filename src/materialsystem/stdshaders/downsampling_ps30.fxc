@@ -1,0 +1,86 @@
+#include "common_ps_fxc.h"
+
+sampler FBSampler : register(s0);
+
+#define PI 3.14159265359
+
+struct PS_INPUT
+{
+    float2 texCoord : TEXCOORD0;
+};
+
+// Cubic interpolation function
+float cubicWeight(float x)
+{
+    float a = -0.5;
+    float ax = abs(x);
+    float ax2 = ax * ax;
+    float ax3 = ax2 * ax;
+
+    if (ax <= 1.0)
+    {
+        return (a + 2.0) * ax3 - (a + 3.0) * ax2 + 1.0;
+    }
+    else if (ax <= 2.0)
+    {
+        return a * ax3 - 5.0 * a * ax2 + 8.0 * a * ax - 4.0 * a;
+    }
+    else
+    {
+        return 0.0;
+    }
+}
+
+// Function to perform separable Gaussian blur
+float4 GaussianBlur(float2 texCoord, float2 texelSize)
+{
+    float weights[5] = { 0.06136, 0.24477, 0.38774, 0.24477, 0.06136 }; // Gaussian weights
+    float4 sumColor = float4(0, 0, 0, 0);
+
+    // Horizontal blur pass
+    for (int i = -2; i <= 2; ++i)
+    {
+        sumColor += tex2D(FBSampler, texCoord + float2(i * texelSize.x, 0)) * weights[i + 2];
+    }
+
+    return sumColor;
+}
+
+// Function to perform bicubic interpolation
+float4 BicubicInterpolation(float2 texCoord, float2 renderTargetSize)
+{
+    float4 texColor = float4(0, 0, 0, 0);
+    float2 texelSize = 1.0 / renderTargetSize;
+
+    // Compute the four neighboring texels
+    for (int j = -1; j <= 2; ++j)
+    {
+        for (int i = -1; i <= 2; ++i)
+        {
+            texColor += tex2D(FBSampler, texCoord + float2(i, j) * texelSize) * 
+                        cubicWeight(i - texCoord.x) * cubicWeight(j - texCoord.y);
+        }
+    }
+
+    return texColor;
+}
+
+float4 main(PS_INPUT i) : COLOR
+{
+    float2 renderTargetSize480p = float2(854, 480); // Dimensions of 480p render target
+    float2 renderTargetSize1080p = float2(1920, 1080); // Dimensions of 1080p render target
+
+    // Perform downsampling to 480p with separable Gaussian blur
+    float4 downsampledColor = GaussianBlur(i.texCoord, 1.0 / renderTargetSize480p);
+
+    // Upscale to 1080p using bicubic interpolation
+    float4 upscaledColor = BicubicInterpolation(i.texCoord * (renderTargetSize1080p / renderTargetSize480p), renderTargetSize1080p);
+
+    // Sample from the original texture using FBSampler
+    float4 originalColor = tex2D(FBSampler, i.texCoord);
+
+    // Blend between upscaled, downsampled, and original colors
+    float4 finalColor = lerp(upscaledColor, lerp(downsampledColor, originalColor, 0.5), 0.5);
+
+    return finalColor;
+}

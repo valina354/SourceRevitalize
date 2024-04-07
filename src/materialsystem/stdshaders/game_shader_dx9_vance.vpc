@@ -67,6 +67,7 @@ $Project "Shaders (VANCE)"
 			$File	"barreldistortion.cpp"
 			$File	"sun_shafts.cpp"
 			$File	"mainsunshaft.cpp"
+			$File	"downsampling.cpp"
 		}
 		
 		$Folder "PBR"
