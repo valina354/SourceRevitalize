@@ -19,7 +19,7 @@ static ConVar r_post_ssgi_radius("r_post_ssao_radius", "5");
 static ConVar r_post_ssgi_fallof("r_post_ssao_fallof", "0.0");
 static ConVar r_post_ssgi_area("r_post_ssao_area", "0.005");
 static ConVar r_post_ssgi_strength("r_post_ssao_strength", "0.175");
-static ConVar r_post_ssgi_samples("r_post_ssao_samples", "16");
+static ConVar r_post_ssgi_samples("r_post_ssao_samples", "256");
 
 extern ConVar csm_enabled;
 

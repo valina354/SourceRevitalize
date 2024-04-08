@@ -87,7 +87,7 @@ bool		g_bInterrupt = false;	// Wsed with background lighting in WC. Tells VRAD
 									// to stop lighting.
 float g_SunAngularExtent=0.0;
 float g_AoSamples = 32.0;
-bool g_bNoAO = false;
+bool g_bNoAO = true;
 
 float g_flSkySampleScale = 1.0;
 float g_flSunSampleScale = 1.0;
@@ -2388,9 +2388,9 @@ int ParseCommandLine( int argc, char **argv, bool *onlydetail )
 		{
 			g_bDumpPropLightmaps = true;
 		}
-		else if ( !Q_stricmp( argv[i], "-noao" ) )
+		else if ( !Q_stricmp( argv[i], "-ambientocclusion" ) )
 		{
-			g_bNoAO = true;
+			g_bNoAO = false;
 		}
 		else if (!Q_stricmp(argv[i],"-bounce"))
 		{
@@ -2892,7 +2892,7 @@ void PrintUsage( int argc, char **argv )
 		"  -noskyboxrecurse : Turn off recursion into 3d skybox (skybox shadows on world)\n"
 		"  -nossprops      : Globally disable self-shadowing on static props\n"
 		"  -aosamples      : The Sample of the baked ambient occlusion, Only for brushes\n"
-		"  -noao      : Disables Baked Ambient Occlusion Of Brushes\n"
+		"  -ambientocclusion      : Enables Baked Ambient Occlusion Of Brushes\n"
 		"\n"
 #if 1 // Disabled for the initial SDK release with VMPI so we can get feedback from selected users.
 		);

@@ -1,8 +1,10 @@
-// STATIC: "CONVERT_TO_SRGB" "0..1"    [ps20b][= g_pHardwareConfig->NeedsShaderSRGBConversion()] [PC]
-// STATIC: "CONVERT_TO_SRGB" "0..0"    [= 0] [XBOX]
-
 #define HDRTYPE HDR_TYPE_NONE
 #include "common_ps_fxc.h"
+
+// Constants
+#define NUM_RAY_SAMPLES 64
+#define MAX_DISTANCE 128.0 // Maximum distance to trace rays
+#define BLEND_FACTOR 1.0   // Adjust this value to control the strength of the global illumination effect
 
 // Samplers for deferred textures
 sampler FBSampler : register(s0); // Framebuffer sampler
@@ -17,66 +19,83 @@ struct PS_INPUT
     float2 texCoord : TEXCOORD0;
 };
 
-// Sample hemisphere function for ray direction
-float2 SampleHemisphere(float3 normal, float t)
+// Function to calculate lighting based on material properties
+float3 CalculateMaterialLighting(float3 normal, float3 viewDir, float3 albedo, float3 mraoValues, float metallic, float roughness)
 {
-    float theta = 2 * 3.141592653589793238 * t;
-    float r = sqrt(max(0.0, 1.0 - normal.z * normal.z));
-    float3 tangent = normalize(float3(-normal.y, normal.x, 0));
-    float3 bitangent = cross(normal, tangent);
-    return float2(cos(theta) * r, sin(theta) * r);
+    // Simple ambient occlusion from MRAO
+    float ambientOcclusion = mraoValues.r;
+
+    // Diffuse term
+    float3 diffuseColor = albedo * (1.0 - metallic);
+
+    // Specular term
+    float3 specularColor = lerp(float3(0.04, 0.04, 0.04), albedo, metallic);
+
+    // Combine roughness and MRAO for specular intensity
+    float specularIntensity = lerp(1.0, 0.5, roughness) * (1.0 - ambientOcclusion);
+
+    // Compute half vector
+    float3 halfVec = normalize(viewDir + float3(0.0, 0.0, 1.0));
+
+    // Calculate specular contribution
+    float specularFactor = pow(saturate(dot(normal, halfVec)), 128.0) * specularIntensity;
+
+    // Calculate final lighting
+    float3 lighting = diffuseColor * ambientOcclusion + specularColor * specularFactor;
+
+    return lighting;
 }
 
-// Implement SSGI calculation function
-float3 CalculateSSGI(float depth, float mrao, float3 normals, float3 albedo, float2 texCoord)
+// Function to trace a ray and gather illumination
+float3 TraceRay(float3 origin, float3 direction)
 {
-    // Sample count and step size for raymarching
-    int sampleCount = 128.0;
-    float stepSize = 0.1;
-
-    // Accumulate SSGI contribution
-    float3 ssgi = 0;
-
-    // Raymarch through neighboring pixels in screen space
-    for (int i = 0; i < sampleCount; ++i)
+    float3 accumulatedColor = float3(0.0, 0.0, 0.0);
+    float t = 0.0;
+    
+    for (int i = 0; i < NUM_RAY_SAMPLES; ++i)
     {
-        // Calculate ray direction based on normals
-        float2 rayDir = SampleHemisphere(normalize(normals), i / float(sampleCount));
+        float3 rayPosition = origin + t * direction;
+        
+        // Sample from G-buffer textures
+        float3 normal = normalize(tex2D(NormalSampler, rayPosition.xy).xyz * 2.0 - 1.0); // Convert from [0,1] to [-1,1] range
+        float3 albedo = tex2D(AlbedoSampler, rayPosition.xy).rgb;
+        float3 mraoValues = tex2D(MRAOSampler, rayPosition.xy).rgb;
+        float metallic = mraoValues.g;
+        float roughness = mraoValues.b;
 
-        // Sample neighbor pixel in screen space
-        float3 neighborPos = tex2D(FBSampler, texCoord + rayDir * stepSize * float(i)).rgb;
-
-        // Accumulate SSGI contribution based on neighbor pixel color
-        ssgi += neighborPos;
+        // Calculate lighting based on material properties
+        float3 lighting = CalculateMaterialLighting(normal, -direction, albedo, mraoValues, metallic, roughness);
+        
+        // Accumulate color
+        accumulatedColor += lighting;
+        
+        // Move along the ray
+        t += 0.1; // Adjust step size as needed
+        
+        // Break if we reach maximum distance or beyond
+        if (t >= MAX_DISTANCE)
+            break;
     }
-
-    // Average SSGI contribution
-    ssgi /= float(sampleCount);
-	
-	// Multiply SSGI contribution by 10000 to exaggerate the effect
-    ssgi *= 10000.0;
-
-
-    return ssgi;
+    
+    // Average the accumulated color
+    return accumulatedColor / float(NUM_RAY_SAMPLES);
 }
 
 //This is the main function
 float4 main(PS_INPUT i) : COLOR
 {
-    // Sample the framebuffer texture
+    // Sample from G-buffer textures
     float4 fbColor = tex2D(FBSampler, i.texCoord);
-
-    // Sample the depth, MRAO, normals, and albedo from their respective textures
     float depth = tex2D(DepthSampler, i.texCoord).r;
-    float mrao = tex2D(MRAOSampler, i.texCoord).r;
-    float3 normals = normalize(tex2D(NormalSampler, i.texCoord).rgb * 2.0 - 1.0); // Convert from [0,1] to [-1,1] range
-    float3 albedo = tex2D(AlbedoSampler, i.texCoord).rgb;
 
-    // Calculate SSGI based on the sampled information
-    float3 ssgi = CalculateSSGI(depth, mrao, normals, albedo, i.texCoord); // Pass texCoord to CalculateSSGI function
+    // Calculate view direction
+    float3 viewDir = normalize(float3(i.texCoord, depth) - float3(0.5, 0.5, 0.5));
 
-    // Combine framebuffer color with SSGI
-    float3 finalColor = fbColor.rgb + ssgi;
+    // Trace rays for GI
+    float3 giColor = TraceRay(fbColor.xyz, viewDir);
+
+    // Blend GI color with framebuffer color
+    float3 finalColor = lerp(fbColor.rgb, giColor, BLEND_FACTOR);
 
     return float4(finalColor, 1.0);
 }

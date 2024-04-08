@@ -412,7 +412,7 @@ typedef struct _D3DDeviceDesc7 {
     DWORD       dwFVFCaps;
     DWORD       dwTextureOpCaps;
     WORD        wMaxTextureBlendStages;
-    WORD        wMaxSimultaneousTextures;
+	WORD wMaxSimultaneousTextures;
 
     DWORD       dwMaxActiveLights;
     D3DVALUE    dvMaxVertexW;

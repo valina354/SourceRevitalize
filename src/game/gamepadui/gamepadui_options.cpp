@@ -752,35 +752,11 @@ void InitAAModes()
 		g_nNumAAModes++;
 	}
 
-	if ( materials->SupportsCSAAMode(4, 2) )							// nVidia CSAA			"8x"
-	{
-		g_AAModes[g_nNumAAModes].strName = "#GameUI_8X_CSAA";
-		g_AAModes[g_nNumAAModes].m_nNumSamples = 4;
-		g_AAModes[g_nNumAAModes].m_nQualityLevel = 2;
-		g_nNumAAModes++;
-	}
-
-	if ( materials->SupportsCSAAMode(4, 4) )							// nVidia CSAA			"16x"
-	{
-		g_AAModes[g_nNumAAModes].strName = "#GameUI_16X_CSAA";
-		g_AAModes[g_nNumAAModes].m_nNumSamples = 4;
-		g_AAModes[g_nNumAAModes].m_nQualityLevel = 4;
-		g_nNumAAModes++;
-	}
-
 	if ( materials->SupportsMSAAMode(8) )
 	{
 		g_AAModes[g_nNumAAModes].strName = "#GameUI_8X";
 		g_AAModes[g_nNumAAModes].m_nNumSamples = 8;
 		g_AAModes[g_nNumAAModes].m_nQualityLevel = 0;
-		g_nNumAAModes++;
-	}
-
-	if ( materials->SupportsCSAAMode(8, 2) )							// nVidia CSAA			"16xQ"
-	{
-		g_AAModes[g_nNumAAModes].strName = "#GameUI_16XQ_CSAA";
-		g_AAModes[g_nNumAAModes].m_nNumSamples = 8;
-		g_AAModes[g_nNumAAModes].m_nQualityLevel = 2;
 		g_nNumAAModes++;
 	}
 }

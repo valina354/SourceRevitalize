@@ -320,6 +320,21 @@ $Project "mdlobjects"
 	"mdlobjects\mdlobjects.vpc" [$WIN32]
 }
 
+$Project "shadercompile"
+{
+	"utils\shadercompile\shadercompile_dll.vpc" [$WIN32]
+}
+
+$Project "lzma"
+{
+	"utils\lzma\lzma.vpc" [$WIN32]
+}
+
+$Project "dx_proxy"
+{
+	"utils\dx_proxy\dx_proxy_dx9_v30_pc.vpc" [$WIN32]
+}
+
 $Project "shaderlib"
 {
 	"materialsystem\shaderlib\shaderlib.vpc" [$WIN32]

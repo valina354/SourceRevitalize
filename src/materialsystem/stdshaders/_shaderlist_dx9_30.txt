@@ -58,11 +58,11 @@ ssr_ps30.fxc
 
 
 
-VertexlitPBR_ps30.fxc
+//VertexlitPBR_ps30.fxc
 //vertexlitPBR_vs30.fxc
 
-lightmappedPBR_ps30.fxc
-lightmappedPBR_vs30.fxc
+//lightmappedPBR_ps30.fxc
+//lightmappedPBR_vs30.fxc
 
 //ssgi
 ssgi0_vs30.fxc
@@ -113,7 +113,7 @@ desaturate_ps2x.fxc
 nightvision_ps2x.fxc
 
 //dof
-ae_depthoffield_ps30.fxc
+//ae_depthoffield_ps30.fxc
 
 //lensflare
 ae_lensflare_ps2x.fxc

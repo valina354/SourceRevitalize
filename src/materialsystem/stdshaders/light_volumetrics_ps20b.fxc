@@ -1,17 +1,17 @@
 #include "common_flashlight_fxc.h"
 
-const float4 g_FlashlightColor			: register( c0 );
-const float4 g_DepthBlendConstants		: register(c1);
-const float4 g_zViewNear				: register(c2);
-const float4 g_zViewFar					: register(c3);
+const float4 g_FlashlightColor        : register( c0 );
+const float4 g_DepthBlendConstants    : register(c1);
+const float4 g_zViewNear                : register(c2);
+const float4 g_zViewFar                : register(c3);
 
-sampler SpotlightTextureSampler		: register( s0 );
-sampler ShadowDepthSampler			: register( s1 );
-sampler FramebufferSampler			: register( s2 );
+sampler SpotlightTextureSampler        : register( s0 );
+sampler ShadowDepthSampler            : register( s1 );
+sampler FramebufferSampler            : register( s2 );
 
 float DoSimpleFlashlightShadow( sampler depthSampler, float3 flashlightSpacePosition )
 {
-	return tex2Dproj( depthSampler, float4( flashlightSpacePosition, 1 ) ).x;
+    return tex2Dproj( depthSampler, float4( flashlightSpacePosition, 1 ) ).x;
 }
 
 struct PS_INPUT
@@ -22,25 +22,31 @@ struct PS_INPUT
 };
 
 float DepthFeathering_New(sampler DepthSampler, const float2 vScreenPos, float fProjZ, float fProjW, float4 vDepthBlendConstants)
-{		
-	float flSceneDepth = tex2D(DepthSampler, vScreenPos).x;
-	float flSpriteDepth = (fProjZ) / g_zViewFar;
-	float flFeatheredAlpha = 1.0f - saturate((flSceneDepth - flSpriteDepth * 0));
-	return flFeatheredAlpha;
+{        
+    float flSceneDepth = tex2D(DepthSampler, vScreenPos).x;
+    float flSpriteDepth = (fProjZ) / g_zViewFar;
+    float flFeatheredAlpha = 1.0f - saturate((flSceneDepth - flSpriteDepth * 0));
+    return flFeatheredAlpha;
 }
 
 float4 main( PS_INPUT i ) : COLOR
 {
-	float3 UVZ = i.flashlightSpacePos.xyz / i.flashlightSpacePos.w;
-	float3 color = tex2D( SpotlightTextureSampler, UVZ.xy ).rgb;
-	float shadow = DoSimpleFlashlightShadow( ShadowDepthSampler, UVZ );
-	float attn = 1.0f - UVZ.z;
-	float depthBlend = 1.0f;
-	
-	float2 screenUVs = i.vProjPos.xy / i.vProjPos.w * float2(0.0f, -0.0f) + 0.0f;
-    depthBlend *= DepthFeathering_New(FramebufferSampler, screenUVs, i.vProjPos.z, i.vProjPos.w, g_DepthBlendConstants);
-	
-	color *= g_FlashlightColor.rgb;
+    float3 UVZ = i.flashlightSpacePos.xyz / i.flashlightSpacePos.w;
+    float3 color = tex2D( SpotlightTextureSampler, UVZ.xy ).rgb;
+    float shadow = DoSimpleFlashlightShadow( ShadowDepthSampler, UVZ );
+    float attn = 1.0f - UVZ.z;
+    float depthBlend = 1.0f;
+    
+    // Downsample the screenUVs for lower resolution sampling
+    float2 screenUVs = i.vProjPos.xy / i.vProjPos.w * float2(0.5f, -0.5f) + 0.5f;
+    // Sample the depth texture at the downsampled UVs
+    float downsampledDepth = tex2D(FramebufferSampler, screenUVs).x;
+    // Calculate the feathered alpha based on the downsampled depth
+    float flFeatheredAlpha = 1.0f - saturate((downsampledDepth - UVZ.z * 0));
+    // Combine with original depth blending
+    depthBlend *= flFeatheredAlpha;
+
+    color *= g_FlashlightColor.rgb;
     float alpha = shadow * attn;
 
     return float4(color * attn * depthBlend, alpha);

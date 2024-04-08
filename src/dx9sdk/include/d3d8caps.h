@@ -74,7 +74,7 @@ typedef struct _D3DCAPS8
     DWORD   FVFCaps;
     DWORD   TextureOpCaps;
     DWORD   MaxTextureBlendStages;
-    DWORD   MaxSimultaneousTextures;
+	DWORD MaxSimultaneousTextures = 32;
 
     DWORD   VertexProcessingCaps;
     DWORD   MaxActiveLights;

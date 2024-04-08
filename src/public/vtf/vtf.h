@@ -138,11 +138,11 @@ enum CubeMapFaceIndex_t
 	CUBEMAP_FACE_UP,
 	CUBEMAP_FACE_DOWN,
 
-	// This is the fallback for low-end
-	CUBEMAP_FACE_SPHEREMAP,
+	CUBEMAP_FACE_COUNT,
 
-	// NOTE: Cubemaps have *7* faces; the 7th is the fallback spheremap
-	CUBEMAP_FACE_COUNT
+	// vtf 7.5: spheremap isn't used anymore, just
+	// here for backward compatibility.
+	CUBEMAP_FACE_SPHEREMAP = CUBEMAP_FACE_COUNT,
 };
 
 //-----------------------------------------------------------------------------
