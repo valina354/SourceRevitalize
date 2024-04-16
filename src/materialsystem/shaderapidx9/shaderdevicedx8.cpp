@@ -726,7 +726,11 @@ bool CShaderDeviceMgrDx8::ComputeCapsFromD3D( HardwareCaps_t *pCaps, int nAdapte
 	pCaps->m_NumTextureStages = caps.MaxTextureBlendStages;
 	if ( pCaps->m_SupportsPixelShaders_2_0 )
 	{
+		#ifdef EXPERIMENTAL_HIGHER_SAMPLERS
+		pCaps->m_NumSamplers = 24;
+		#else
 		pCaps->m_NumSamplers = 16;
+		#endif
 	}
 	else
 	{

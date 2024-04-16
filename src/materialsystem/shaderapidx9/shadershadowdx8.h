@@ -25,8 +25,13 @@ class IShaderAPIDX8;
 //-----------------------------------------------------------------------------
 enum
 {
+	#ifdef EXPERIMENTAL_HIGHER_SAMPLERS
+	MAX_SAMPLERS = 24,
+	MAX_TEXTURE_STAGES = 24,
+	#else
 	MAX_SAMPLERS = 16,
 	MAX_TEXTURE_STAGES = 16,
+	#endif
 };
 
 
