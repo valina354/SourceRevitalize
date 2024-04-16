@@ -169,6 +169,27 @@ public:
 		m_bPARALLAXCORRECT = true;
 #endif
 	}
+private:
+	int m_nWVT;
+#ifdef _DEBUG
+	bool m_bWVT;
+#endif
+public:
+	void SetWVT( int i )
+	{
+		Assert( i >= 0 && i <= 1 );
+		m_nWVT = i;
+#ifdef _DEBUG
+		m_bWVT = true;
+#endif
+	}
+	void SetWVT( bool i )
+	{
+		m_nWVT = i ? 1 : 0;
+#ifdef _DEBUG
+		m_bWVT = true;
+#endif
+	}
 public:
 	lightmappedpbr_ps30_Static_Index( )
 	{
@@ -204,19 +225,23 @@ public:
 		m_bPARALLAXCORRECT = false;
 #endif // _DEBUG
 		m_nPARALLAXCORRECT = 0;
+#ifdef _DEBUG
+		m_bWVT = false;
+#endif // _DEBUG
+		m_nWVT = 0;
 	}
 	int GetIndex()
 	{
 		// Asserts to make sure that we aren't using any skipped combinations.
 		// Asserts to make sure that we are setting all of the combination vars.
 #ifdef _DEBUG
-		bool bAllStaticVarsDefined = m_bCONVERT_TO_SRGB && m_bFLASHLIGHT && m_bCUBEMAP && m_bCUBEMAP_SPHERE_LEGACY && m_bSMOOTHNESS && m_bSEAMLESS && m_bBUMPMAP && m_bPARALLAXCORRECT;
+		bool bAllStaticVarsDefined = m_bCONVERT_TO_SRGB && m_bFLASHLIGHT && m_bCUBEMAP && m_bCUBEMAP_SPHERE_LEGACY && m_bSMOOTHNESS && m_bSEAMLESS && m_bBUMPMAP && m_bPARALLAXCORRECT && m_bWVT;
 		Assert( bAllStaticVarsDefined );
 #endif // _DEBUG
-		return ( 288 * m_nCONVERT_TO_SRGB ) + ( 288 * m_nFLASHLIGHT ) + ( 576 * m_nCUBEMAP ) + ( 1152 * m_nCUBEMAP_SPHERE_LEGACY ) + ( 2304 * m_nSMOOTHNESS ) + ( 4608 * m_nSEAMLESS ) + ( 9216 * m_nBUMPMAP ) + ( 18432 * m_nPARALLAXCORRECT ) + 0;
+		return ( 288 * m_nCONVERT_TO_SRGB ) + ( 288 * m_nFLASHLIGHT ) + ( 576 * m_nCUBEMAP ) + ( 1152 * m_nCUBEMAP_SPHERE_LEGACY ) + ( 2304 * m_nSMOOTHNESS ) + ( 4608 * m_nSEAMLESS ) + ( 9216 * m_nBUMPMAP ) + ( 18432 * m_nPARALLAXCORRECT ) + ( 36864 * m_nWVT ) + 0;
 	}
 };
-#define shaderStaticTest_lightmappedpbr_ps30 psh_forgot_to_set_static_CONVERT_TO_SRGB + psh_forgot_to_set_static_FLASHLIGHT + psh_forgot_to_set_static_CUBEMAP + psh_forgot_to_set_static_CUBEMAP_SPHERE_LEGACY + psh_forgot_to_set_static_SMOOTHNESS + psh_forgot_to_set_static_SEAMLESS + psh_forgot_to_set_static_BUMPMAP + psh_forgot_to_set_static_PARALLAXCORRECT + 0
+#define shaderStaticTest_lightmappedpbr_ps30 psh_forgot_to_set_static_CONVERT_TO_SRGB + psh_forgot_to_set_static_FLASHLIGHT + psh_forgot_to_set_static_CUBEMAP + psh_forgot_to_set_static_CUBEMAP_SPHERE_LEGACY + psh_forgot_to_set_static_SMOOTHNESS + psh_forgot_to_set_static_SEAMLESS + psh_forgot_to_set_static_BUMPMAP + psh_forgot_to_set_static_PARALLAXCORRECT + psh_forgot_to_set_static_WVT + 0
 class lightmappedpbr_ps30_Dynamic_Index
 {
 private:

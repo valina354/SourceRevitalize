@@ -17,15 +17,20 @@ BEGIN_VS_SHADER( LightmappedPBR, "Help for LightmappedPBR" )
 
 BEGIN_SHADER_PARAMS
 SHADER_PARAM( ALPHATESTREFERENCE, SHADER_PARAM_TYPE_FLOAT, "0.0", "" )
+SHADER_PARAM( BASETEXTURE2, SHADER_PARAM_TYPE_TEXTURE, "", "" )
 SHADER_PARAM( ENVMAP, SHADER_PARAM_TYPE_TEXTURE, "shadertest/shadertest_env", "envmap" )
 SHADER_PARAM( NORMALMAP, SHADER_PARAM_TYPE_TEXTURE, "models/shadertest/shader1_normal", "bump map" )
+SHADER_PARAM( NORMALMAP2, SHADER_PARAM_TYPE_TEXTURE, "models/shadertest/shader1_normal", "bump map" )
 SHADER_PARAM( SEAMLESS_SCALE, SHADER_PARAM_TYPE_FLOAT, "0", "Scale factor for 'seamless' texture mapping. 0 means to use ordinary mapping" )
 
 SHADER_PARAM( BRDF, SHADER_PARAM_TYPE_TEXTURE, "models/PBRTest/BRDF", "" )
 SHADER_PARAM( NOISE, SHADER_PARAM_TYPE_TEXTURE, "shaders/bluenoise", "" )
 SHADER_PARAM( ROUGHNESS, SHADER_PARAM_TYPE_TEXTURE, "", "" )
+SHADER_PARAM( ROUGHNESS2, SHADER_PARAM_TYPE_TEXTURE, "", "" )
 SHADER_PARAM( METALLIC, SHADER_PARAM_TYPE_TEXTURE, "", "" )
+SHADER_PARAM( METALLIC2, SHADER_PARAM_TYPE_TEXTURE, "", "" )
 SHADER_PARAM( AO, SHADER_PARAM_TYPE_TEXTURE, "", "" )
+SHADER_PARAM( AO2, SHADER_PARAM_TYPE_TEXTURE, "", "" )
 SHADER_PARAM( DETAIL, SHADER_PARAM_TYPE_TEXTURE, "", "" )
 SHADER_PARAM( DETAILSCALE, SHADER_PARAM_TYPE_TEXTURE, "", "" )
 SHADER_PARAM( USESMOOTHNESS, SHADER_PARAM_TYPE_BOOL, "0", "Invert roughness" )
@@ -46,16 +51,21 @@ END_SHADER_PARAMS
 void SetupVars( LightmappedPBR_DX9_Vars_t &info )
 {
 	info.m_nBaseTexture = BASETEXTURE;
+	info.m_nBaseTexture2 = BASETEXTURE2;
 	info.m_nBaseTextureFrame = FRAME;
 	info.m_nBaseTextureTransform = BASETEXTURETRANSFORM;
 	info.m_nAlphaTestReference = ALPHATESTREFERENCE;
 	info.m_nRoughness = ROUGHNESS;
+	info.m_nRoughness2 = ROUGHNESS2;
 	info.m_nMetallic = METALLIC;
+	info.m_nMetallic2 = METALLIC2;
 	info.m_nAO = AO;
+	info.m_nAO2 = AO2;
 	info.m_nDetail = DETAIL;
 	info.m_nDetailStrength = DETAILSCALE;
 	info.m_nEnvmap = ENVMAP;
 	info.m_nBumpmap = NORMALMAP;
+	info.m_nBumpmap2 = NORMALMAP2;
 	info.m_nFlashlightTexture = FLASHLIGHTTEXTURE;
 	info.m_nFlashlightTextureFrame = FLASHLIGHTTEXTUREFRAME;
 	info.m_nBRDF = BRDF;

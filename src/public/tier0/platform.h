@@ -1136,6 +1136,19 @@ PLATFORM_INTERFACE char *			Plat_ctime( const time_t *timep, char *buf, size_t b
 PLATFORM_INTERFACE struct tm *		Plat_gmtime( const time_t *timep, struct tm *result );
 PLATFORM_INTERFACE time_t			Plat_timegm( struct tm *timeptr );
 PLATFORM_INTERFACE struct tm *		Plat_localtime( const time_t *timep, struct tm *result );
+PLATFORM_INTERFACE void Plat_GetModuleFilename( char *pOut, int nMaxBytes );
+
+PLATFORM_INTERFACE void Plat_ExitProcess( int nCode );
+
+//called to exit the process due to a fatal error. This allows for the application to handle providing a hook as well which can be called
+//before exiting
+PLATFORM_INTERFACE void Plat_ExitProcessWithError( int nCode, bool bGenerateMinidump = false );
+
+//sets the callback that will be triggered by Plat_ExitProcessWithError. NULL is valid. The return value true indicates that
+//the exit has been handled and no further processing should be performed. False will cause a minidump to be generated, and the process
+//to be terminated
+typedef bool ( *ExitProcessWithErrorCBFn )( int nCode );
+PLATFORM_INTERFACE void Plat_SetExitProcessWithErrorCB( ExitProcessWithErrorCBFn pfnCB );
 
 #if defined( _WIN32 ) && defined( _MSC_VER ) && ( _MSC_VER >= 1400 )
 	extern "C" unsigned __int64 __rdtsc();
@@ -1222,6 +1235,28 @@ struct CPUInformation
 // Have to return a pointer, not a reference, because references are not compatible with the
 // extern "C" implied by PLATFORM_INTERFACE.
 PLATFORM_INTERFACE const CPUInformation* GetCPUInformation();
+
+#define MEMORY_INFORMATION_VERSION 0
+
+struct MemoryInformation
+{
+	int m_nStructVersion;
+
+	uint m_nPhysicalRamMbTotal;
+	uint m_nPhysicalRamMbAvailable;
+
+	uint m_nVirtualRamMbTotal;
+	uint m_nVirtualRamMbAvailable;
+
+	inline MemoryInformation()
+	{
+		memset( this, 0, sizeof( *this ) );
+		m_nStructVersion = MEMORY_INFORMATION_VERSION;
+	}
+};
+
+// Returns true if the passed in MemoryInformation structure was filled out, otherwise false.
+PLATFORM_INTERFACE bool GetMemoryInformation( MemoryInformation *pOutMemoryInfo );
 
 PLATFORM_INTERFACE float GetCPUUsage();
 

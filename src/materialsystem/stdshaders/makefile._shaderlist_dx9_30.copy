@@ -24,6 +24,7 @@ skydome_vs30.fxc-----skydome_vs30
 ssgi_ps30.fxc-----ssgi_ps30
 ssgi_combine_ps30.fxc-----ssgi_combine_ps30
 ssr_ps30.fxc-----ssr_ps30
+lightmappedPBR_vs30.fxc-----lightmappedPBR_vs30
 ssgi0_vs30.fxc-----ssgi0_vs30
 ssgi0_ps30.fxc-----ssgi0_ps30
 SDK_water_ps2x.fxc-----SDK_water_ps30

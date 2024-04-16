@@ -86,6 +86,7 @@ SHADER_DRAW
 		pShaderShadow->EnableTexture(SHADER_SAMPLER1, true);
 		pShaderShadow->EnableTexture(SHADER_SAMPLER2, true);
 		pShaderShadow->EnableTexture(SHADER_SAMPLER3, true);
+		pShaderShadow->EnableTexture( SHADER_SAMPLER4, true );
 	}
 	else // not snapshotting -- begin dynamic state
 	{
@@ -126,6 +127,7 @@ SHADER_DRAW
 		BindTexture(SHADER_SAMPLER1, NORMAL);
 		BindTexture(SHADER_SAMPLER2, ALBEDO);
 		BindTexture(SHADER_SAMPLER3, MRAO);
+		pShaderAPI->BindStandardTexture( SHADER_SAMPLER4, TEXTURE_LIGHTMAP );
 	}
 	
 	Draw();

@@ -92,6 +92,26 @@ void InitLightmappedPBR_DX9( CBaseVSShader *pShader, IMaterialVar **params, Ligh
 	{
 		pShader->LoadTexture( info.m_nAO );
 	}
+	if ( info.m_nBaseTexture2 != -1 && params[info.m_nBaseTexture2]->IsDefined() )
+	{
+		pShader->LoadTexture( info.m_nBaseTexture2 );
+	}
+	if ( info.m_nRoughness2 != -1 && params[info.m_nRoughness2]->IsDefined() )
+	{
+		pShader->LoadTexture( info.m_nRoughness2 );
+	}
+	if ( info.m_nMetallic2 != -1 && params[info.m_nMetallic2]->IsDefined() )
+	{
+		pShader->LoadTexture( info.m_nMetallic2 );
+	}
+	if ( info.m_nAO2 != -1 && params[info.m_nAO2]->IsDefined() )
+	{
+		pShader->LoadTexture( info.m_nAO2 );
+	}
+	if ( info.m_nBumpmap2 != -1 && params[info.m_nBumpmap2]->IsDefined() )
+	{
+		pShader->LoadTexture( info.m_nBumpmap2 );
+	}
 	if ( info.m_nDetail != -1 && params[info.m_nDetail]->IsDefined() )
 	{
 		pShader->LoadTexture( info.m_nDetail );
@@ -146,6 +166,7 @@ static void DrawLightmappedPBR_DX9_Internal( CBaseVSShader *pShader, IMaterialVa
 	bool bHasRoughness = ( info.m_nRoughness != -1 ) && params[info.m_nRoughness]->IsTexture();
 	bool bHasMetallic = ( info.m_nMetallic != -1 ) && params[info.m_nMetallic]->IsTexture();
 	bool bHasAO = ( info.m_nAO != -1 ) && params[info.m_nAO]->IsTexture();
+	bool bHasWVT = ( info.m_nBaseTexture2 != -1 ) && params[info.m_nBaseTexture2]->IsTexture();
 	bool bHasDetail = ( info.m_nDetail != -1 ) && params[info.m_nDetail]->IsTexture();
 	bool bIsAlphaTested = IS_FLAG_SET( MATERIAL_VAR_ALPHATEST ) != 0;
 	bool bHasEnvmap = ( info.m_nEnvmap != -1 ) && params[info.m_nEnvmap]->IsTexture();
@@ -270,6 +291,7 @@ static void DrawLightmappedPBR_DX9_Internal( CBaseVSShader *pShader, IMaterialVa
 		SET_STATIC_VERTEX_SHADER_COMBO( BUMPMAP, bHasBump );
 		SET_STATIC_VERTEX_SHADER_COMBO( DIFFUSEBUMPMAP, bHasBump );
 		SET_STATIC_VERTEX_SHADER_COMBO( VERTEXALPHATEXBLENDFACTOR, false );
+		SET_STATIC_VERTEX_SHADER_COMBO( WVT, bHasWVT );
 		SET_STATIC_VERTEX_SHADER( lightmappedpbr_vs30 );
 
 		// Assume we're only going to get in here if we support 2b
@@ -283,6 +305,7 @@ static void DrawLightmappedPBR_DX9_Internal( CBaseVSShader *pShader, IMaterialVa
 		SET_STATIC_PIXEL_SHADER_COMBO( BUMPMAP, bHasBump );
 		// Parallax cubemaps enabled for 2_0b and onwards
 		SET_STATIC_PIXEL_SHADER_COMBO( PARALLAXCORRECT, hasParallaxCorrection );
+		SET_STATIC_PIXEL_SHADER_COMBO( WVT, bHasWVT );
 		SET_STATIC_PIXEL_SHADER( lightmappedpbr_ps30 );
 
 		if ( bHasFlashlight )
@@ -338,6 +361,23 @@ static void DrawLightmappedPBR_DX9_Internal( CBaseVSShader *pShader, IMaterialVa
 			pShader->BindTexture( SHADER_SAMPLER5, info.m_nDetail );
 		else
 			pShaderAPI->BindStandardTexture( SHADER_SAMPLER5, TEXTURE_BLACK );
+
+		if (bHasWVT)
+		{
+			pShader->BindTexture( SHADER_SAMPLER11, info.m_nBaseTexture2 );
+			pShader->BindTexture( SHADER_SAMPLER12, info.m_nRoughness2 );
+			pShader->BindTexture( SHADER_SAMPLER13, info.m_nMetallic2 );
+			pShader->BindTexture( SHADER_SAMPLER14, info.m_nBumpmap2 );
+			pShader->BindTexture( SHADER_SAMPLER15, info.m_nAO2 );
+		}
+		else
+		{
+			pShaderAPI->BindStandardTexture( SHADER_SAMPLER11, TEXTURE_BLACK );
+			pShaderAPI->BindStandardTexture( SHADER_SAMPLER12, TEXTURE_BLACK );
+			pShaderAPI->BindStandardTexture( SHADER_SAMPLER13, TEXTURE_BLACK );
+			pShaderAPI->BindStandardTexture( SHADER_SAMPLER14, TEXTURE_BLACK );
+			pShaderAPI->BindStandardTexture( SHADER_SAMPLER15, TEXTURE_BLACK );
+		}
 
 		pShaderAPI->BindStandardTexture( SHADER_SAMPLER10, TEXTURE_LIGHTMAP );
 

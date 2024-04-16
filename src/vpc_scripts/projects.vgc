@@ -215,6 +215,11 @@ $Project "tier2"
 	"tier2\tier2.vpc" [$WIN32]
 }
 
+$Project "tier0"
+{
+	"tier0\tier0.vpc" [$WIN32]
+}
+
 $Project "tier3"
 {
 	"tier3\tier3.vpc" [$WIN32]
@@ -290,6 +295,11 @@ $Project "gameui"
 	"gameui\GameUI.vpc" [$WIN32]
 }
 
+$Project "vgui2"
+{
+	"vgui2\src\vgui_dll.vpc" [$WIN32]
+}
+
 $Project "datacache"
 {
 	"datacache\datacache.vpc" [$WIN32]
@@ -328,6 +338,33 @@ $Project "shadercompile"
 $Project "lzma"
 {
 	"utils\lzma\lzma.vpc" [$WIN32]
+}
+
+$Project "networksystem"
+{
+	"networksystem\networksystem.vpc" [$WIN32]
+}
+
+$Project "sfmobjects"
+{
+	"sfmobjects\sfmobjects.vpc" [$WIN32]
+}
+
+$Project "togl"
+{
+	"togl\togl.vpc" [$WIN32]
+}
+
+$Project "avi"
+{
+	"avi\valve_avi.vpc" [$WIN32]
+}
+
+
+
+$Project "video_services1"
+{
+	"video\video_serviceseng.vpc" [$WIN32]
 }
 
 $Project "dx_proxy"

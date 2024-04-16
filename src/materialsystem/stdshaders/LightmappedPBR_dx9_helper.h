@@ -28,16 +28,21 @@ struct LightmappedPBR_DX9_Vars_t
 	}
 
 	int m_nBaseTexture;
+	int m_nBaseTexture2;
 	int m_nBaseTextureFrame;
 	int m_nBaseTextureTransform;
 	int m_nAlphaTestReference;
 	int m_nRoughness;
+	int m_nRoughness2;
 	int m_nMetallic;
+	int m_nMetallic2;
 	int m_nAO;
+	int m_nAO2;
 	int m_nDetail;
 	int m_nDetailStrength;
 	int m_nEnvmap;
 	int m_nBumpmap;
+	int m_nBumpmap2;
 	int m_nFlashlightTexture;
 	int m_nFlashlightTextureFrame;
 	int m_nBRDF;

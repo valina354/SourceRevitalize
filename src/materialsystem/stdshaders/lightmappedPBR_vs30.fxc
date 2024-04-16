@@ -8,6 +8,7 @@
 //  STATIC: "DIFFUSEBUMPMAP"			"0..1"
 //  STATIC: "VERTEXCOLOR"				"0..1"
 //  STATIC: "VERTEXALPHATEXBLENDFACTOR"	"0..1"
+//  STATIC: "WVT"                       "0..1"
 
 //  DYNAMIC: "FASTPATH"					"0..1"
 //	DYNAMIC: "DOWATERFOG"				"0..1"
@@ -151,6 +152,10 @@ VS_OUTPUT main( const VS_INPUT v )
 	{
 		o.vertexBlendX_fogFactorW.r = v.vColor.a;
 	}
+	
+	#if WVT
+    o.vertexColor += v.vColor.w;
+    #endif
 	
 	return o;
 }

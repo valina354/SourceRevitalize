@@ -1,23 +1,21 @@
 #include "common_flashlight_fxc.h"
-
 #include "common_pbr.h"
 
 sampler sDepth : register(s0);
 sampler sNormals : register(s1);
 sampler sAlbedo : register(s2);
 sampler sMRAO : register(s3);
-
+sampler sLightmapMask : register(s4);
 
 float4 lightColor_InnerCos  : register(c0);
 float4 lightDir_OuterCos    : register(c1);
 float3 lightOrigin          : register(c2);
 float4 attnInfo             : register(c3);
 
-
 float4x4 g_ViewInv : register(c4);
 float4x4 g_ProjInv : register(c8);
-
 float3 g_EyePos : register(c12);
+
 #define NoAlbedo
 
 struct PS_INPUT
@@ -67,7 +65,15 @@ float4 main( PS_INPUT i ) : COLOR
 {
     float2 viewCoord = i.viewPos.xy / i.viewPos.w;
     float2 texcoord = viewCoord * 0.5f + 0.5f;
-    texcoord.y = 1.0f-texcoord.y;
+    texcoord.y = 1.0f - texcoord.y;
+    
+    // Sample the lightmap mask texture
+    float4 lightmapMask = tex2D(sLightmapMask, texcoord);
+    
+    // Check if the pixel in the lightmap mask is black
+    float lightmapAlpha = lightmapMask.a; // Assuming the alpha channel represents the intensity of the lightmap
+    
+    // Calculate lighting only for pixels where the lightmap mask is not black
     float3 normals = readNormal(texcoord);
     float3 worldPos = readPos(texcoord);
     float3 albedo = readAlbedo(texcoord);
@@ -81,18 +87,18 @@ float4 main( PS_INPUT i ) : COLOR
     float spot_falloff = clamp((spot_dot - lightDir_OuterCos.w) / (lightColor_InnerCos.w - lightDir_OuterCos.w), 0.0, 1.0);
     if (spot_dot > lightDir_OuterCos.w)
     {
-        //spot_falloff = 1.0f;
         if (spot_dot < lightColor_InnerCos.w)
         {
             spot_falloff = Lerp5(1, 0, lightColor_InnerCos.w, lightDir_OuterCos.w, spot_dot);
         }
     }
     
-	#ifdef NoAlbedo
-    float3 lighting = DoPBRLight(worldPos, normals, 0, lightOrigin, lightColor_InnerCos.xyz, g_EyePos, dist_falloff * spot_falloff, metallness, roughness);
-	#else
-	float3 lighting = DoPBRLight(worldPos, normals, albedo, lightOrigin, lightColor_InnerCos.xyz, g_EyePos, dist_falloff * spot_falloff, metallness, roughness);
-	#endif
-    
+    // Conditional lighting calculation based on NoAlbedo macro
+    #ifdef NoAlbedo
+    float3 lighting = lightmapAlpha < 1.0 ? float3(0, 0, 0) : DoPBRLight(worldPos, normals, 0, lightOrigin, lightColor_InnerCos.xyz, g_EyePos, dist_falloff * spot_falloff, metallness, roughness);
+    #else
+    float3 lighting = lightmapAlpha < 1.0 ? float3(0, 0, 0) : DoPBRLight(worldPos, normals, albedo, lightOrigin, lightColor_InnerCos.xyz, g_EyePos, dist_falloff * spot_falloff, metallness, roughness);
+    #endif
+
     return float4(lighting.xyz, 1.0f);
 }

@@ -12,6 +12,7 @@
 // STATIC: "SEAMLESS"                   "0..1"
 // STATIC: "BUMPMAP"                    "0..1"
 // STATIC: "PARALLAXCORRECT"			"0..1"
+// STATIC: "WVT"			"0..1"
 
 // DYNAMIC: "WRITEWATERFOGTODESTALPHA"  "0..1"
 // DYNAMIC: "PIXELFOGTYPE"				"0..1"
@@ -102,6 +103,13 @@ sampler EnvmapSampler			: register( s7 );	// for IBL
 sampler BRDFSampler				: register( s8 );	// for IBL
 sampler AOSampler				: register( s9 );	// AO
 sampler LightmapSampler			: register( s10 );	// Lightmap texture from the engine
+#if WVT == 1
+sampler BaseTextureSampler2		: register( s11 );	// Base map2, selfillum in alpha
+sampler RoughnessSampler2		: register( s12 );	// Roughness2
+sampler MetallicSampler2			: register( s13 );	// Metallic2
+sampler BumpmapSampler2			: register( s14 );	// Bump map2
+sampler AOSampler2				: register( s15 );	// AO2
+#endif
 
 // Compute the matrix used to transform tangent space normals to world space
 // This expects DirectX normal maps in Mikk Tangent Space http://www.mikktspace.com
@@ -466,21 +474,46 @@ float3 worldPos = i.worldPos_projPosZ.xyz;
     float3 offsetCoords = ParallaxOcclusionMapping(UV.xy, normalize(i.worldPos_projPosZ.xyz - g_EyePos.xyz));
 	bool bBumpmap = BUMPMAP ? true : false;
 	bool bCubemap = (CUBEMAP) ? true : false;
+	float blendfactor=i.vertexColor.r;
 #if SMOOTHNESS == 0
+#if WVT == 1
+    float roughnessMapOld = lerp(tex2D(RoughnessSampler, offsetCoords.xy), tex2D(RoughnessSampler2, offsetCoords.xy), blendfactor);
+#else
 	float  roughnessMapOld = tex2D( RoughnessSampler, offsetCoords.xy );
+#endif
 	float  roughnessMap = roughnessMapOld + float4(detailColor.rgb * g_DetailStrength, 0.0f);
 #else
+#if WVT == 1
+    float roughnessMapOld = 1.0f - lerp(tex2D(RoughnessSampler, offsetCoords.xy), tex2D(RoughnessSampler2, offsetCoords.xy), blendfactor);
+#else
 	float  roughnessMapOld = 1.0f - tex2D( RoughnessSampler, offsetCoords.xy );
+#endif
 	float  roughnessMap = roughnessMapOld + float4(detailColor.rgb * g_DetailStrength, 0.0f);
 #endif
+#if WVT == 1
+    float metallicMapOld = lerp(tex2D(MetallicSampler, offsetCoords.xy), tex2D(MetallicSampler2, offsetCoords.xy), blendfactor);
+#else
 	float  metallicMapOld = tex2D( MetallicSampler, offsetCoords.xy );
+#endif
 	float  metallicMap = metallicMapOld + float4(detailColor.rgb * g_DetailStrength, 0.0f);
+#if WVT == 1
+    float AOSampleOld = lerp(tex2D(AOSampler, offsetCoords.xy), tex2D(AOSampler2, offsetCoords.xy), blendfactor);
+#else
 	float  AOSampleOld = tex2D( AOSampler, offsetCoords.xy );
+#endif
 	float  AOSample = AOSampleOld + float4(detailColor.rgb * g_DetailStrength, 0.0f);
+#if WVT == 1
+    float4 baseColorOld = lerp(tex2D(BaseTextureSampler, offsetCoords.xy), tex2D(BaseTextureSampler2, offsetCoords.xy), blendfactor);
+#else
     float4 baseColorOld = tex2D(BaseTextureSampler, offsetCoords.xy);
+#endif
     float4 baseColor = baseColorOld + float4(detailColor.rgb * g_DetailStrength, 0.0f);
     float4 baseColor2 = 0.0f.xxxx;
+#if WVT == 1
+    float4 normalTexelOld = lerp(tex2D(BumpmapSampler, offsetCoords.xy), tex2D(BumpmapSampler2, offsetCoords.xy), blendfactor);
+#else
     float4 normalTexelOld = tex2D(BumpmapSampler, offsetCoords.xy);
+#endif
 	float4 normalTexel = normalTexelOld + float4(detailColor.rgb * g_DetailStrength, 0.0f);
 	GetBaseTextureAndNormal( BaseTextureSampler, BaseTextureSampler, BumpmapSampler, false, bBumpmap, 
 		offsetCoords, i.vertexColor.rgb, baseColor, baseColor2, normalTexel);

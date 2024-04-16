@@ -15,8 +15,8 @@
 #include "viewdebug.h"
 #include "iclientmode.h"
 
-#include "vance/entities/c_env_skydome.h"
-#include "rendering/c_light_manager.h"
+#include "vance/c_env_skydome.h"
+#include "c_light_manager.h"
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
