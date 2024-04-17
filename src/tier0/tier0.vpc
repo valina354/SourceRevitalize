@@ -22,7 +22,7 @@ $Configuration
 	
 	$Compiler
 	{
-		$PreprocessorDefinitions		"$BASE;TIER0_DLL_EXPORT"
+		$PreprocessorDefinitions		"$BASE;TIER0_DLL_EXPORT;RAD_TELEMETRY_ENABLED"
 		$Create/UsePrecompiledHeader	"Use Precompiled Header (/Yu)"
 		$Create/UsePCHThroughFile		"pch_tier0.h"
 		$PrecompiledHeaderFile			"$(IntDir)/tier0.pch"

@@ -16,6 +16,8 @@
 #pragma once
 #endif
 
+#define EXPERIMENTAL_HIGHER_SAMPLERS
+
 
 //-----------------------------------------------------------------------------
 // Important enumerations
@@ -91,7 +93,6 @@ enum Sampler_t
 	SHADER_SAMPLER21,
 	SHADER_SAMPLER22,
 	SHADER_SAMPLER23,
-	SHADER_SAMPLER24,
 	SHADER_SAMPLER24,
 	#endif
 };

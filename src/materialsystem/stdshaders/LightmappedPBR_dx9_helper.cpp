@@ -358,9 +358,9 @@ static void DrawLightmappedPBR_DX9_Internal( CBaseVSShader *pShader, IMaterialVa
 			pShaderAPI->BindStandardTexture( SHADER_SAMPLER9, TEXTURE_WHITE );
 
 		if ( bHasDetail )
-			pShader->BindTexture( SHADER_SAMPLER5, info.m_nDetail );
+			pShader->BindTexture( SHADER_SAMPLER20, info.m_nDetail );
 		else
-			pShaderAPI->BindStandardTexture( SHADER_SAMPLER5, TEXTURE_BLACK );
+			pShaderAPI->BindStandardTexture( SHADER_SAMPLER20, TEXTURE_BLACK );
 
 		if (bHasWVT)
 		{
