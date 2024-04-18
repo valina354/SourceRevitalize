@@ -9,6 +9,7 @@
 //  STATIC: "VERTEXCOLOR"				"0..1"
 //  STATIC: "VERTEXALPHATEXBLENDFACTOR"	"0..1"
 //  STATIC: "WVT"                       "0..1"
+//  STATIC: "DISPLACEMENTMAPPING"                       "0..1"
 
 //  DYNAMIC: "FASTPATH"					"0..1"
 //	DYNAMIC: "DOWATERFOG"				"0..1"
@@ -30,6 +31,8 @@ const float4 SeamlessScale                      : register( SHADER_SPECIFIC_CONS
 const float4 cBaseTexCoordTransform[2]			:  register( SHADER_SPECIFIC_CONST_2 );
 
 const float4x4 g_FlashlightWorldToTexture		:  register( SHADER_SPECIFIC_CONST_6 );
+const float DisplacementScale : register(SHADER_SPECIFIC_CONST_10);
+sampler sHeightmap : register(s0);
 
 struct VS_INPUT
 {
@@ -38,6 +41,9 @@ struct VS_INPUT
 	float2 vBaseTexCoord				: TEXCOORD0;
 	float2 vLightmapTexCoord			: TEXCOORD1;
 	float2 vLightmapTexCoordOffset		: TEXCOORD2;
+	#if DISPLACEMENTMAPPING
+	float2 vHeightmapTexCoord  : TEXCOORD3;
+	#endif
 	float3 vTangentS					: TANGENT;
 	float3 vTangentT					: BINORMAL;
 	float4 vColor						: COLOR0;
@@ -60,102 +66,108 @@ struct VS_OUTPUT
 
 };
 
-VS_OUTPUT main( const VS_INPUT v )
+VS_OUTPUT main(const VS_INPUT v)
 {
-	VS_OUTPUT o = ( VS_OUTPUT )0;
+    VS_OUTPUT o = (VS_OUTPUT)0;
 
-	float3 vObjNormal;
-	DecompressVertex_Normal( v.vNormal, vObjNormal );
+    float3 vObjNormal;
+    DecompressVertex_Normal(v.vNormal, vObjNormal);
 
-	float3 worldPos = mul( float4( v.vPos, 1 ), cModel[0] );
-	float4 vProjPos = mul( float4( v.vPos, 1 ), cModelViewProj );
-	o.projPos = vProjPos;
-	vProjPos.z = dot( float4( v.vPos, 1 ), cModelViewProjZ );
-	o.worldPos_projPosZ = float4( worldPos, vProjPos.z );
+    float3 worldPos = mul(float4(v.vPos, 1), cModel[0]);
+    float4 vProjPos = mul(float4(v.vPos, 1), cModelViewProj);
+    o.projPos = vProjPos;
+    vProjPos.z = dot(float4(v.vPos, 1), cModelViewProjZ);
+    o.worldPos_projPosZ = float4(worldPos, vProjPos.z);
 
-	float3 worldNormal = mul3x3( v.vNormal, ( const float3x3 )cModel[0] );
-	float3 worldTangentS = mul( v.vTangentS, ( const float3x3 )cModel[0] );
-	float3 worldTangentT = mul( v.vTangentT, ( const float3x3 )cModel[0] );
-	
-	o.TBN[0] = worldTangentS;
-	o.TBN[1] = worldTangentT;
-	o.TBN[2] = worldNormal;
+    float3 worldNormal = mul3x3(v.vNormal, (const float3x3)cModel[0]);
+    float3 worldTangentS = mul(v.vTangentS, (const float3x3)cModel[0]);
+    float3 worldTangentT = mul(v.vTangentT, (const float3x3)cModel[0]);
+    
+    o.TBN[0] = worldTangentS;
+    o.TBN[1] = worldTangentT;
+    o.TBN[2] = worldNormal;
 
-	float3 worldVertToEyeVector = VSHADER_VECT_SCALE * (cEyePos - worldPos);
+    float3 worldVertToEyeVector = VSHADER_VECT_SCALE * (cEyePos - worldPos);
 
-	{
-		// we need to fill in the texture coordinate projections
-		o.SeamlessTexCoord = SEAMLESS_SCALE*worldPos;
-	}
-	{
-		if (FASTPATH)
-		{
-			o.baseTexCoord.xy = v.vBaseTexCoord;
-		}
-		else
-		{
-			o.baseTexCoord.x = dot( v.vBaseTexCoord, cBaseTexCoordTransform[0] ) + cBaseTexCoordTransform[0].w;
-			o.baseTexCoord.y = dot( v.vBaseTexCoord, cBaseTexCoordTransform[1] ) + cBaseTexCoordTransform[1].w;
-		}
-	}
-	
-	o.lightmapTexCoord3.zw = v.vBaseTexCoord;
+    {
+        // we need to fill in the texture coordinate projections
+        o.SeamlessTexCoord = SEAMLESS_SCALE * worldPos;
+    }
+    {
+        if (FASTPATH)
+        {
+            o.baseTexCoord.xy = v.vBaseTexCoord;
+        }
+        else
+        {
+            o.baseTexCoord.x = dot(v.vBaseTexCoord, cBaseTexCoordTransform[0]) + cBaseTexCoordTransform[0].w;
+            o.baseTexCoord.y = dot(v.vBaseTexCoord, cBaseTexCoordTransform[1]) + cBaseTexCoordTransform[1].w;
+        }
+    }
+    
+    o.lightmapTexCoord3.zw = v.vBaseTexCoord;
 
-	
-	//  compute lightmap coordinates
-	if( g_bBumpmap)
-	{
-		o.lightmapTexCoord1And2.xy = v.vLightmapTexCoord + v.vLightmapTexCoordOffset;
+    
+    //  compute lightmap coordinates
+    if (g_bBumpmap)
+    {
+        o.lightmapTexCoord1And2.xy = v.vLightmapTexCoord + v.vLightmapTexCoordOffset;
 
-		float2 lightmapTexCoord2 = o.lightmapTexCoord1And2.xy + v.vLightmapTexCoordOffset;
-		float2 lightmapTexCoord3 = lightmapTexCoord2 + v.vLightmapTexCoordOffset;
+        float2 lightmapTexCoord2 = o.lightmapTexCoord1And2.xy + v.vLightmapTexCoordOffset;
+        float2 lightmapTexCoord3 = lightmapTexCoord2 + v.vLightmapTexCoordOffset;
 
-		// reversed component order
-		o.lightmapTexCoord1And2.w = lightmapTexCoord2.x;
-		o.lightmapTexCoord1And2.z = lightmapTexCoord2.y;
+        // reversed component order
+        o.lightmapTexCoord1And2.w = lightmapTexCoord2.x;
+        o.lightmapTexCoord1And2.z = lightmapTexCoord2.y;
 
-		o.lightmapTexCoord3.xy = lightmapTexCoord3;
-	}
-	else
-	{
-		o.lightmapTexCoord1And2.xy = v.vLightmapTexCoord;
-	}
+        o.lightmapTexCoord3.xy = lightmapTexCoord3;
+    }
+    else
+    {
+        o.lightmapTexCoord1And2.xy = v.vLightmapTexCoord;
+    }
 
-	o.vertexBlendX_fogFactorW = CalcFog( worldPos, vProjPos, g_FogType );
+    o.vertexBlendX_fogFactorW = CalcFog(worldPos, vProjPos, g_FogType);
 
-	if (!g_bVertexColor)
-	{
-		o.vertexColor = float4( 1.0f, 1.0f, 1.0f, cModulationColor.a );
-	}
-	else
-	{
+    if (!g_bVertexColor)
+    {
+        o.vertexColor = float4(1.0f, 1.0f, 1.0f, cModulationColor.a);
+    }
+    else
+    {
 #if FASTPATH
-		o.vertexColor = v.vColor;
+        o.vertexColor = v.vColor;
 #else
-		if ( g_bVertexAlphaTexBlendFactor )
-		{
-			o.vertexColor.rgb = v.vColor.rgb;
-			o.vertexColor.a = cModulationColor.a;
-		}
-		else
-		{
-			o.vertexColor = v.vColor;
-			o.vertexColor.a *= cModulationColor.a;
-		}
+        if (g_bVertexAlphaTexBlendFactor)
+        {
+            o.vertexColor.rgb = v.vColor.rgb;
+            o.vertexColor.a = cModulationColor.a;
+        }
+        else
+        {
+            o.vertexColor = v.vColor;
+            o.vertexColor.a *= cModulationColor.a;
+        }
 #endif
-	}
-	// compute belnd weights in rgb
-	float3 vNormal=normalize( worldNormal );
-	o.vertexColor.xyz = vNormal * vNormal;           // sums to 1.
+    }
+    // compute belnd weights in rgb
+    float3 vNormal = normalize(worldNormal);
+    o.vertexColor.xyz = vNormal * vNormal;           // sums to 1.
 
-	if ( g_bVertexAlphaTexBlendFactor )
-	{
-		o.vertexBlendX_fogFactorW.r = v.vColor.a;
-	}
+    if (g_bVertexAlphaTexBlendFactor)
+    {
+        o.vertexBlendX_fogFactorW.r = v.vColor.a;
+    }
 	
 	#if WVT
     o.vertexColor += v.vColor.w;
     #endif
-	
-	return o;
+    
+	#if DISPLACEMENTMAPPING
+    // Displacement mapping
+    float height = tex2D(sHeightmap, v.vHeightmapTexCoord).r;
+    worldPos += vObjNormal * height * DisplacementScale;
+	#endif
+
+    return o;
 }

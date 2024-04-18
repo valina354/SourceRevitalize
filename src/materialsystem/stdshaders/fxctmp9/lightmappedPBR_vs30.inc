@@ -106,6 +106,27 @@ public:
 		m_bWVT = true;
 #endif
 	}
+private:
+	int m_nDISPLACEMENTMAPPING;
+#ifdef _DEBUG
+	bool m_bDISPLACEMENTMAPPING;
+#endif
+public:
+	void SetDISPLACEMENTMAPPING( int i )
+	{
+		Assert( i >= 0 && i <= 1 );
+		m_nDISPLACEMENTMAPPING = i;
+#ifdef _DEBUG
+		m_bDISPLACEMENTMAPPING = true;
+#endif
+	}
+	void SetDISPLACEMENTMAPPING( bool i )
+	{
+		m_nDISPLACEMENTMAPPING = i ? 1 : 0;
+#ifdef _DEBUG
+		m_bDISPLACEMENTMAPPING = true;
+#endif
+	}
 public:
 	lightmappedpbr_vs30_Static_Index( )
 	{
@@ -129,19 +150,23 @@ public:
 		m_bWVT = false;
 #endif // _DEBUG
 		m_nWVT = 0;
+#ifdef _DEBUG
+		m_bDISPLACEMENTMAPPING = false;
+#endif // _DEBUG
+		m_nDISPLACEMENTMAPPING = 0;
 	}
 	int GetIndex()
 	{
 		// Asserts to make sure that we aren't using any skipped combinations.
 		// Asserts to make sure that we are setting all of the combination vars.
 #ifdef _DEBUG
-		bool bAllStaticVarsDefined = m_bBUMPMAP && m_bDIFFUSEBUMPMAP && m_bVERTEXCOLOR && m_bVERTEXALPHATEXBLENDFACTOR && m_bWVT;
+		bool bAllStaticVarsDefined = m_bBUMPMAP && m_bDIFFUSEBUMPMAP && m_bVERTEXCOLOR && m_bVERTEXALPHATEXBLENDFACTOR && m_bWVT && m_bDISPLACEMENTMAPPING;
 		Assert( bAllStaticVarsDefined );
 #endif // _DEBUG
-		return ( 4 * m_nBUMPMAP ) + ( 8 * m_nDIFFUSEBUMPMAP ) + ( 16 * m_nVERTEXCOLOR ) + ( 32 * m_nVERTEXALPHATEXBLENDFACTOR ) + ( 64 * m_nWVT ) + 0;
+		return ( 4 * m_nBUMPMAP ) + ( 8 * m_nDIFFUSEBUMPMAP ) + ( 16 * m_nVERTEXCOLOR ) + ( 32 * m_nVERTEXALPHATEXBLENDFACTOR ) + ( 64 * m_nWVT ) + ( 128 * m_nDISPLACEMENTMAPPING ) + 0;
 	}
 };
-#define shaderStaticTest_lightmappedpbr_vs30 vsh_forgot_to_set_static_BUMPMAP + vsh_forgot_to_set_static_DIFFUSEBUMPMAP + vsh_forgot_to_set_static_VERTEXCOLOR + vsh_forgot_to_set_static_VERTEXALPHATEXBLENDFACTOR + vsh_forgot_to_set_static_WVT + 0
+#define shaderStaticTest_lightmappedpbr_vs30 vsh_forgot_to_set_static_BUMPMAP + vsh_forgot_to_set_static_DIFFUSEBUMPMAP + vsh_forgot_to_set_static_VERTEXCOLOR + vsh_forgot_to_set_static_VERTEXALPHATEXBLENDFACTOR + vsh_forgot_to_set_static_WVT + vsh_forgot_to_set_static_DISPLACEMENTMAPPING + 0
 class lightmappedpbr_vs30_Dynamic_Index
 {
 private:

@@ -168,6 +168,7 @@ static void DrawLightmappedPBR_DX9_Internal( CBaseVSShader *pShader, IMaterialVa
 	bool bHasAO = ( info.m_nAO != -1 ) && params[info.m_nAO]->IsTexture();
 	bool bHasWVT = ( info.m_nBaseTexture2 != -1 ) && params[info.m_nBaseTexture2]->IsTexture();
 	bool bHasDetail = ( info.m_nDetail != -1 ) && params[info.m_nDetail]->IsTexture();
+	bool bHasDisplacement = ( info.DisplacementMap != -1 ) && params[info.DisplacementMap]->IsTexture() && params[info.DisplacementEnabled != 0]->GetIntValue();
 	bool bIsAlphaTested = IS_FLAG_SET( MATERIAL_VAR_ALPHATEST ) != 0;
 	bool bHasEnvmap = ( info.m_nEnvmap != -1 ) && params[info.m_nEnvmap]->IsTexture();
 	bool bHasLegacyEnvSphereMap = bHasEnvmap && IS_FLAG_SET( MATERIAL_VAR_ENVMAPSPHERE );
@@ -292,6 +293,7 @@ static void DrawLightmappedPBR_DX9_Internal( CBaseVSShader *pShader, IMaterialVa
 		SET_STATIC_VERTEX_SHADER_COMBO( DIFFUSEBUMPMAP, bHasBump );
 		SET_STATIC_VERTEX_SHADER_COMBO( VERTEXALPHATEXBLENDFACTOR, false );
 		SET_STATIC_VERTEX_SHADER_COMBO( WVT, bHasWVT );
+		SET_STATIC_VERTEX_SHADER_COMBO( DISPLACEMENTMAPPING, bHasDisplacement );
 		SET_STATIC_VERTEX_SHADER( lightmappedpbr_vs30 );
 
 		// Assume we're only going to get in here if we support 2b
@@ -520,6 +522,7 @@ static void DrawLightmappedPBR_DX9_Internal( CBaseVSShader *pShader, IMaterialVa
 		}
 
 		pShaderAPI->SetPixelShaderConstant( 39, params[info.m_nDetailStrength]->GetVecValue() );
+		pShaderAPI->SetVertexShaderConstant( VERTEX_SHADER_SHADER_SPECIFIC_CONST_10, params[info.DisplacementDepth]->GetVecValue() );
 
 		if ( bHasFlashlight )
 		{

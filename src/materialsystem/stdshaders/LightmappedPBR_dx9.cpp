@@ -40,6 +40,10 @@ SHADER_PARAM( PARALLAXDEPTH, SHADER_PARAM_TYPE_FLOAT, "0", "Depth of the Paralla
 SHADER_PARAM( PARALLAXSCALING, SHADER_PARAM_TYPE_FLOAT, "0", "Scaling of the Parallax Map" );
 SHADER_PARAM( PARALLAXSTEP, SHADER_PARAM_TYPE_FLOAT, "0", "Step Scalling of the Parallax Map" );
 
+SHADER_PARAM( DISPLACEMENTDEPTH, SHADER_PARAM_TYPE_FLOAT, "0", "Depth of the Displacement Mapping" );
+SHADER_PARAM( DISPLACEMENTENABLED, SHADER_PARAM_TYPE_FLOAT, "0", "Enabling of the displacement mapping" );
+SHADER_PARAM( DISPLACEMENTMAP, SHADER_PARAM_TYPE_TEXTURE, "0", "Height Map of the displacement mapping" );
+
 // Parallax cubemaps
 SHADER_PARAM( ENVMAPPARALLAX, SHADER_PARAM_TYPE_BOOL, "0", "Enables parallax correction code for env_cubemaps" )
 SHADER_PARAM( ENVMAPPARALLAXOBB1, SHADER_PARAM_TYPE_VEC4, "[1 0 0 0]", "The first line of the parallax correction OBB matrix" )
@@ -74,6 +78,9 @@ void SetupVars( LightmappedPBR_DX9_Vars_t &info )
 	info.ParallaxDepth = PARALLAXDEPTH;
 	info.ParallaxScaling = PARALLAXSCALING;
 	info.ParallaxStep = PARALLAXSTEP;
+	info.DisplacementDepth = DISPLACEMENTDEPTH;
+	info.DisplacementEnabled = DISPLACEMENTENABLED;
+	info.DisplacementMap = DISPLACEMENTMAP;
 
 	// Parallax cubemaps
 	info.m_nEnvmapParallax = ENVMAPPARALLAX;

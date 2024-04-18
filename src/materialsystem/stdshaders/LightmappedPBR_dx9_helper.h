@@ -51,6 +51,9 @@ struct LightmappedPBR_DX9_Vars_t
 	int ParallaxDepth;
 	int ParallaxScaling;
 	int ParallaxStep;
+	int DisplacementDepth;
+	int DisplacementEnabled;
+	int DisplacementMap;
 
 	// Parallax cubemaps
 	int m_nEnvmapParallax; // Needed for editor
