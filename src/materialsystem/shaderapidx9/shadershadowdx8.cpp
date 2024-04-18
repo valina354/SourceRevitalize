@@ -128,6 +128,7 @@ public:
 	// per texture unit stuff
 	void OverbrightValue( TextureStage_t stage, float value );
 	void EnableTexture( Sampler_t stage, bool bEnable );
+	void EnableVertexTexture( VertexTextureSampler_t sampler, bool bEnable );
 	void EnableTexGen( TextureStage_t stage, bool bEnable );
 	void TexGen( TextureStage_t stage, ShaderTexGenParam_t param );
 	void TextureCoordinate( TextureStage_t stage, int useCoord );
@@ -275,6 +276,7 @@ private:
 	// State info stores with each texture stage
 	TextureStageState_t m_TextureStage[MAX_TEXTURE_STAGES];
 	SamplerState_t m_SamplerState[MAX_SAMPLERS];
+	SamplerState_t m_VertexSamplerState[MAX_VERTEX_SAMPLERS];
 };
 
 
@@ -856,6 +858,18 @@ void CShaderShadowDX8::EnableTexture( Sampler_t sampler, bool bEnable )
 	else
 	{
 		Warning( "Attempting to bind a texture to an invalid sampler (%d)!\n", sampler );
+	}
+}
+
+void CShaderShadowDX8::EnableVertexTexture( VertexTextureSampler_t vtSampler, bool bEnable )
+{
+	if ( vtSampler < MAX_VERTEX_SAMPLERS )
+	{
+		m_VertexSamplerState[vtSampler].m_TextureEnable = bEnable;
+	}
+	else
+	{
+		Warning( "Attempting to bind a texture to an invalid vertex sampler (%d)!\n", vtSampler );
 	}
 }
 

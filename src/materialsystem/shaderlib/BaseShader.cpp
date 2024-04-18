@@ -342,6 +342,16 @@ ShaderAPITextureHandle_t CBaseShader::GetShaderAPITextureBindHandle( int nTextur
 	return GetShaderSystem()->GetShaderAPITextureBindHandle( pTextureVar->GetTextureValue(), nFrame, nTextureChannel );
 }
 
+void CBaseShader::BindVertexTexture( VertexTextureSampler_t vtSampler, int nTextureVar, int nFrame /* = 0  */ )
+{
+	Assert( !IsSnapshotting() );
+
+	IMaterialVar *pTextureVar = s_ppParams[nTextureVar];
+	if ( !pTextureVar )
+		return;
+
+	GetShaderSystem()->BindVertexTexture( vtSampler, pTextureVar->GetTextureValue() );
+}
 
 //-----------------------------------------------------------------------------
 // Four different flavors of BindTexture(), handling the two-sampler

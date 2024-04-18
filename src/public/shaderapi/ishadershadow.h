@@ -357,6 +357,9 @@ public:
 	// Shadow map filtering
 	virtual void SetShadowDepthFiltering( Sampler_t stage ) = 0;
 
+	// Per vertex texture unit stuff
+	virtual void EnableVertexTexture( VertexTextureSampler_t sampler, bool bEnable ) = 0;
+
 	// More alpha blending state
 	virtual void BlendOp( ShaderBlendOp_t blendOp ) = 0;
 	virtual void BlendOpSeparateAlpha( ShaderBlendOp_t blendOp ) = 0;
