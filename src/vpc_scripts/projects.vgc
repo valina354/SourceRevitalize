@@ -360,7 +360,10 @@ $Project "avi"
 	"avi\valve_avi.vpc" [$WIN32]
 }
 
-
+$Project "interfaces"
+{
+	"interfaces\interfaces.vpc" [$WIN32]
+}
 
 $Project "video_services1"
 {

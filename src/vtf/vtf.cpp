@@ -189,7 +189,11 @@ IVTFTexture *CreateVTFTexture()
 
 void DestroyVTFTexture( IVTFTexture *pTexture )
 {
-	delete pTexture;
+	CVTFTexture *pTex = static_cast<CVTFTexture *>( pTexture );
+	if ( pTex )
+	{
+		delete pTex;
+	}
 }
 
 //-----------------------------------------------------------------------------
@@ -388,10 +392,13 @@ bool CVTFTexture::Init( int nWidth, int nHeight, int nDepth, ImageFormat fmt, in
 		}
 	}
 
-	if ( !IsMultipleOf4( nWidth ) || !IsMultipleOf4( nHeight ) || !IsMultipleOf4( nDepth ) )
+	if ( ( fmt == IMAGE_FORMAT_DXT1 ) || ( fmt == IMAGE_FORMAT_DXT3 ) || ( fmt == IMAGE_FORMAT_DXT5 ) || ( fmt == IMAGE_FORMAT_DXT1_RUNTIME ) || ( fmt == IMAGE_FORMAT_DXT5_RUNTIME ) )
 	{
-		Warning( "Image dimensions must be multiple of 4!\n" );
-		return false;
+		if ( !IsMultipleOf4( nWidth ) || !IsMultipleOf4( nHeight ) || !IsMultipleOf4( nDepth ) )
+		{
+			Warning( "Image dimensions must be multiple of 4!\n" );
+			return false;
+		}
 	}
 
 	if ( fmt == IMAGE_FORMAT_DEFAULT )
@@ -597,7 +604,7 @@ void CVTFTexture::ImageFileInfo( int nFrame, int nFace, int nMipLevel, int *pSta
 	int nFacesToRead = m_nFaceCount;
 	if ( IsCubeMap() )
 	{
-		if ((m_nVersion[0] == 7) && (m_nVersion[1] < 1))
+		if ( ( m_nVersion[0] == 7 ) && ( m_nVersion[1] < 1 || m_nVersion[1] > 4 ) )
 		{
 			nFacesToRead = 6;
 			if (nFace == CUBEMAP_FACE_SPHEREMAP)
@@ -676,56 +683,29 @@ bool CVTFTexture::LoadImageData( CUtlBuffer &buf, const VTFFileHeader_t &header,
 	int iImageSize = ComputeFaceSize();
 	iImageSize *= m_nFaceCount * m_nFrameCount;
 
-	// For backwards compatibility, we don't read in the spheremap fallback on
-	// older format .VTF files...
-	int nFacesToRead = m_nFaceCount;
-	if ( IsCubeMap() )
-	{
-		if ((header.version[0] == 7) && (header.version[1] < 1))
-			nFacesToRead = 6;
-	}
-
-	// Even if we are preloading partial data, always do the full allocation here. We'll use LOD clamping to ensure we only 
-	// reference data that is available.
 	if ( !AllocateImageData( iImageSize ) )
 		return false;
 
-	// We may only have part of the data available--if so we will stream in the rest later. 
-	// If we have the data available but we're ignoring it (for example during development), then we 
-	// need to skip over the data we're ignoring below, otherwise we'll be sad pandas.
-	bool bMipDataPresent = true;
-	int nFirstAvailableMip = 0;
-	int nLastAvailableMip = m_nMipCount - 1;
-	TextureStreamSettings_t const *pStreamSettings = ( TextureStreamSettings_t const * ) GetResourceData( VTF_RSRC_TEXTURE_STREAM_SETTINGS, NULL );
-	if ( pStreamSettings ) 
-	{
-		nFirstAvailableMip = Max( 0, pStreamSettings->m_firstAvailableMip - nSkipMipLevels );
-		nLastAvailableMip = Max( 0, pStreamSettings->m_lastAvailableMip - nSkipMipLevels );
-		bMipDataPresent = false;
-	} 
-	
-	// If we have coarse mips but not the fine mips (yet)
-	if ( ( header.flags & TEXTUREFLAGS_STREAMABLE ) == TEXTUREFLAGS_STREAMABLE_COARSE )
-	{
-		nFirstAvailableMip = Max( 0, Max( nFirstAvailableMip, STREAMING_START_MIPMAP ) - nSkipMipLevels );
-	}
-
-	if ( header.flags & TEXTUREFLAGS_STREAMABLE_FINE )
-	{
-		// Don't need to subtract nSkipMipLevels: m_nMipCount has subtracted that above--assuming this assert doesn't fire.
-		Assert( m_nMipCount == header.numMipLevels - nSkipMipLevels );
-		nLastAvailableMip = Min( nLastAvailableMip, STREAMING_START_MIPMAP - 1 );
-	}
-
-	// Valid settings? 
-	Assert( nFirstAvailableMip >= 0 && nFirstAvailableMip <= nLastAvailableMip && nLastAvailableMip < m_nMipCount );
-
-	// Store the clamp settings
-	m_nFinestMipmapLevel = nFirstAvailableMip;
-	m_nCoarsestMipmapLevel = nLastAvailableMip;
-
 	// NOTE: The mip levels are stored ascending from smallest (1x1) to largest (NxN)
 	// in order to allow for truncated reads of the minimal required data
+
+
+	// NOTE: I checked in a bad version 4 where it stripped out the spheremap.
+	// To make it all work, need to check for that bad case.
+	bool bNoSkip = false;
+	if ( IsCubeMap() && ( header.version[0] == 7 ) && ( header.version[1] == 4 ) )
+	{
+		int nBytesRemaining = buf.TellMaxPut() - buf.TellGet();
+		int nFileSize = ComputeFaceSize( nSkipMipLevels ) * m_nFaceCount * m_nFrameCount;
+		if ( nBytesRemaining == nFileSize )
+		{
+			bNoSkip = true;
+		}
+	}
+
+	int nGet = buf.TellGet();
+
+	retryCubemapLoad:
 	for (int iMip = m_nMipCount; --iMip >= 0; )
 	{
 		// NOTE: This is for older versions...
@@ -734,32 +714,35 @@ bool CVTFTexture::LoadImageData( CUtlBuffer &buf, const VTFFileHeader_t &header,
 
 		int iMipSize = ComputeMipSize( iMip );
 
-		// Skip over any levels we don't have data for--we'll get them later. 
-		if ( iMip > nLastAvailableMip || iMip < nFirstAvailableMip )
-		{
-			// If the data is there but we're ignoring it, need to update the get pointer.
-			if ( bMipDataPresent ) 
-			{
-				for ( int iFrame = 0; iFrame < m_nFrameCount; ++iFrame )
-					for ( int iFace = 0; iFace < nFacesToRead; ++iFace )
-						buf.SeekGet( CUtlBuffer::SEEK_CURRENT, iMipSize );
-			}
-			continue;
-		}
-
 		for (int iFrame = 0; iFrame < m_nFrameCount; ++iFrame)
 		{
-			for (int iFace = 0; iFace < nFacesToRead; ++iFace)
+			for ( int iFace = 0; iFace < m_nFaceCount; ++iFace )
 			{
 				// printf("\n tex %p mip %i frame %i face %i  size %i  buf offset %i", this, iMip, iFrame, iFace, iMipSize, buf.TellGet() );
 				unsigned char *pMipBits = ImageData( iFrame, iFace, iMip );
 				buf.Get( pMipBits, iMipSize );
 			}
+			// Strip out the spheremap in older versions
+			if ( IsCubeMap() && !bNoSkip && ( header.version[0] == 7 ) && ( header.version[1] >= 1 ) && ( header.version[1] < 5 ) )
+			{
+				buf.SeekGet( CUtlBuffer::SEEK_CURRENT, iMipSize );
+			}
 		}
 	}
 
-	return buf.IsValid();
-}
+	bool bOk = buf.IsValid();
+	if ( !bOk && IsCubeMap() && ( header.version[0] == 7 ) && ( header.version[1] <= 4 ) )
+	{
+		if ( !bNoSkip )
+		{
+			bNoSkip = true;
+			buf.SeekGet( CUtlBuffer::SEEK_HEAD, nGet );
+			goto retryCubemapLoad;
+		}
+		Warning( "** Encountered stale cubemap! Please rebuild the following vtf:\n" );
+	}
+	return bOk;
+	}
 
 void *CVTFTexture::SetResourceData( uint32 eType, void const *pData, size_t nNumBytes )
 {
@@ -912,7 +895,7 @@ bool CVTFTexture::SetupByteSwap( CUtlBuffer &buf )
 static bool ReadHeaderFromBufferPastBaseHeader( CUtlBuffer &buf, VTFFileHeader_t &header )
 {
 	unsigned char *pBuf = (unsigned char*)(&header) + sizeof(VTFFileBaseHeader_t);
-	if ( header.version[1] == VTF_MINOR_VERSION || header.version[1] == 4 )
+	if ( header.version[1] <= VTF_MINOR_VERSION && header.version[1] >= 4 )
 	{
 		buf.Get( pBuf, sizeof(VTFFileHeader_t) - sizeof(VTFFileBaseHeader_t) );
 	}
@@ -974,7 +957,7 @@ bool CVTFTexture::ReadHeader( CUtlBuffer &buf, VTFFileHeader_t &header )
 			{
 				m_Swap.SwapFieldsToTargetEndian( (VTFFileHeaderV7_3_t*)buf.PeekGet() );
 			}
-			else if ( baseHeader.version[1] == 4 || baseHeader.version[1] == VTF_MINOR_VERSION )
+			else if ( baseHeader.version[1] >= 4 && baseHeader.version[1] <= VTF_MINOR_VERSION )
 			{
 				m_Swap.SwapFieldsToTargetEndian( (VTFFileHeader_t*)buf.PeekGet() );
 			}
@@ -2366,47 +2349,40 @@ void CVTFTexture::ComputeHemispheremapFrame( unsigned char **ppCubeFaces, unsign
 //-----------------------------------------------------------------------------
 void CVTFTexture::GenerateSpheremap( LookDir_t lookDir )
 {
-	// vtf 7.5: this causes a crash when creating cubemaps,
-	// but spheremaps aren't used so this isn't needed anyway
+	if ( !IsCubeMap() )
+		return;
 
-	//if (!IsCubeMap())
-	//	return;
-	//
-	//// HDRFIXME: Need to re-enable this.
-	////	Assert( m_Format == IMAGE_FORMAT_RGBA8888 );
-	//
-	//// We'll be doing our work in IMAGE_FORMAT_RGBA8888 mode 'cause it's easier
-	//unsigned char *pCubeMaps[6];
-	//
-	//// Allocate the bits for the spheremap
-	//Assert( m_nDepth == 1 );
-	//int iMemRequired = ComputeFaceSize( 0, IMAGE_FORMAT_RGBA8888 );
-	//unsigned char *pSphereMapBits = (unsigned char *)MemAllocScratch(iMemRequired);
-	//
-	//// Generate a spheremap for each frame of the cubemap
-	//for (int iFrame = 0; iFrame < m_nFrameCount; ++iFrame)
-	//{
-	//	// Point to our own textures (highest mip level)
-	//	for (int iFace = 0; iFace < 6; ++iFace)
-	//	{
-	//		pCubeMaps[iFace] = ImageData( iFrame, iFace, 0 );
-	//	}
-	//
-	//	// Compute the spheremap of the top LOD
-	//	// HDRFIXME: Make this work?
-	//	if( m_Format == IMAGE_FORMAT_RGBA8888 )
-	//	{
-	//		ComputeSpheremapFrame( pCubeMaps, pSphereMapBits, lookDir );
-	//	}
-	//
-	//	// Compute the mip levels of the spheremap, converting from RGBA8888 to our format
-	//	unsigned char *pFinalSphereMapBits = ImageData( iFrame, CUBEMAP_FACE_SPHEREMAP, 0 );
-	//	ImageLoader::GenerateMipmapLevels( pSphereMapBits, pFinalSphereMapBits,
-	//		m_nWidth, m_nHeight, m_nDepth, m_Format, 2.2, 2.2, m_nMipCount );
-	//}
+	// HDRFIXME: Need to re-enable this.
+	//	Assert( m_Format == IMAGE_FORMAT_RGBA8888 );
 
-	// Free memory
-	MemFreeScratch();
+	// We'll be doing our work in IMAGE_FORMAT_RGBA8888 mode 'cause it's easier
+	unsigned char *pCubeMaps[6];
+
+	// Allocate the bits for the spheremap
+	Assert( m_nDepth == 1 );
+	int iMemRequired = ComputeFaceSize( 0, IMAGE_FORMAT_RGBA8888 );
+	unsigned char *pSphereMapBits = new unsigned char[iMemRequired];
+
+	// Generate a spheremap for each frame of the cubemap
+	for ( int iFrame = 0; iFrame < m_nFrameCount; ++iFrame )
+	{
+		// Point to our own textures (highest mip level)
+		for ( int iFace = 0; iFace < 6; ++iFace )
+		{
+			pCubeMaps[iFace] = ImageData( iFrame, iFace, 0 );
+		}
+
+		// Compute the spheremap of the top LOD
+		// HDRFIXME: Make this work?
+		if ( m_Format == IMAGE_FORMAT_RGBA8888 )
+		{
+			ComputeSpheremapFrame( pCubeMaps, pSphereMapBits, lookDir );
+		}
+
+		// Compute the mip levels of the spheremap, converting from RGBA8888 to our format
+		unsigned char *pFinalSphereMapBits = ImageData( iFrame, CUBEMAP_FACE_SPHEREMAP, 0 );
+		ImageLoader::GenerateMipmapLevels( pSphereMapBits, pFinalSphereMapBits, m_nWidth, m_nHeight, m_nDepth, m_Format, 2.2, 2.2, m_nMipCount );
+	}
 }
 
 void CVTFTexture::GenerateHemisphereMap( unsigned char *pSphereMapBitsRGBA, int targetWidth, 
@@ -2532,7 +2508,7 @@ void CVTFTexture::GenerateMipmaps()
 //		return;
 //	}
 
-	Assert( m_Format == IMAGE_FORMAT_RGBA8888 || m_Format == IMAGE_FORMAT_RGB323232F );
+	Assert( m_Format == IMAGE_FORMAT_RGBA8888 || m_Format == IMAGE_FORMAT_RGB323232F || m_Format == IMAGE_FORMAT_RGBA32323232F );
 
 	// FIXME: Should we be doing anything special for normalmaps other than a final normalization pass?
 	ImageLoader::ResampleInfo_t info;
@@ -2671,7 +2647,11 @@ void CVTFTexture::GenerateMipmaps()
 				info.m_pSrc = pSrcLevel;
 				info.m_pDest = pDstLevel;
 				ComputeMipLevelDimensions( nSrcMipLevel, &info.m_nSrcWidth, &info.m_nSrcHeight, &info.m_nSrcDepth );
-				if( m_Format == IMAGE_FORMAT_RGB323232F )
+				if ( m_Format == IMAGE_FORMAT_RGBA32323232F )
+				{
+					ImageLoader::ResampleRGBA32323232F( info );
+				}
+				else if ( m_Format == IMAGE_FORMAT_RGB323232F )
 				{
 					ImageLoader::ResampleRGB323232F( info );
 				}
