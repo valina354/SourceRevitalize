@@ -1405,25 +1405,6 @@ DLL_EXPORT int LauncherMain( int argc, char **argv )
 					free((void *)szCommand);
 				}
 			}
-			else
-			{
-				if (!multiRun) {
-					::MessageBox(NULL, "Only one instance of the game can be running at one time.", "Source - Warning", MB_ICONINFORMATION | MB_OK);
-				}
-			}
-
-			if (!multiRun) {
-				return retval;
-			}
-		}
-	}
-#elif defined( POSIX )
-	else
-	{
-		if ( !GrabSourceMutex() )
-		{
-			::MessageBox(NULL, "Only one instance of the game can be running at one time.", "Source - Warning", 0 );
-			return -1;
 		}
 	}
 #endif
