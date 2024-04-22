@@ -1,7 +1,7 @@
 //========= Copyright Valve Corporation, All rights reserved. ================================== //
 //
-// Purpose: Defines a texture compositor infterface which uses simple operations and shaders to 
-// create complex procedural textures. 
+// Purpose: Defines a texture compositor infterface which uses simple operations and shaders to
+// create complex procedural textures.
 //
 //============================================================================================== //
 
@@ -26,9 +26,12 @@ enum ECompositeResolveStatus
 
 enum TextureCompositeCreateFlags_t
 {
-	TEX_COMPOSITE_CREATE_FLAGS_FORCE			= 0x00000001,
-	TEX_COMPOSITE_CREATE_FLAGS_NO_COMPRESSION	= 0x00000002,
-	TEX_COMPOSITE_CREATE_FLAGS_NO_MIPMAPS		= 0x00000004,
+	TEX_COMPOSITE_CREATE_FLAGS_FORCE = 0x00000001,
+	TEX_COMPOSITE_CREATE_FLAGS_NO_COMPRESSION = 0x00000002,
+	TEX_COMPOSITE_CREATE_FLAGS_NO_MIPMAPS = 0x00000004,
+	TEX_COMPOSITE_CREATE_FLAGS_VERIFY_SCHEMA_ONLY = 0x00000008,
+	TEX_COMPOSITE_CREATE_FLAGS_VERIFY_TEMPLATE_ONLY = 0x00000010,
+	TEX_COMPOSITE_CREATE_FLAGS_LOG_NODES_ONLY = 0x00000020
 };
 
 abstract_class ITextureCompositor
@@ -39,12 +42,14 @@ public:
 	virtual int GetRefCount() const = 0;
 
 	virtual void Update() = 0;
-	virtual ITexture* GetResultTexture() const = 0;
+	virtual ITexture *GetResultTexture() const = 0;
 	virtual ECompositeResolveStatus GetResolveStatus() const = 0;
 	virtual void ScheduleResolve() = 0;
-protected:
-	virtual ~ITextureCompositor() {}
-};
 
+protected:
+	virtual ~ITextureCompositor()
+	{
+	}
+};
 
 #endif /* ITEXTURECOMPOSITOR_H */

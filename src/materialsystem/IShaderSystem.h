@@ -68,9 +68,6 @@ public:
 
 	// Are we using graphics?
 	virtual bool CanUseEditorMaterials() const = 0;
-
-	// Bind vertex texture
-	virtual void BindVertexTexture( VertexTextureSampler_t vtSampler, ITexture * pTexture, int nFrameVar = 0 ) = 0;
 };
 
 

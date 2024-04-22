@@ -1,4 +1,4 @@
-//====== Copyright © 1996-2005, Valve Corporation, All rights reserved. =======
+//========= Copyright Valve Corporation, All rights reserved. ============//
 //
 // Purpose: This is temporary obfuscation code to verify that a base shader
 // DLL comes from us (because it includes some interfaces that we don't

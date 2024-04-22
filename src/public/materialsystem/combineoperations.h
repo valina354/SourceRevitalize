@@ -1,6 +1,6 @@
 //========= Copyright Valve Corporation, All rights reserved. ============//
 //
-// Purpose: 
+// Purpose:
 //
 // $NoKeywords: $
 //=============================================================================//
@@ -13,6 +13,7 @@
 // Keep these in sync with cCombineMaterialName in ctexturecompositor.cpp
 enum ECombineOperation
 {
+	ECO_FirstPrecacheMaterial = 0,
 	ECO_Multiply = 0,
 	ECO_Add,
 	ECO_Lerp,
@@ -21,6 +22,10 @@ enum ECombineOperation
 
 	ECO_Legacy_Lerp_FirstPass,
 	ECO_Legacy_Lerp_SecondPass,
+
+	ECO_Blend,
+
+	ECO_LastPrecacheMaterial,
 
 	ECO_Error,
 	ECO_COUNT
