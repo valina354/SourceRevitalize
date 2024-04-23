@@ -52,6 +52,7 @@ public:
 
 	virtual void		BindTexture( Sampler_t sampler1, ITexture *pTexture, int nFrame = 0 );
 	virtual void		BindTexture( Sampler_t sampler1, Sampler_t sampler2, ITexture *pTexture, int nFrame = 0 );
+	virtual void BindVertexTexture( VertexTextureSampler_t vtSampler, ITexture *pTexture, int nFrame = 0 );
 
 	virtual void		TakeSnapshot( );
 	virtual void		DrawSnapshot( bool bMakeActualDrawCall = true );
@@ -1934,6 +1935,13 @@ void CShaderSystem::BindTexture( Sampler_t sampler1, Sampler_t sampler2, ITextur
 	}
 }
 
+void CShaderSystem::BindVertexTexture( VertexTextureSampler_t vtSampler, ITexture *pTexture, int nFrame /* = 0 */ )
+{
+	if ( pTexture )
+	{
+		static_cast<ITextureInternal *>( pTexture )->BindVertexTexture( vtSampler, nFrame );
+	}
+}
 
 //-----------------------------------------------------------------------------
 //

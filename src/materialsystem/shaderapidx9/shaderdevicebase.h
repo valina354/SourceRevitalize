@@ -126,7 +126,11 @@ protected:
 //-----------------------------------------------------------------------------
 // The Base implementation of the shader device
 //-----------------------------------------------------------------------------
+#ifdef DX11
+class CShaderDeviceBase : public IShaderDeviceDX11
+#else
 class CShaderDeviceBase : public IShaderDevice
+#endif
 {
 public:
 	enum IPCMessage_t

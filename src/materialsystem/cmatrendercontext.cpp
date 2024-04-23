@@ -2810,6 +2810,10 @@ void CMatRenderContext::BindStandardVertexTexture( VertexTextureSampler_t sample
 		g_pMorphMgr->MorphWeights()->BindVertexTexture( sampler );
 		return;
 
+	case TEXTURE_BLACK:
+		g_pShaderAPI->BindVertexTexture( sampler, GetBlackTextureHandle() );
+		return;
+
 	default:
 		Assert(0);
 	}

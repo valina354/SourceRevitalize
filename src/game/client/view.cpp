@@ -1162,6 +1162,34 @@ void CViewRender::SetUpOverView()
 	// render->DrawTopView( true );
 }
 
+ConVar mat_drs_minscale( "mat_drs_minscale", "0.75" );
+ConVar mat_drs_enable( "mat_drs_enable", "0" );
+ConVar mat_drs_targetfps( "mat_drs_targetfps", "175" );
+ConVar mat_drs_debug( "mat_drs_debug", "1" );
+float CalcDynResScale()
+{
+	float fps = 1.0f / gpGlobals->absoluteframetime;
+	float result = 1.0f / ( ( mat_drs_targetfps.GetFloat() + 1.0 ) / fps );
+
+	if ( fps >= mat_drs_targetfps.GetFloat() )
+	{
+		result = 1.0f;
+	}
+	if ( result < mat_drs_minscale.GetFloat() )
+	{
+		result = mat_drs_minscale.GetFloat();
+	}
+
+	if ( mat_drs_debug.GetBool() )
+	{
+		engine->Con_NPrintf( 10, "Current framtime: %f", gpGlobals->frametime );
+		engine->Con_NPrintf( 11, "Current FPS: %f", fps );
+		engine->Con_NPrintf( 14, "Current ResScale: %f", result );
+	}
+
+	return result;
+}
+
 //-----------------------------------------------------------------------------
 // Purpose: Render current view into specified rectangle
 // Input  : *rect - is computed by CVideoMode_Common::GetClientViewRect()
@@ -1258,6 +1286,12 @@ void CViewRender::Render( vrect_t *rect )
 
 	    float flViewportScale = mat_viewportscale.GetFloat();
 
+		float dyn_scale = 1.0f;
+		if ( mat_drs_enable.GetBool() )
+		{
+			dyn_scale = CalcDynResScale();
+		}
+
 		view.m_nUnscaledX = vr.x;
 		view.m_nUnscaledY = vr.y;
 		view.m_nUnscaledWidth = vr.width;
@@ -1274,10 +1308,10 @@ void CViewRender::Render( vrect_t *rect )
 	            view.x				= vr.x + view.width * 0.10f;
 	            view.y				= vr.y + view.height * 0.20f;
 #else
-	            view.x				= vr.x * flViewportScale;
-				view.y				= vr.y * flViewportScale;
-				view.width			= vr.width * flViewportScale;
-				view.height			= vr.height * flViewportScale;
+				view.x = vr.x * dyn_scale;
+				view.y = vr.y * dyn_scale;
+				view.width = vr.width * dyn_scale;
+				view.height = vr.height * dyn_scale;
 #endif
 			    float engineAspectRatio = engine->GetScreenAspectRatio();
 			    view.m_flAspectRatio	= ( engineAspectRatio > 0.0f ) ? engineAspectRatio : ( (float)view.width / (float)view.height );

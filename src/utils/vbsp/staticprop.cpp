@@ -162,7 +162,7 @@ bool LoadStudioModel( char const* pModelName, char const* pEntityType, CUtlBuffe
 
 	Studio_ConvertStudioHdrToNewVersion( pHdr );
 
-	if (pHdr->version != STUDIO_VERSION)
+	if ( pHdr->version != 48 && pHdr->version != 49 )
 	{
 		return false;
 	}

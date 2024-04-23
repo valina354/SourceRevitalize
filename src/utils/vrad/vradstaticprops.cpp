@@ -481,7 +481,7 @@ bool LoadStudioModel( char const* pModelName, CUtlBuffer& buf )
 
 	Studio_ConvertStudioHdrToNewVersion( pHdr );
 
-	if (pHdr->version != STUDIO_VERSION)
+	if ( pHdr->version != 48 && pHdr->version != 49 )
 	{
 		if ( g_bIgnoreModelVersions )
 		{

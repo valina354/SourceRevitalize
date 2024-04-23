@@ -232,7 +232,6 @@ enum PolygonOffsetMode_t
 	SHADER_POLYOFFSET_RESERVED		= 0x3	// Reserved for future use
 };
 
-
 //-----------------------------------------------------------------------------
 // The Shader interface versions
 //-----------------------------------------------------------------------------
@@ -368,7 +367,5 @@ public:
 	virtual void BlendOpSeparateAlpha( ShaderBlendOp_t blendOp ) = 0;
 };
 // end class IShaderShadow
-
-
 
 #endif // ISHADERSHADOW_H

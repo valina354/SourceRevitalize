@@ -350,7 +350,7 @@ void CBaseShader::BindVertexTexture( VertexTextureSampler_t vtSampler, int nText
 	if ( !pTextureVar )
 		return;
 
-	//GetShaderSystem()->BindVertexTexture( vtSampler, pTextureVar->GetTextureValue() );
+	GetShaderSystem()->BindVertexTexture( vtSampler, pTextureVar->GetTextureValue() );
 }
 
 //-----------------------------------------------------------------------------

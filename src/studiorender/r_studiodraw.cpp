@@ -2271,7 +2271,7 @@ int CStudioRender::R_StudioDrawStaticMesh( IMatRenderContext *pRenderContext, ms
 
 	int numTrianglesRendered = 0;
 
-	bool bDoSoftwareLighting = !pColorMeshes && 
+	bool bDoSoftwareLighting = /*!pColorMeshes && */
 		((m_pRC->m_Config.bSoftwareSkin != 0) || m_pRC->m_Config.bDrawNormals || m_pRC->m_Config.bDrawTangentFrame ||
 		(pMaterial ? pMaterial->NeedsSoftwareSkinning() : false) ||
 		(m_pRC->m_Config.bSoftwareLighting != 0) ||

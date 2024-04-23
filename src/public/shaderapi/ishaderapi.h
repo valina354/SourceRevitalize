@@ -623,5 +623,4 @@ public:
 	virtual void UnlockRect( ShaderAPITextureHandle_t texHandle, int mipmap ) = 0;
 };
 
-
 #endif // ISHADERAPI_H

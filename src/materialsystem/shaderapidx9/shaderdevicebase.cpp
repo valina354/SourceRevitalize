@@ -845,7 +845,9 @@ int CShaderDeviceMgrBase::GetClosestActualDXLevel( int nDxLevel ) const
 		return 98;
 	if ( nDxLevel <= 99 )
 		return 95;
-	return 100;
+	if ( nDxLevel <= 109 )
+		return 100;
+	return 110;
 }
 
 

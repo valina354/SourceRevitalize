@@ -140,7 +140,7 @@ uint64 GetVidMemBytes( void )
    
     while ( pEnumerator )
     {
-        HRESULT hr = pEnumerator->Next(WBEM_INFINITE, 1, &pclsObj, &uReturn);
+		HRESULT hr = pEnumerator->Next( WBEM_INFINITE, 1, &pclsObj, &uReturn );
 
         if(0 == uReturn)
         {

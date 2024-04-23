@@ -69,7 +69,7 @@ typedef uint64 VertexFormat_t;
 #define MATERIAL_SYSTEM_INTERFACE_VERSION "VMaterialSystem080"
 
 #ifdef POSIX
-#define ABSOLUTE_MINIMUM_DXLEVEL 90
+#define ABSOLUTE_MINIMUM_DXLEVEL 95
 #else
 #define ABSOLUTE_MINIMUM_DXLEVEL 95
 #endif

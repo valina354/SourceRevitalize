@@ -168,7 +168,7 @@ static void DrawLightmappedPBR_DX9_Internal( CBaseVSShader *pShader, IMaterialVa
 	bool bHasAO = ( info.m_nAO != -1 ) && params[info.m_nAO]->IsTexture();
 	bool bHasWVT = ( info.m_nBaseTexture2 != -1 ) && params[info.m_nBaseTexture2]->IsTexture();
 	bool bHasDetail = ( info.m_nDetail != -1 ) && params[info.m_nDetail]->IsTexture();
-	bool bHasDisplacement = ( info.DisplacementMap != -1 ) && params[info.DisplacementMap]->IsTexture() && params[info.DisplacementEnabled != 0]->GetIntValue();
+	bool bHasDisplacement = ( info.DisplacementMap != -1 ) && params[info.DisplacementMap]->IsTexture();
 	bool bIsAlphaTested = IS_FLAG_SET( MATERIAL_VAR_ALPHATEST ) != 0;
 	bool bHasEnvmap = ( info.m_nEnvmap != -1 ) && params[info.m_nEnvmap]->IsTexture();
 	bool bHasLegacyEnvSphereMap = bHasEnvmap && IS_FLAG_SET( MATERIAL_VAR_ENVMAPSPHERE );
@@ -363,6 +363,11 @@ static void DrawLightmappedPBR_DX9_Internal( CBaseVSShader *pShader, IMaterialVa
 			pShader->BindTexture( SHADER_SAMPLER5, info.m_nDetail );
 		else
 			pShaderAPI->BindStandardTexture( SHADER_SAMPLER5, TEXTURE_BLACK );
+
+		if (bHasDisplacement)
+			pShader->BindVertexTexture( SHADER_VERTEXTEXTURE_SAMPLER0, info.DisplacementMap );
+		else
+			pShader->BindVertexTexture( SHADER_VERTEXTEXTURE_SAMPLER0, TEXTURE_BLACK );
 
 		if (bHasWVT)
 		{

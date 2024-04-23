@@ -105,6 +105,8 @@ public:
 	// Alpha to coverage
 	virtual void ApplyAlphaToCoverage( bool bEnable ) = 0;
 
+	static void BindStandardVertexTexture( VertexTextureSampler_t sampler, StandardTextureId_t id );
+
 #if defined( _X360 )
 	virtual void ApplySRGBReadState( int iTextureStage, bool bSRGBReadEnabled ) = 0; //360 needs to rebind the texture over again instead of setting a sampler state
 #endif

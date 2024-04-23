@@ -275,7 +275,6 @@ public:
 
 };
 
-
 //-----------------------------------------------------------------------------
 // Helper wrapper for IShaderBuffer for reading precompiled shader files
 // NOTE: This is meant to be instanced on the stack; so don't call Release!

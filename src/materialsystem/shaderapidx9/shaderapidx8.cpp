@@ -7902,7 +7902,7 @@ void CShaderAPIDx8::SetRenderTargetEx( int nRenderTargetID, ShaderAPITextureHand
 		}
 		else
 		{	
-			HRESULT hr = ((IDirect3DTexture9*)tex.GetTexture())->GetSurfaceLevel( 0, &pZSurface );
+			HRESULT hr = ( (IDirect3DTexture9 *)tex.GetTexture() )->GetSurfaceLevel( 0, &pZSurface );
 		}
 
 		if ( !pZSurface )

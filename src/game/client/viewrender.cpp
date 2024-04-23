@@ -2552,7 +2552,10 @@ void CViewRender::RenderView( const CViewSetup &viewIn, int nClearFlags, int wha
 
 	}
 
-	if ( mat_viewportupscale.GetBool() && mat_viewportscale.GetFloat() < 1.0f ) 
+
+
+	extern ConVar mat_drs_enable;
+	if ( mat_drs_enable.GetBool() )
 	{
 		CMatRenderContextPtr pRenderContext( materials );
 
@@ -2761,6 +2764,32 @@ void CViewRender::RenderView( const CViewSetup &viewIn, int nClearFlags, int wha
 //-----------------------------------------------------------------------------
 void CViewRender::Render2DEffectsPreHUD( const CViewSetup &view )
 {
+	extern ConVar mat_drs_enable;
+	if ( mat_drs_enable.GetBool() )
+	{
+		CMatRenderContextPtr pRenderContext( materials );
+		//pRenderContext->Viewport(0, 0, view.width, view.height);
+		Rect_t UpscaleRect, OGRect;
+
+		OGRect.x = view.m_nUnscaledX;
+		OGRect.y = view.m_nUnscaledY;
+		OGRect.width = view.m_nUnscaledWidth;
+		OGRect.height = view.m_nUnscaledHeight;
+
+		UpscaleRect.x = view.x;
+		UpscaleRect.y = view.y;
+		UpscaleRect.width = view.width;
+		UpscaleRect.height = view.height;
+
+		//pRenderContext->Viewport(0, 0, view.m_nUnscaledWidth, view.m_nUnscaledHeight);
+
+		pRenderContext->CopyTextureToRenderTargetEx( 0, materials->FindTexture( "_rt_FullFrameFB1", TEXTURE_GROUP_RENDER_TARGET ), &UpscaleRect, &OGRect );
+		//pRenderContext->DrawScreenSpaceRectangle(pCopyMaterial, UpscaleRect.x, UpscaleRect.y, UpscaleRect.width, UpscaleRect.height,
+		//	OGRect.x, OGRect.y, OGRect.x + OGRect.width - 1, OGRect.y + OGRect.height - 1,
+		//	pFullFrameFB1->GetActualWidth(), pFullFrameFB1->GetActualHeight());
+
+		//pCopyMaterial->DecrementReferenceCount();
+	}
 	//DrawScreenEffectMaterial(m_HDRSample, view.x, view.y, view.width, view.height);
 	CMatRenderContextPtr pRenderContext(materials);
 	Rect_t srcRect = {0, 0, GetFullFrameHDRTexture()->GetActualWidth(), GetFullFrameHDRTexture()->GetActualHeight()};

@@ -841,7 +841,7 @@ void ApplyTextureEnable( const ShadowState_t& state, int stage )
 	// but the ShaderAPI will handle that
 	int i;
 	int nSamplerCount = HardwareConfig()->GetSamplerCount();
-	for ( i = 0; i < nSamplerCount; ++i )
+	for ( int i = 0; i < nSamplerCount; ++i )
 	{
 		ShaderAPI()->ApplyTextureEnable( state, i );
 
@@ -1128,7 +1128,7 @@ int CTransitionTable::CreateNormalTransitions( const ShadowState_t& fromState, c
 	}
 
 	int nSamplerCount = HardwareConfig()->GetSamplerCount();
-	for ( int i = 0; i < nSamplerCount; ++i )
+	for ( i = 0; i < nSamplerCount; ++i )
 	{
 		ADD_SAMPLER_STATE_TRANSITION( i, SRGBReadEnable );
 		ADD_SAMPLER_STATE_TRANSITION( i, Fetch4Enable );
